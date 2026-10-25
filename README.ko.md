@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/ehs208/TimeTree-MCP/actions/workflows/ci.yml"><img src="https://github.com/ehs208/TimeTree-MCP/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/ODU33104/TimeTree-MCP/actions/workflows/ci.yml"><img src="https://github.com/ODU33104/TimeTree-MCP/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="https://github.com/ehs208/TimeTree-MCP/releases/latest"><img src="https://img.shields.io/github/v/release/ehs208/TimeTree-MCP?label=release" alt="최신 릴리스"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT License"></a>
 </p>
@@ -17,6 +17,9 @@
 <p align="center">
   <a href="README.md">English</a> | 한국어 | <a href="README.ja.md">日本語</a>
 </p>
+
+> [!IMPORTANT]
+> 이 저장소는 [ehs208/TimeTree-MCP](https://github.com/ehs208/TimeTree-MCP)의 포크입니다. 기능, 안전성, 사용성을 검토 중인 개발 버전이며 아직 개선 사항을 보장하지 않습니다. 원저작자 표시와 [LICENSE](LICENSE), [DISCLAIMER.md](DISCLAIMER.md)를 유지합니다.
 
 > [!NOTE]
 > 개인 사용을 위한 비공식 프로젝트입니다. TimeTree, Inc.와 관계가 없습니다. TimeTree 웹 앱의 비공개 엔드포인트를 사용하므로 언제든 동작이 바뀔 수 있습니다. 자세한 내용은 [DISCLAIMER.md](DISCLAIMER.md)를 참고하십시오.
@@ -143,7 +146,7 @@ GUI 클라이언트가 `node`를 찾지 못하면 `command -v node`로 나온 �
 
 **로그인 실패**: 같은 이메일과 비밀번호로 TimeTree 웹 앱에 로그인되는지 확인합니다. 이 서버는 이메일과 비밀번호 로그인만 지원합니다.
 
-**캘린더나 일정이 안 나옴**: 계정에 캘린더가 있는지 확인하고 클라이언트의 MCP 로그를 봅니다. TimeTree 웹 API가 바뀌었을 수 있으니 [이슈](https://github.com/ehs208/TimeTree-MCP/issues)로 알려주십시오.
+**캘린더나 일정이 안 나옴**: 계정에 캘린더가 있는지 확인하고 클라이언트의 MCP 로그를 봅니다. TimeTree 웹 API가 바뀌었을 수 있으니 [이슈](https://github.com/ODU33104/TimeTree-MCP/issues)로 알려주십시오.
 
 ## 동작 방식
 
@@ -157,8 +160,8 @@ GUI 클라이언트가 `node`를 찾지 못하면 `command -v node`로 나온 �
 
 기여해 주신 모든 분께 감사드립니다.
 
-<a href="https://github.com/ehs208/TimeTree-MCP/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=ehs208/TimeTree-MCP" alt="기여자">
+<a href="https://github.com/ODU33104/TimeTree-MCP/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=ODU33104/TimeTree-MCP" alt="기여자">
 </a>
 
 ## 크레딧
