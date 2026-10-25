@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/ehs208/TimeTree-MCP/actions/workflows/ci.yml"><img src="https://github.com/ehs208/TimeTree-MCP/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/ODU33104/TimeTree-MCP/actions/workflows/ci.yml"><img src="https://github.com/ODU33104/TimeTree-MCP/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="https://github.com/ehs208/TimeTree-MCP/releases/latest"><img src="https://img.shields.io/github/v/release/ehs208/TimeTree-MCP?label=release" alt="最新リリース"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT License"></a>
 </p>
@@ -17,6 +17,9 @@
 <p align="center">
   <a href="README.md">English</a> | <a href="README.ko.md">한국어</a> | 日本語
 </p>
+
+> [!IMPORTANT]
+> このリポジトリは [ehs208/TimeTree-MCP](https://github.com/ehs208/TimeTree-MCP) の Fork です。現在、機能・安全性・使いやすさを見直している開発版です。独自の改善はまだ保証されていません。元の作者・貢献者の権利表示と [LICENSE](LICENSE)、[DISCLAIMER.md](DISCLAIMER.md) を維持しています。
 
 > [!NOTE]
 > 個人利用向けの非公式プロジェクトです。TimeTree, Inc. とは関係ありません。TimeTree Web アプリの非公開エンドポイントを使うため、いつでも動作が変わる可能性があります。詳細は [DISCLAIMER.md](DISCLAIMER.md) を参照してください。
@@ -143,7 +146,7 @@ GUI クライアントが `node` を見つけられない場合は、`command -v
 
 **ログインに失敗する**: 同じメールアドレスとパスワードで TimeTree Web アプリにログインできるか確認します。このサーバーはメールアドレスとパスワードでのログインのみ対応しています。
 
-**カレンダーや予定が表示されない**: アカウントにカレンダーがあるか確認し、クライアントの MCP ログを見てください。TimeTree の Web API が変わった可能性があるため、[Issue](https://github.com/ehs208/TimeTree-MCP/issues) で知らせてください。
+**カレンダーや予定が表示されない**: アカウントにカレンダーがあるか確認し、クライアントの MCP ログを見てください。TimeTree の Web API が変わった可能性があるため、[Issue](https://github.com/ODU33104/TimeTree-MCP/issues) で知らせてください。
 
 ## 仕組み
 
@@ -157,8 +160,8 @@ Issue と Pull Request を歓迎します。[CONTRIBUTING.md](CONTRIBUTING.md) �
 
 コントリビュートしてくださった皆さんに感謝します。
 
-<a href="https://github.com/ehs208/TimeTree-MCP/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=ehs208/TimeTree-MCP" alt="コントリビューター">
+<a href="https://github.com/ODU33104/TimeTree-MCP/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=ODU33104/TimeTree-MCP" alt="コントリビューター">
 </a>
 
 ## クレジット
