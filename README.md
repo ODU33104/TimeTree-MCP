@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/ehs208/TimeTree-MCP/actions/workflows/ci.yml"><img src="https://github.com/ehs208/TimeTree-MCP/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/ODU33104/TimeTree-MCP/actions/workflows/ci.yml"><img src="https://github.com/ODU33104/TimeTree-MCP/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="https://github.com/ehs208/TimeTree-MCP/releases/latest"><img src="https://img.shields.io/github/v/release/ehs208/TimeTree-MCP?label=release" alt="Latest release"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT License"></a>
 </p>
@@ -17,6 +17,9 @@
 <p align="center">
   English | <a href="README.ko.md">한국어</a> | <a href="README.ja.md">日本語</a>
 </p>
+
+> [!IMPORTANT]
+> This repository is a fork of [ehs208/TimeTree-MCP](https://github.com/ehs208/TimeTree-MCP). It is currently under review for functionality, safety, and usability; no independent improvements are claimed yet. Original attribution, [LICENSE](LICENSE), and [DISCLAIMER.md](DISCLAIMER.md) are retained.
 
 > [!NOTE]
 > Unofficial and for personal use. Not affiliated with TimeTree, Inc. It uses the TimeTree web app's undocumented endpoints, which can change at any time. See [DISCLAIMER.md](DISCLAIMER.md).
@@ -143,7 +146,7 @@ If the creation response cannot be validated, check existing calendars before tr
 
 **Sign-in fails**: check that you can sign in on the TimeTree web app with the same email and password. The server signs in with email and password only.
 
-**No calendars or events**: make sure the account has calendars, and check the client's MCP logs. TimeTree may have changed its web API; please [open an issue](https://github.com/ehs208/TimeTree-MCP/issues).
+**No calendars or events**: make sure the account has calendars, and check the client's MCP logs. TimeTree may have changed its web API; please [open an issue](https://github.com/ODU33104/TimeTree-MCP/issues).
 
 ## How it works
 
@@ -157,8 +160,8 @@ Issues and pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 Thanks to everyone who has contributed.
 
-<a href="https://github.com/ehs208/TimeTree-MCP/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=ehs208/TimeTree-MCP" alt="Contributors">
+<a href="https://github.com/ODU33104/TimeTree-MCP/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=ODU33104/TimeTree-MCP" alt="Contributors">
 </a>
 
 ## Credits
