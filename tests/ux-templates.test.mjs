@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { previewTemplate, validateTemplate } from "../dist/features/templates/index.js";
+import { previewTemplate, validateTemplate } from "../.test-dist/features/templates/index.js";
 const base = { title: "Meeting", durationMinutes: 30, timezone: "Asia/Tokyo" };
 test("preview does not mutate and returns correct duration", () => {
   const result = previewTemplate(base, "2026-10-26T09:00:00+09:00");
