@@ -1,7 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
-<title>TimeTree MCP community connector</title><desc>Abstract linked nodes surrounding a central calendar pulse; independent community artwork.</desc>
-<rect width="512" height="512" rx="112" fill="#172B3A"/>
-<circle cx="256" cy="256" r="142" fill="none" stroke="#4BD1B6" stroke-width="22" stroke-dasharray="145 34 62 34 95 34 62 34"/>
-<path d="M158 256h66l30-61 44 122 29-61h29" fill="none" stroke="#F6F4EB" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"/>
-<circle cx="256" cy="94" r="24" fill="#FFCA75"/><circle cx="418" cy="256" r="24" fill="#FFCA75"/><circle cx="256" cy="418" r="24" fill="#FFCA75"/><circle cx="94" cy="256" r="24" fill="#FFCA75"/>
+<title id="title">TimeTree MCP connector</title>
+<desc id="desc">Original mint leaf-like petals linked to three network nodes; independent community project icon.</desc>
+<defs><linearGradient id="petal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#A5F4B5"/><stop offset="1" stop-color="#15BCA6"/></linearGradient><linearGradient id="link" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#38D7A0"/><stop offset="1" stop-color="#00B8C9"/></linearGradient></defs>
+<rect width="512" height="512" rx="108" fill="#FFFFFF"/>
+<g fill="url(#petal)"><path d="M246 248C174 249 112 207 112 119c91 0 135 55 134 129Z"/><path d="M249 248c0-72 50-122 132-122 0 80-49 124-132 122Z"/><path d="M246 255c-73-2-131 49-131 130 86 0 133-52 131-130Z"/><path d="M253 255c69 0 116 46 116 120-78 0-117-46-116-120Z"/></g>
+<path d="M308 94A169 169 0 0 1 406 361A170 170 0 0 1 301 416" fill="none" stroke="url(#link)" stroke-width="19" stroke-linecap="round"/>
+<g fill="#13CDAF" stroke="#FFFFFF" stroke-width="10"><circle cx="308" cy="94" r="25"/><circle cx="423" cy="256" r="25"/><circle cx="301" cy="416" r="25"/></g>
 </svg>
