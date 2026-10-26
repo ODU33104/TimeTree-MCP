@@ -16,3 +16,17 @@ All non-DOCS sessions use the **same dispatcher URL**; no session names are need
 
 ## Reporting
 Each worker updates its own claim and commits a report to `docs/coordination/reports/<item-id>.md` on its task branch. Coordinator periodically reads claims, reviews branches, updates STATUS and merges only verified work.
+
+## Next wave — usability differentiation (claim only after earlier dependencies)
+
+| Priority | Item ID | Task | Owned paths | Acceptance |
+| --- | --- | --- | --- | --- |
+| 7 | UX-SEARCH | Search events across accessible calendars by date range, keywords and optional calendar filters, with pagination and timezone-safe handling | `src/features/search/**`, `tests/ux-search*.test.mjs` | Read-only search with deterministic fixtures; no private data in logs |
+| 8 | UX-AVAILABILITY | Calculate free/busy slots across selected calendars, configurable duration, working hours and timezone | `src/features/availability/**`, `tests/ux-availability*.test.mjs` | Conflict-free suggestions from fixtures; no mutation |
+| 9 | UX-BATCH-PREVIEW | Build dry-run planner for multi-event create/update/delete with explicit diff and confirmation contract; no mutation without approval | `src/features/batch/**`, `tests/ux-batch*.test.mjs` | Preview-first plan, rejects destructive actions without confirmation, handles partial failure |
+| 10 | UX-TEMPLATES | Reusable event templates and safe bulk scheduling plans | `src/features/templates/**`, `tests/ux-templates*.test.mjs` | Template validation, timezone and recurrence correctness, preview before write |
+| 11 | UX-CONFLICTS | Detect overlapping events and suggest alternatives without modifying calendars | `src/features/conflicts/**`, `tests/ux-conflicts*.test.mjs` | Multi-calendar overlaps, all-day/timezone edge cases |
+| 12 | UX-ONBOARD | Secure local credential entry command wired to credential vault and server consumer contract; never accept secrets via MCP tool arguments | `src/onboarding/**`, `src/credentials/**`, `tests/ux-onboard*.test.mjs` | Private local input, permissions and rotation; explicit coordinator integration handoff |
+| 13 | UX-TOOL-INTEGRATION | Wire approved search/availability/batch/templates features into MCP tool registration after QA | coordinator-owned `src/index.ts`, `src/tools/index.ts`, `docs/coordination/**` | New tools discoverable and permission-gated, regression suite green |
+
+**Dispatcher note:** UX-TOOL-INTEGRATION is coordinator-only. Other UX tasks may be claimed by any non-DOCS worker. New modules should expose typed functions and fixtures, not edit `src/index.ts` or existing tool registry. Do not claim the user-facing functionality works until integrated.
