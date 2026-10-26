@@ -87,7 +87,7 @@ export class HttpClient {
   ): Promise<T> {
     const { method = 'GET', body, headers, timeout = this.defaultTimeout, requiresCsrf = false } = options;
 
-    const controller = new AbortController();
+    // Never send TimeTree credentials or session cookies to an unexpected origin.\n    const parsedUrl = new URL(url);\n    if (parsedUrl.protocol !== 'https:' || parsedUrl.hostname !== 'timetreeapp.com' || parsedUrl.username || parsedUrl.password) {\n      throw new Error('HTTP request blocked: untrusted TimeTree API origin');\n    }\n\n    const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeout);
 
     try {
@@ -97,7 +97,7 @@ export class HttpClient {
         method,
         headers: this.buildHeaders(headers, requiresCsrf),
         body: body ? JSON.stringify(body) : undefined,
-        signal: controller.signal,
+        signal: controller.signal,\n        // Native fetch follows redirects by default, which could forward credentials.\n        redirect: 'error',
       });
 
       clearTimeout(timeoutId);
