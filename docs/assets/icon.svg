@@ -1,16 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="112" fill="#1F2A44"/>
-  <rect x="96" y="128" width="320" height="288" rx="40" fill="#F5F6F8"/>
-  <rect x="96" y="128" width="320" height="76" rx="40" fill="#4C7CF0"/>
-  <rect x="96" y="168" width="320" height="36" fill="#4C7CF0"/>
-  <rect x="164" y="100" width="24" height="64" rx="12" fill="#F5F6F8"/>
-  <rect x="324" y="100" width="24" height="64" rx="12" fill="#F5F6F8"/>
-  <g fill="#C5CCD8">
-    <rect x="140" y="236" width="44" height="40" rx="10"/>
-    <rect x="234" y="236" width="44" height="40" rx="10"/>
-    <rect x="140" y="320" width="44" height="40" rx="10"/>
-    <rect x="234" y="320" width="44" height="40" rx="10"/>
-  </g>
-  <rect x="328" y="236" width="44" height="40" rx="10" fill="#1F2A44"/>
-  <path d="M312 356 l22 22 l46 -50" fill="none" stroke="#4C7CF0" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+<title>TimeTree MCP community connector</title><desc>Abstract linked nodes surrounding a central calendar pulse; independent community artwork.</desc>
+<rect width="512" height="512" rx="112" fill="#172B3A"/>
+<circle cx="256" cy="256" r="142" fill="none" stroke="#4BD1B6" stroke-width="22" stroke-dasharray="145 34 62 34 95 34 62 34"/>
+<path d="M158 256h66l30-61 44 122 29-61h29" fill="none" stroke="#F6F4EB" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="256" cy="94" r="24" fill="#FFCA75"/><circle cx="418" cy="256" r="24" fill="#FFCA75"/><circle cx="256" cy="418" r="24" fill="#FFCA75"/><circle cx="94" cy="256" r="24" fill="#FFCA75"/>
 </svg>
