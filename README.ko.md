@@ -9,14 +9,20 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/ehs208/TimeTree-MCP/actions/workflows/ci.yml"><img src="https://github.com/ehs208/TimeTree-MCP/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-  <a href="https://github.com/ehs208/TimeTree-MCP/releases/latest"><img src="https://img.shields.io/github/v/release/ehs208/TimeTree-MCP?label=release" alt="최신 릴리스"></a>
+  <a href="https://github.com/ODU33104/TimeTree-MCP/actions/workflows/ci.yml"><img src="https://github.com/ODU33104/TimeTree-MCP/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/ODU33104/TimeTree-MCP/releases"><img src="https://img.shields.io/github/v/release/ODU33104/TimeTree-MCP?label=release" alt="최신 릴리스"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT License"></a>
 </p>
 
 <p align="center">
   <a href="README.md">English</a> | 한국어 | <a href="README.ja.md">日本語</a>
 </p>
+
+> **포크 안내:** 이 저장소는 [ODU33104/TimeTree-MCP](https://github.com/ODU33104/TimeTree-MCP)에서 관리하는 비공식 독립 포크입니다. 원본 프로젝트는 [ehs208/TimeTree-MCP](https://github.com/ehs208/TimeTree-MCP) (MIT)입니다. TimeTree, Inc.와 관련이 없습니다. 포크 릴리스 및 클라이언트 호환성은 보장되지 않습니다.
+
+**보안:** TimeTree 로그인 정보를 AI 대화나 코딩 에이전트 프롬프트에 입력하지 마세요. MCP 클라이언트의 로컬 환경 설정에 저장하세요. ChatGPT 모바일 원격 연결은 아직 검증되지 않았습니다.
+
+**포크 설치:** 원본 대신 이 저장소를 clone하세요. 실행 전 스크립트를 검토하세요. 포크 릴리스가 실제로 게시된 경우에만 해당 배포 파일을 사용하세요.
 
 > [!NOTE]
 > 개인 사용을 위한 비공식 프로젝트입니다. TimeTree, Inc.와 관계가 없습니다. TimeTree 웹 앱의 비공개 엔드포인트를 사용하므로 언제든 동작이 바뀔 수 있습니다. 자세한 내용은 [DISCLAIMER.md](DISCLAIMER.md)를 참고하십시오.
@@ -47,7 +53,7 @@ AI 어시스턴트에게 이렇게 물어보면 됩니다.
 
 ### Claude Desktop (macOS, Windows): 원클릭 확장 프로그램
 
-1. [최신 릴리스](https://github.com/ehs208/TimeTree-MCP/releases/latest)에서 `timetree-mcp-<버전>.mcpb`를 내려받습니다.
+1. [최신 릴리스](https://github.com/ODU33104/TimeTree-MCP/releases)에서 `timetree-mcp-<버전>.mcpb`를 내려받습니다.
 2. 파일을 엽니다. Claude Desktop에 설치 창이 뜹니다.
 3. TimeTree 이메일과 비밀번호를 입력하고 확장 프로그램을 켭니다.
 
@@ -59,19 +65,19 @@ Node.js 22 이상과 Git이 필요합니다.
 
 **코딩 에이전트에게 맡기기.** Claude Code, Codex 같은 에이전트에 아래 내용을 붙여넣습니다.
 
-> `https://github.com/ehs208/TimeTree-MCP`를 클론하고, 클론한 디렉토리 안에서 `npm ci && npm run build`를 실행한 뒤, 내 MCP 클라이언트에 `timetree` 서버를 추가해줘. 실행 명령은 `node /absolute/path/to/TimeTree-MCP/dist/index.js` 형태로 실제 clone 경로를 사용하고, `TIMETREE_EMAIL`과 `TIMETREE_PASSWORD`는 MCP 클라이언트의 환경변수 설정에만 저장하며 절대 코드나 로그에 직접 쓰지 마.
+> `https://github.com/ODU33104/TimeTree-MCP`를 클론하고, 클론한 디렉토리 안에서 `npm ci && npm run build`를 실행한 뒤, 내 MCP 클라이언트에 `timetree` 서버를 추가해줘. 실행 명령은 `node /absolute/path/to/TimeTree-MCP/dist/index.js` 형태로 실제 clone 경로를 사용하고, `TIMETREE_EMAIL`과 `TIMETREE_PASSWORD`는 MCP 클라이언트의 환경변수 설정에만 저장하며 절대 코드나 로그에 직접 쓰지 마.
 
 **설치 스크립트 실행.** 클론과 빌드를 하고 클라이언트별 설정 예시를 출력합니다.
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/ehs208/TimeTree-MCP/main/TimeTree-MCP-install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/ODU33104/TimeTree-MCP/main/TimeTree-MCP-install.sh | bash
 ```
 
 <details>
 <summary>수동 설치</summary>
 
 ```bash
-git clone https://github.com/ehs208/TimeTree-MCP.git
+git clone https://github.com/ODU33104/TimeTree-MCP.git
 cd TimeTree-MCP
 npm ci
 npm run build
@@ -106,7 +112,7 @@ GUI 클라이언트가 `node`를 찾지 못하면 `command -v node`로 나온 �
 
 새 버전이 나오면 서버가 툴 응답에 안내를 한 번 덧붙여서 어시스턴트가 알려줄 수 있게 합니다. 끄려면 MCP `env`에 `TIMETREE_UPDATE_CHECK=false`를 설정합니다.
 
-- **Claude Desktop 확장 프로그램:** [최신 릴리스](https://github.com/ehs208/TimeTree-MCP/releases/latest)에서 새 `.mcpb`를 내려받아 엽니다.
+- **Claude Desktop 확장 프로그램:** [최신 릴리스](https://github.com/ODU33104/TimeTree-MCP/releases)에서 새 `.mcpb`를 내려받아 엽니다.
 - **Git clone:** 설치 폴더에서 `git pull origin main && npm ci && npm run build`를 실행하고 MCP 클라이언트를 재시작합니다.
 
 자세한 방법: [docs/UPDATING.md](docs/UPDATING.md). 변경 내역: [CHANGELOG.md](CHANGELOG.md).
