@@ -15,7 +15,7 @@
 </p>
 
 <p align="center">
-  <a href="README.md">English</a> | <a href="README.ko.md">한국어</a> | 日本語
+  <a href="README.md">English</a> · <a href="README.ja.md">日本語</a> · <a href="README.ko.md">한국어</a> · <a href="README.de.md">Deutsch</a> · <a href="README.zh-Hant.md">繁體中文</a> · <a href="README.fr.md">Français</a> · <a href="README.es.md">Español</a> · <a href="README.pt-BR.md">Português (Brasil)</a> · <a href="README.zh-Hans.md">简体中文</a> · <a href="README.it.md">Italiano</a> · <a href="README.th.md">ไทย</a> · <a href="README.id.md">Bahasa Indonesia</a> · <a href="README.ms.md">Bahasa Melayu</a>
 </p>
 
 > **フォークについて:** このリポジトリは [ODU33104/TimeTree-MCP](https://github.com/ODU33104/TimeTree-MCP) が管理する非公式の独立フォークです。原作者のプロジェクトは [ehs208/TimeTree-MCP](https://github.com/ehs208/TimeTree-MCP)（MIT）です。TimeTree, Inc. とは無関係です。フォーク版のリリースやクライアント互換性は未保証です。
