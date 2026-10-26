@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { createBusyOnlyExport, isShareExpired } from "../dist/features/share-slots/index.js";
+import { createBusyOnlyExport, isShareExpired } from "../.test-dist/features/share-slots/index.js";
 const input = { consent: true, now: "2026-10-26T00:00:00Z", expiresAt: "2026-10-27T00:00:00Z", windowStart: "2026-10-26T00:00:00Z", windowEnd: "2026-10-27T00:00:00Z", busy: [] };
 test("requires opt-in and valid expiration", () => {
   assert.throws(() => createBusyOnlyExport({ ...input, consent: false }));
