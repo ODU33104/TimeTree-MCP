@@ -541,3 +541,14 @@ test('virtual user update and delete use the uuid path and report a missing memb
   await assert.rejects(client.deleteVirtualUser('123', 'vm-uuid'), (error) => error.statusCode === 404);
   assert.equal(requests[1][1], 'https://timetreeapp.com/api/v1/calendars/123/virtual_users/vm-uuid');
 });
+
+test('recurrence writes reject timezone-less and invalid timestamps before API access', async () => {
+  for (const at of ['2026-10-21T01:00:00', '2026-10-21', 'invalid', 1.5, Infinity]) {
+    const client = fakeClient();
+    const response = await createDeleteEventOccurrenceTool(client).handler({
+      calendar_id: 123, event_uuid: 'series', occurrence_start_at: at,
+    });
+    assert.equal(response.isError, true, String(at));
+    assert.equal(client.calls.length, 0);
+  }
+});
