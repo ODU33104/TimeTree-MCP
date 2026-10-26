@@ -441,3 +441,15 @@ test('create_calendar reports persistent TimeTree auth rejections as authenticat
     assert.equal(JSON.stringify(result).includes('upstream detail'), false);
   }
 });
+
+test('calendar IDs reject unsafe numeric values without coercion', async () => {
+  const { CalendarIdSchema } = await import('../.test-dist/tools/shared-schemas.js');
+  for (const value of [0, -1, '0', '00123', '9007199254740993', 9007199254740992, 1.5, 'abc']) {
+    assert.equal(CalendarIdSchema.safeParse(value).success, false, String(value));
+  }
+  for (const value of [123, '123', Number.MAX_SAFE_INTEGER.toString()]) {
+    const parsed = CalendarIdSchema.safeParse(value);
+    assert.equal(parsed.success, true, String(value));
+    assert.equal(parsed.data, Number(value));
+  }
+});
