@@ -45,6 +45,10 @@ import {
 /** get_events returns occurrence times as ISO strings; numbers (ms) are accepted too. */
 const OccurrenceStartSchema = z.union([z.number(), z.string()]).transform((value, ctx) => {
   const instant = typeof value === 'number' ? value : Date.parse(value);
+  if (typeof value === 'string' && !/(?:Z|[+-]\\d{2}:\\d{2})$/i.test(value)) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'occurrence_start_at requires an explicit timezone offset or Z' });
+    return z.NEVER;
+  }
   // Reject timezone-less local timestamps: the server must not guess the caller's timezone.
   if (typeof value === 'string' && !/(?:Z|[+-]\d{2}:\d{2})$/i.test(value)) {
     ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'occurrence_start_at must include a timezone offset or Z' });
