@@ -1,5 +1,6 @@
 /** Security boundary for an unofficial, self-hosted remote MCP endpoint. */
-import { timingSafeEqual } from 'node:crypto';\nimport { isToolAllowed } from '../utils/tool-access.js';
+import { timingSafeEqual } from 'node:crypto';
+import { isToolAllowed } from '../utils/tool-access.js';
 
 export type RemotePolicy = {
   bearerToken: string;
