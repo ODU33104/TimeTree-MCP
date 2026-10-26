@@ -22,3 +22,8 @@ State: implementation committed; coordinator review required
 - No build, integration, device, or live account tests executed. No claims of compatibility or successful releases.
 - Fork's current credentials configuration is local-client based; new credential onboarding is owned by AUTH. Coordinate documentation after AUTH implementation.
 - Docs-brand changes are not merged into main.
+
+## Internationalization follow-up
+- Researched official worldwide usage, markets and supported languages; roadmap committed at `docs/INTERNATIONALIZATION.md`.
+- Proposed next docs languages: German and Traditional Chinese first, then French, Spanish and Brazilian Portuguese.
+- Coordinator: decide translation review ownership and locale-specific date/time tests before merging.
