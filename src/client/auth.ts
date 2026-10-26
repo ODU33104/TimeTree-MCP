@@ -74,9 +74,9 @@ export class TimeTreeAuthManager {
    * Authenticate with TimeTree and obtain session cookie
    */
   async authenticate(): Promise<void> {
-    logger.info('Authenticating with TimeTree', { email: this.email });
+    logger.info('Authenticating with TimeTree');
 
-    const uuid = this.generateUUID();
+    // Discard any previous credentials before a fresh login attempt.\n    this.httpClient.clearSessionCookie();\n    this.httpClient.clearCsrfToken();\n    this.csrfToken = undefined;\n    this.authenticated = false;\n\n    const uuid = this.generateUUID();
     const authRequest: AuthRequest = {
       uid: this.email,
       password: this.password,
