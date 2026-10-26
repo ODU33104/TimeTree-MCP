@@ -15,7 +15,7 @@
 </p>
 
 <p align="center">
-  English | <a href="README.ko.md">한국어</a> | <a href="README.ja.md">日本語</a>
+  <a href="README.md">English</a> · <a href="README.ja.md">日本語</a> · <a href="README.ko.md">한국어</a> · <a href="README.de.md">Deutsch</a> · <a href="README.zh-Hant.md">繁體中文</a> · <a href="README.fr.md">Français</a> · <a href="README.es.md">Español</a> · <a href="README.pt-BR.md">Português (Brasil)</a> · <a href="README.zh-Hans.md">简体中文</a> · <a href="README.it.md">Italiano</a> · <a href="README.th.md">ไทย</a> · <a href="README.id.md">Bahasa Indonesia</a> · <a href="README.ms.md">Bahasa Melayu</a>
 </p>
 
 > **Fork notice:** This is an independent, unofficial fork maintained at [ODU33104/TimeTree-MCP](https://github.com/ODU33104/TimeTree-MCP). Original project: [ehs208/TimeTree-MCP](https://github.com/ehs208/TimeTree-MCP) (MIT). Neither project is affiliated with TimeTree, Inc. Fork releases and client compatibility are not guaranteed.
