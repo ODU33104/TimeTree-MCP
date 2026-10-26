@@ -65,7 +65,7 @@ Files/modules changed, expected behavior, known limitations and risks:
 - 
 
 - [ ] README / release notes are accurate for **this fork** and distinguish prototype from registered functionality
-- [ ] `SECURITY.md` and [release readiness](docs/engineering/RELEASE-READINESS.md) remain accurate
+- [ ] `SECURITY.md` and [release readiness](../docs/engineering/RELEASE-READINESS.md) remain accurate
 - [ ] No GitHub Actions were deliberately triggered during development
 - [ ] This PR does not merge into `main` before a verified final release gate
 
