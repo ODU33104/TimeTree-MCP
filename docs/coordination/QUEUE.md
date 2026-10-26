@@ -30,3 +30,18 @@ Each worker updates its own claim and commits a report to `docs/coordination/rep
 | 13 | UX-TOOL-INTEGRATION | Wire approved search/availability/batch/templates features into MCP tool registration after QA | coordinator-owned `src/index.ts`, `src/tools/index.ts`, `docs/coordination/**` | New tools discoverable and permission-gated, regression suite green |
 
 **Dispatcher note:** UX-TOOL-INTEGRATION is coordinator-only. Other UX tasks may be claimed by any non-DOCS worker. New modules should expose typed functions and fixtures, not edit `src/index.ts` or existing tool registry. Do not claim the user-facing functionality works until integrated.
+
+## Third wave — competitive advantage beyond official TimeTree AI (2026-10-26)
+
+Official TimeTree Web AI Chat beta already supports conversational create/edit/delete/search, batch entry from pasted emails, batch label edits and confirmation cards. Do **not** claim those are unique. Official Schedule Context Engine is a future external-agent vision, not an available integration API. Do not use undocumented official AI endpoints.
+
+| Priority | Item ID | Task | Owned paths | Acceptance |
+| --- | --- | --- | --- | --- |
+| 14 | UX-SMART-BRIEF | Privacy-first daily/weekly briefing engine: actionable upcoming schedule, conflicts, preparation suggestions and provenance; no LLM secret handling | `src/features/briefing/**`, `tests/ux-briefing*.test.mjs` | Deterministic summaries with source event IDs, timezone and opt-in controls |
+| 15 | UX-TRAVEL-BUFFER | Commute/buffer planner using user-provided travel durations (no invented geolocation/ETA) | `src/features/travel-buffer/**`, `tests/ux-travel-buffer*.test.mjs` | Flags impossible back-to-back travel, all-day and DST handling |
+| 16 | UX-UNDO-PLAN | Compensating-action and rollback-plan generation for previewed multi-event edits; clearly mark non-atomic remote mutations | `src/features/undo/**`, `tests/ux-undo*.test.mjs` | Idempotency keys, partial-failure recovery, no auto-execution |
+| 17 | UX-SHARE-SLOTS | Privacy-preserving shareable availability suggestions without exposing event titles or participants | `src/features/share-slots/**`, `tests/ux-share-slots*.test.mjs` | Busy-only export, opt-in and expiration semantics |
+| 18 | UX-NATURAL-PARSER | Locale-aware Japanese/multilingual date-expression normalization with explicit ambiguity resolution and timezone correctness | `src/features/natural-date/**`, `tests/ux-natural-date*.test.mjs` | No silent interpretation of ambiguous dates; tests for JP, EN, DST |
+| 19 | UX-OFFICIAL-COMPAT | Track documented official AI/SCE capabilities and permitted integration surfaces; no scraping secrets, no unsupported API calls | `docs/official-ai-compatibility.md`, `tests/official-compat*.test.mjs` | Source-linked capability matrix, gap analysis, safe interoperability plan |
+
+**Coordination:** UX-TOOL-INTEGRATION remains coordinator-only and must not be claimed by general workers. The first-wave PRs #7–#13 are draft and must pass QA before merge. Third-wave features must remain isolated typed modules until integration review.
