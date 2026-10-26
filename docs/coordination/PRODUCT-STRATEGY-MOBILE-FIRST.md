@@ -43,3 +43,16 @@ Persona reports are hypotheses; conduct real-user validation. UI affordances dep
 
 ## Next coordinator action
 Create implementation tasks for mobile-first quick-start, concise agenda presentation, mobile-safe confirmation, and iPhone connection feasibility audit. Keep README/icon ownership separate. Do not run GitHub Actions during development.
+
+
+## Product decision — native-feature breadth plus distinctive engineering (2026-10-26)
+
+The goal is an excellent **unofficial** calendar assistant, not merely a clone of TimeTree and not a product that claims TimeTree endorsement. Keep the repository in research/experimental branches until source rights, safe access and QA are established. Do not require outreach to TimeTree as a prerequisite for **synthetic/offline** prototype work; conversely, lack of outreach never supplies permission for hosting a public service or accessing undocumented provider endpoints beyond applicable terms.
+
+**Track 1: App-feature coverage.** Maintain the official TimeTree product feature matrix and the corresponding MCP tool/runtime capability map in [feature coverage](TIMETREE-FEATURE-COVERAGE-20261026.md). First perfect existing supported event, recurrence, member, memo, checklist, label, comment and activity behaviors. Research missing RSVP, album photos, calendar settings/invites, reminders, premium files, public/discover calendars, widgets and cross-calendar imports as separate capability/permission questions. Label each feature `APP-NATIVE / CODE-PROTOTYPE / MCP-REGISTERED / VERIFIED-IN-TEST / PROVIDER-LIVE-VERIFIED`; never equate these statuses.
+
+**Track 2: Memorable original functions.** Build demonstrable improvements that work with user-provided or authorized snapshots: what-if rescheduling (PR #21); privacy-first portable iCalendar output (PR #22); privacy-safe shareable free times; family and team responsibility coverage; batch previews and undo plans; international timezone-safe scheduling. Make distinctive behavior visible through concise synthetic demo dialogues and reproducible data/outputs, not inflated tool counts.
+
+**Track 3: Developer trust.** Publish exact typed API contracts, deterministic tests, threat models and honest PASS/FAIL/NOT RUN evidence. Existing failed dependency audit is release-blocking; no green marketing badges until same-commit gate passes. Do not trigger GitHub Actions during development or merge experimental work into main. A dedicated branding/docs worker owns README/icon updates.
+
+**Launch gate:** ChatGPT mobile distribution, TimeTree provider authorization, per-user OAuth isolation, secure deployment, accessibility and independent release QA remain separate gates. If a function only works offline with synthetic data, describe it exactly that way.
