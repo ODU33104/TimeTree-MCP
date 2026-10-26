@@ -49,6 +49,5 @@ export function isRemoteToolAllowed(
   name: string,
   allowWrites: boolean,
 ): boolean {
-  if (allowWrites) return true;
-  return /^(list_|get_|search_)/.test(name);
+  return isToolAllowed(name, !allowWrites);
 }
