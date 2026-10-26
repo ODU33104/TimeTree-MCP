@@ -16,7 +16,7 @@ import {
 import { TimeTreeAuthManager } from './client/auth.js';
 import { TimeTreeAPIClient } from './client/api.js';
 import { registerTools, toolResult } from './tools/index.js';
-import { logger, summarizeToolArguments } from './utils/logger.js';
+import { logger, summarizeToolArguments } from './utils/logger.js';\nimport { safeToolErrorResult } from './utils/mcp-errors.js';
 import { SERVER_VERSION as VERSION } from './config/config.js';
 import { fetchNewerVersion, formatUpdateNotice } from './utils/update-check.js';
 
