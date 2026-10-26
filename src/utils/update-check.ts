@@ -13,9 +13,14 @@ const CHECK_TIMEOUT_MS = 3000;
 
 /** True when `candidate` is a higher x.y.z version than `current`. */
 export function isNewerVersion(candidate: string, current: string): boolean {
-  const parse = (version: string) => version.split('-')[0].split('.').map((part) => Number(part) || 0);
+  const parse = (version: string): number[] | null => {
+    if (!/^\\d+\\.\\d+\\.\\d+$/.test(version)) return null;
+    const parts = version.split('.').map(Number);
+    return parts.every(Number.isSafeInteger) ? parts : null;
+  };
   const a = parse(candidate);
   const b = parse(current);
+  if (!a || !b) return false;
   for (let i = 0; i < Math.max(a.length, b.length); i++) {
     const diff = (a[i] ?? 0) - (b[i] ?? 0);
     if (diff !== 0) return diff > 0;
@@ -38,7 +43,9 @@ export async function fetchNewerVersion(
     });
     if (!response.ok) return null;
 
-    const { version } = (await response.json()) as { version?: unknown };
+    const payload: unknown = await response.json();
+    if (!payload || typeof payload !== 'object' || !('version' in payload)) return null;
+    const version = payload.version;
     if (typeof version !== 'string') return null;
 
     return isNewerVersion(version, currentVersion) ? version : null;
