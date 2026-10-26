@@ -44,10 +44,16 @@ export function authorizeRemoteRequest(
   return 200;
 }
 
+const READ_ONLY_TOOLS = new Set([
+  'list_calendars', 'get_calendar', 'get_events', 'get_event',
+  'get_memos', 'get_memo', 'search_events', 'search_memos',
+]);
+
 export function isRemoteToolAllowed(
   name: string,
   allowWrites: boolean,
 ): boolean {
   if (allowWrites) return true;
-  return /^(list_|get_|search_)/.test(name);
+  // Explicit allowlist: prefixes are not a security boundary.
+  return READ_ONLY_TOOLS.has(name);
 }
