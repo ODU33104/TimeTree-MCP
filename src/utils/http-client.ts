@@ -98,6 +98,7 @@ export class HttpClient {
         headers: this.buildHeaders(headers, requiresCsrf),
         body: body ? JSON.stringify(body) : undefined,
         signal: controller.signal,
+        redirect: 'error', // Never forward credentials across redirects.
       });
 
       clearTimeout(timeoutId);
@@ -121,17 +122,12 @@ export class HttpClient {
 
       // Handle non-2xx responses
       if (!response.ok) {
-        const errorBody = await response.text();
-        logger.error(`HTTP ${response.status} ${response.statusText}`, {
-          url,
-          status: response.status,
-          body: errorBody,
-        });
+        logger.error(`HTTP request failed with status ${response.status}`);
 
         throw new HttpError(
           response.status,
           `HTTP ${response.status}: ${response.statusText}`,
-          errorBody
+          undefined
         );
       }
 
@@ -150,12 +146,12 @@ export class HttpClient {
       }
 
       if ((error as any).name === 'AbortError') {
-        logger.error('Request timeout', { url, timeout });
+        logger.error('Request timeout', { timeout });
         throw new Error(`Request timeout after ${timeout}ms`);
       }
 
-      logger.error('Network error', { url, error });
-      throw new Error(`Network error: ${(error as Error).message}`);
+      logger.error('Network error');
+      throw new Error('Network request failed');
     }
   }
 
