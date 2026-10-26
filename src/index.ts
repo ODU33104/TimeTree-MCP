@@ -26,7 +26,7 @@ const SERVER_INSTRUCTIONS = [
   'Times are Unix milliseconds in inputs and ISO 8601 (UTC) in outputs; pass a time zone such as "Asia/Seoul" when creating events.',
   'Memos are notes without a schedule: use the memo tools for them and the event tools for events.',
   'Recurring events: get_events with start_before expands occurrences that share the series uuid. update_event and delete_event change the whole series; update_event_occurrence and delete_event_occurrence change one occurrence or it and the ones after it.',
-  'Writes are visible to everyone in the calendar. Confirm before deleting.',
+  'Writes are visible to everyone in the calendar. Confirm before deleting.',\n  'Never request or display TimeTree passwords, session cookies or CSRF tokens in chat. Configure credentials only in the MCP server environment.',
 ].join('\n');
 
 /**
@@ -168,6 +168,6 @@ async function main() {
 // Start the server
 main().catch((error) => {
   logger.error('Fatal error', { error });
-  console.error('Fatal error:', error);
+  console.error('Fatal error: TimeTree MCP server could not start. See sanitized server logs.');
   process.exit(1);
 });
