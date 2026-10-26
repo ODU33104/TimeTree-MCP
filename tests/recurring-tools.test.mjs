@@ -541,3 +541,30 @@ test('virtual user update and delete use the uuid path and report a missing memb
   await assert.rejects(client.deleteVirtualUser('123', 'vm-uuid'), (error) => error.statusCode === 404);
   assert.equal(requests[1][1], 'https://timetreeapp.com/api/v1/calendars/123/virtual_users/vm-uuid');
 });
+
+test('occurrence mutations reject ambiguous timestamps before calling the API', async () => {
+  for (const occurrence_start_at of [
+    '2026-10-21T01:00:00',
+    '2026-10-21',
+    'not-a-date',
+    1.5,
+    Number.POSITIVE_INFINITY,
+    8_640_000_000_000_001,
+  ]) {
+    const client = fakeClient();
+    const result = await createDeleteEventOccurrenceTool(client).handler({
+      calendar_id: 123, event_uuid: 'series', occurrence_start_at,
+    });
+    assert.equal(result.isError, true, String(occurrence_start_at));
+    assert.equal(client.calls.length, 0, String(occurrence_start_at));
+  }
+});
+
+test('occurrence mutation accepts an explicit timezone offset', async () => {
+  const client = fakeClient();
+  const result = parse(await createDeleteEventOccurrenceTool(client).handler({
+    calendar_id: 123, event_uuid: 'series', occurrence_start_at: '2026-10-21T10:00:00+09:00',
+  }));
+  assert.equal(result.success, true);
+  assert.equal(client.calls[1][0], 'updateEvent');
+});
