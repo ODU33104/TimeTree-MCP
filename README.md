@@ -9,14 +9,20 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/ehs208/TimeTree-MCP/actions/workflows/ci.yml"><img src="https://github.com/ehs208/TimeTree-MCP/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-  <a href="https://github.com/ehs208/TimeTree-MCP/releases/latest"><img src="https://img.shields.io/github/v/release/ehs208/TimeTree-MCP?label=release" alt="Latest release"></a>
+  <a href="https://github.com/ODU33104/TimeTree-MCP/actions/workflows/ci.yml"><img src="https://github.com/ODU33104/TimeTree-MCP/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/ODU33104/TimeTree-MCP/releases"><img src="https://img.shields.io/github/v/release/ODU33104/TimeTree-MCP?label=release" alt="Latest release"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT License"></a>
 </p>
 
 <p align="center">
   English | <a href="README.ko.md">한국어</a> | <a href="README.ja.md">日本語</a>
 </p>
+
+> **Fork notice:** This is an independent, unofficial fork maintained at [ODU33104/TimeTree-MCP](https://github.com/ODU33104/TimeTree-MCP). Original project: [ehs208/TimeTree-MCP](https://github.com/ehs208/TimeTree-MCP) (MIT). Neither project is affiliated with TimeTree, Inc. Fork releases and client compatibility are not guaranteed.
+
+**Security:** Never paste TimeTree credentials into an AI conversation or coding-agent prompt. Configure secrets locally in your MCP client's protected environment/settings. Remote ChatGPT/mobile access is not currently verified.
+
+**Fork install:** Clone this repository rather than the upstream repository. Review scripts before running them. Release assets are only usable if actually published for this fork.
 
 > [!NOTE]
 > Unofficial and for personal use. Not affiliated with TimeTree, Inc. It uses the TimeTree web app's undocumented endpoints, which can change at any time. See [DISCLAIMER.md](DISCLAIMER.md).
@@ -47,7 +53,7 @@ Ask your AI assistant things like:
 
 ### Claude Desktop (macOS, Windows): one-click extension
 
-1. Download `timetree-mcp-<version>.mcpb` from the [latest release](https://github.com/ehs208/TimeTree-MCP/releases/latest).
+1. Download `timetree-mcp-<version>.mcpb` from the [latest release](https://github.com/ODU33104/TimeTree-MCP/releases).
 2. Open the file. Claude Desktop shows an install dialog.
 3. Enter your TimeTree email and password, then enable the extension.
 
@@ -59,19 +65,19 @@ Requires Node.js 22 or later and Git.
 
 **Ask your coding agent.** Paste this into Claude Code, Codex, or a similar agent:
 
-> Clone `https://github.com/ehs208/TimeTree-MCP`, enter the cloned directory, run `npm ci && npm run build`, then configure my MCP client with a server named `timetree` that runs `node /absolute/path/to/TimeTree-MCP/dist/index.js` (use the real cloned path). Store `TIMETREE_EMAIL` and `TIMETREE_PASSWORD` only in the MCP client environment configuration, and never hardcode or print secrets.
+> Clone `https://github.com/ODU33104/TimeTree-MCP`, enter the cloned directory, run `npm ci && npm run build`, then configure my MCP client with a server named `timetree` that runs `node /absolute/path/to/TimeTree-MCP/dist/index.js` (use the real cloned path). Store `TIMETREE_EMAIL` and `TIMETREE_PASSWORD` only in the MCP client environment configuration, and never hardcode or print secrets.
 
 **Or run the installer.** It clones, builds, and prints a config example for each client:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/ehs208/TimeTree-MCP/main/TimeTree-MCP-install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/ODU33104/TimeTree-MCP/main/TimeTree-MCP-install.sh | bash
 ```
 
 <details>
 <summary>Manual install</summary>
 
 ```bash
-git clone https://github.com/ehs208/TimeTree-MCP.git
+git clone https://github.com/ODU33104/TimeTree-MCP.git
 cd TimeTree-MCP
 npm ci
 npm run build
@@ -106,7 +112,7 @@ This project is not published to npm. Install it from a GitHub release or a clon
 
 When a newer version is out, the server adds a one-time notice to a tool response, so your assistant can tell you. Set `TIMETREE_UPDATE_CHECK=false` in the MCP `env` to turn this off.
 
-- **Claude Desktop extension:** download the new `.mcpb` from the [latest release](https://github.com/ehs208/TimeTree-MCP/releases/latest) and open it.
+- **Claude Desktop extension:** download the new `.mcpb` from the [latest release](https://github.com/ODU33104/TimeTree-MCP/releases) and open it.
 - **Git clone:** run `git pull origin main && npm ci && npm run build` in the folder, then restart your MCP client.
 
 Details: [docs/UPDATING.md](docs/UPDATING.md). Changes: [CHANGELOG.md](CHANGELOG.md).
