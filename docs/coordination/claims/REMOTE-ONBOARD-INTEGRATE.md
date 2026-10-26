@@ -2,4 +2,5 @@
 item_id: REMOTE-ONBOARD-INTEGRATE
 branch: work/remote-onboard-integrate-20261026
 start_date: 2026-10-26
-status: claimed
+status: ready-for-review
+report: docs/coordination/reports/REMOTE-ONBOARD-INTEGRATE.md
