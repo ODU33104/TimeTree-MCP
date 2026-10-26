@@ -1,10 +1,9 @@
 item_id: DEP-AUDIT-REMEDIATE
-task_branch: task/DEP-AUDIT-REMEDIATE-20261026
+task_branch: work/dep-audit-remediate-takeover
 start_date: 2026-10-26
-status: claimed
+status: blocked
 handoff_date: 2026-10-26
-previous_status: blocked
-previous_worker_note: DNS resolution prevented GitHub clone and npm audit.
-assigned_branch: work/dep-audit-remediate-takeover
+previous_branch: task/DEP-AUDIT-REMEDIATE-20261026
 assigned_worker: takeover-session-20261026-2038-jst
-handoff_reason: coordinator priority override
+report: docs/coordination/reports/DEP-AUDIT-REMEDIATE.md
+NEEDS_COORDINATOR_DECISION: github.com and registry.npmjs.org DNS inaccessible in local container; dependency upgrades, npm ci, typecheck, build, tests and npm audit cannot be safely completed. Require network-enabled checkout and validation before release.
