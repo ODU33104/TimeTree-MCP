@@ -45,7 +45,12 @@ import {
 /** get_events returns occurrence times as ISO strings; numbers (ms) are accepted too. */
 const OccurrenceStartSchema = z.union([z.number(), z.string()]).transform((value, ctx) => {
   const instant = typeof value === 'number' ? value : Date.parse(value);
-  if (!Number.isFinite(instant)) {
+  // Reject timezone-less local timestamps: the server must not guess the caller's timezone.
+  if (typeof value === 'string' && !/(?:Z|[+-]\d{2}:\d{2})$/i.test(value)) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'occurrence_start_at must include a timezone offset or Z' });
+    return z.NEVER;
+  }
+  if (!Number.isFinite(instant) || !Number.isInteger(instant) || Math.abs(instant) > 8_640_000_000_000_000) {
     ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'occurrence_start_at must be an ISO 8601 time or Unix ms' });
     return z.NEVER;
   }
