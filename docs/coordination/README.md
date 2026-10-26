@@ -2,6 +2,10 @@
 
 **Coordinator:** the originating ChatGPT session. This repository is the sole source of truth for task instructions, handoffs, evidence and decisions. Do not create GitHub Issues. Do not contact the human user; questions go to the coordinator through the workstream report in Git.
 
+## Universal dispatcher — CURRENT RULE (supersedes fixed AUTH/REMOTE/TOOLS assignments)
+
+**All sessions except DOCS-BRAND receive the same URL:** `docs/coordination/instructions/worker-dispatch.md`. The session MUST implement a task rather than summarize this instruction. The dispatcher uses `docs/coordination/QUEUE.md` and Git claim files to assign unclaimed work automatically. The fixed workstream names below are historical path ownership guidance only, not instructions to send tasks to named sessions. DOCS-BRAND remains a separate dedicated session; it owns all README, translations and icon/logo updates.
+
 ## Operating rules
 - Work in your assigned branch and owned paths. Never modify another workstream's files without a recorded handoff.
 - Each worker updates its own `docs/coordination/reports/<stream>.md` with completed work, commits, risks, test status and requests to the coordinator.
