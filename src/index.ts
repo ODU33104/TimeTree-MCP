@@ -93,8 +93,9 @@ async function main() {
     }
   );
 
-  // Register tools
+  // Register tools; read-only mode is explicit for stdio compatibility.
   const tools = registerTools(apiClient);
+  const readOnly = process.env.TIMETREE_READ_ONLY === 'true';
 
   // Check for a newer version in the background; shown once in the next tool response.
   let updateNotice: string | null = null;
@@ -110,7 +111,7 @@ async function main() {
   // Handle list_tools request
   server.setRequestHandler(ListToolsRequestSchema, async () => {
     return {
-      tools: tools.map((tool) => ({
+      tools: tools.filter((tool) => isToolAllowed(tool.name, readOnly)).map((tool) => ({
         name: tool.name,
         description: tool.description,
         inputSchema: tool.inputSchema,
@@ -122,8 +123,6 @@ async function main() {
 
   // Stdio remains write-capable for backwards compatibility; remote transports must
   // explicitly opt into a separate restrictive policy before exposing tools.
-  const readOnly = process.env.TIMETREE_READ_ONLY === 'true';
-
   // Handle call_tool request
   server.setRequestHandler(CallToolRequestSchema, async (request) => {
     const { name, arguments: args } = request.params;
