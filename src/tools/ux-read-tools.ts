@@ -4,7 +4,6 @@
  */
 import { z } from 'zod';
 import type { TimeTreeAPIClient } from '../client/api.js';
-import type { Event } from '../types/timetree.js';
 import { expandRecurrence, parseRecurrence } from '../utils/recurrence.js';
 import { safeToolErrorResult } from '../utils/mcp-errors.js';
 import { searchEvents, type SearchEvent } from '../features/search/index.js';
