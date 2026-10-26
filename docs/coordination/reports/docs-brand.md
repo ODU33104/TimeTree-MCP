@@ -31,3 +31,9 @@ State: implementation committed; coordinator review required
 ## Brand icon revision
 - Replaced abstract pulse icon with an original white-background mint four-petal connector mark, three nodes and curved link; `docs/assets/icon.svg` commit `d7fcd49`.
 - Artwork is a distinct project identity, not an official TimeTree icon; visually review small-size rendering and potential trademark confusion before publication.
+
+## Batch localization delivery (2026-10-26)
+- Added 10 localized **quick-start** READMEs: de, zh-Hant, fr, es, pt-BR, zh-Hans, it, th, id, ms; existing en/ja/ko brings navigation to 13 languages.
+- Updated language links in the three original READMEs and linked all 13 from new pages.
+- New translations cover project identity, safety, installation, and disclaimers, **not full feature parity** with existing long READMEs. Native-language review, translation completeness, link validation and locale behavior tests remain open.
+- Changes remain only on `work/docs-brand`; coordinator to review before integration.
