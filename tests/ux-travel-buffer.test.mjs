@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { evaluateTravelBuffers } from '../dist/features/travel-buffer/index.js';
+import { evaluateTravelBuffers } from '../.test-dist/features/travel-buffer/index.js';
 
 const event = (id, start, end, allDay = false) => ({ id, start, end, allDay });
 test('warns when user-supplied travel and preparation exceed gap', () => {
