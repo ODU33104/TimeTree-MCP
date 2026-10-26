@@ -44,3 +44,24 @@ test('authenticated requests reject redirects and keep credentials on TimeTree o
     globalThis.fetch = originalFetch;
   }
 });
+
+test('network errors do not reveal arbitrary fetch error contents', async () => {
+  const client = new HttpClient();
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async () => { throw new Error('password=supersecret in proxy diagnostics'); };
+  try {
+    await assert.rejects(client.get('https://timetreeapp.com/api/v1/calendars'), (error) => {
+      assert.doesNotMatch(error.message, /supersecret/);
+      assert.match(error.message, /TimeTree network request failed/);
+      return true;
+    });
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test('nonstandard ports and invalid URLs are rejected', async () => {
+  const client = new HttpClient();
+  await assert.rejects(client.get('https://timetreeapp.com:444/api'), /untrusted TimeTree API origin/);
+  await assert.rejects(client.get('not a url'), /invalid TimeTree API URL/);
+});
