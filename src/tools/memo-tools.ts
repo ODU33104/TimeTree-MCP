@@ -29,7 +29,7 @@ const VirtualUserAttendeesSchema = z.array(z.union([z.string(), z.number()]));
 export const ListMemosInputSchema = z.object({
   calendar_id: CalendarIdSchema.describe('The calendar ID to list memos from'),
   updated_after: z.number().optional().describe('Only return memos updated after this Unix timestamp in milliseconds'),
-  limit: z.number().positive().optional().describe('Optional limit on number of memos returned'),
+  limit: z.number().int().positive().max(1000).optional().describe('Optional limit on number of memos returned'),
 });
 
 export const CreateMemoInputSchema = z.object({
@@ -39,14 +39,14 @@ export const CreateMemoInputSchema = z.object({
   label_id: z.number().min(1).max(10).optional().describe('Color label ID (1-10)'),
   location: z.string().optional().describe('Optional memo location'),
   url: z.string().optional().describe('Optional related URL'),
-  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().describe('Optional memo date in YYYY-MM-DD; defaults to today UTC'),
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine((value) => { const [y, m, d] = value.split('-').map(Number); return new Date(Date.UTC(y, m - 1, d)).toISOString().slice(0, 10) === value; }, 'Invalid calendar date').optional().describe('Optional memo date in YYYY-MM-DD; defaults to today UTC'),
   checklist: ChecklistSchema.optional().describe('Checklist items for the memo'),
   virtual_user_attendees: VirtualUserAttendeesSchema.optional().describe('Virtual member IDs/names related to the memo'),
 });
 
 export const UpdateMemoInputSchema = z.object({
   calendar_id: CalendarIdSchema.describe('The calendar ID'),
-  memo_uuid: z.string().describe('The memo UUID (same as event UUID)'),
+  memo_uuid: z.string().trim().min(1).describe('The memo UUID (same as event UUID)'),
   title: z.string().min(1).optional().describe('New memo title'),
   note: z.string().optional().describe('New memo body text'),
   label_id: z.number().min(1).max(10).optional().describe('New color label ID (1-10)'),
@@ -150,7 +150,7 @@ function memoError(error: unknown, action: string) {
     return errorContent('Invalid input', `Please provide valid data to ${action}`, (error as { errors?: unknown }).errors);
   }
 
-  return errorContent(`Failed to ${action}`, (error as Error).message);
+  return errorContent(`Failed to ${action}`, 'Operation failed; inspect server logs for diagnostic details.');
 }
 
 export function createListMemosTool(apiClient: TimeTreeAPIClient) {
