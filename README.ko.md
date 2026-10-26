@@ -15,7 +15,7 @@
 </p>
 
 <p align="center">
-  <a href="README.md">English</a> | 한국어 | <a href="README.ja.md">日本語</a>
+  <a href="README.md">English</a> · <a href="README.ja.md">日本語</a> · <a href="README.ko.md">한국어</a> · <a href="README.de.md">Deutsch</a> · <a href="README.zh-Hant.md">繁體中文</a> · <a href="README.fr.md">Français</a> · <a href="README.es.md">Español</a> · <a href="README.pt-BR.md">Português (Brasil)</a> · <a href="README.zh-Hans.md">简体中文</a> · <a href="README.it.md">Italiano</a> · <a href="README.th.md">ไทย</a> · <a href="README.id.md">Bahasa Indonesia</a> · <a href="README.ms.md">Bahasa Melayu</a>
 </p>
 
 > **포크 안내:** 이 저장소는 [ODU33104/TimeTree-MCP](https://github.com/ODU33104/TimeTree-MCP)에서 관리하는 비공식 독립 포크입니다. 원본 프로젝트는 [ehs208/TimeTree-MCP](https://github.com/ehs208/TimeTree-MCP) (MIT)입니다. TimeTree, Inc.와 관련이 없습니다. 포크 릴리스 및 클라이언트 호환성은 보장되지 않습니다.
