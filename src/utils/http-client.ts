@@ -155,7 +155,7 @@ export class HttpClient {
         throw new HttpError(
           response.status,
           `HTTP ${response.status}: ${response.statusText}`,
-          undefined
+          code === undefined ? undefined : JSON.stringify({ error: { code } })
         );
       }
 
