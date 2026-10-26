@@ -22,3 +22,9 @@ Updated: 2026-10-26. Coordinator reviewed all four worker branch diffs and Git r
 - Integrate complete and safe independent changes into a single release candidate branch.
 - Verify build, typecheck, unit tests and privacy/security tests together, then isolated live read-only testing.
 - Keep `main` untouched until the QA gate passes. No GitHub Issues or user-facing progress questions.
+
+## 2026-10-26 — GitHub Actions budget policy and integration handoff
+- GitHub Actions: **minimize billable runs**. No push-triggered or per-PR heavy CI while iterating; prefer local `npm ci`, typecheck, build and tests. Reserve manual `workflow_dispatch` or a release gate for final integration/security milestones. Do not disable mandatory security protections without review.
+- Worker feature branches for PR #7–#19 have been submitted; **do not interpret draft PR creation as integration or passing QA**.
+- User reports integration worker has finished, but coordinator has **not yet verified an integration commit, successful local tests, or report**. Treat status as unverified until exact SHA and output are confirmed.
+- Coordinator must inspect worker integration result before any merge to `main`; README/icon changes remain with docs-brand worker.
