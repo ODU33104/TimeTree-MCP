@@ -4,7 +4,6 @@ export type DateResolution =
   | { status: 'ambiguous'; reason: string; candidates?: string[] }
   | { status: 'unsupported'; reason: string };
 export interface DateParseOptions { reference: string; timeZone: string; locale: 'ja' | 'en'; }
-const DAY = 86_400_000;
 function dateParts(timestamp: number, timeZone: string): { year: number; month: number; day: number; weekday: number } {
   const parts = new Intl.DateTimeFormat('en-US', {timeZone, year:'numeric',month:'numeric',day:'numeric',weekday:'short'}).formatToParts(timestamp);
   const get = (type: string) => parts.find(p=>p.type===type)?.value ?? '';
