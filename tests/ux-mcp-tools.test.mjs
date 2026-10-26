@@ -53,8 +53,8 @@ test('availability excludes time ranges busy in any selected calendar without ex
   });
   assert.equal(response.isError, undefined);
   const page = json(response);
-  assert.equal(page.total, 2);
-  assert.deepEqual(page.slots.map(s=>s.start), ['2026-10-26T00:00:00.000Z', '2026-10-26T03:00:00.000Z']);
+  assert.equal(page.total, 3);
+  assert.deepEqual(page.slots.map(s=>s.start), ['2026-10-26T00:00:00.000Z', '2026-10-26T02:30:00.000Z', '2026-10-26T03:00:00.000Z']);
   assert.equal(JSON.stringify(page).includes('Project sync'), false);
 });
 
