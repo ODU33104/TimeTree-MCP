@@ -10,6 +10,15 @@
 
 **Compatibility:** Rilis fork ini, akses jarak jauh melalui ChatGPT seluler, dan kompatibilitas semua klien belum diverifikasi.
 
+## Status fitur (27 Oktober 2026)
+
+- **`main`:** 29 alat MCP terdaftar untuk kalender, acara, pengulangan, memo dan data daftar periksa, komentar, anggota, label, hari libur, dan aktivitas terbaru.
+- **Kandidat integrasi, belum dirilis:** 3 alat baca-saja tambahan untuk pencarian lintas kalender, waktu kosong, dan benturan jadwal (total 32). Meski pengujian sebelumnya lulus, **audit keamanan keseluruhan gagal**.
+- **Prototipe, belum dapat dipanggil melalui MCP:** simulasi pemindahan acara dan ekspor `.ics` yang mengutamakan privasi. Koneksi langsung ChatGPT seluler, layanan publik multi-pengguna, dan izin resmi TimeTree belum terverifikasi.
+
+
+[Feature coverage / 機能対応表](https://github.com/ODU33104/TimeTree-MCP/blob/coordination/parallel-workstreams/docs/coordination/TIMETREE-FEATURE-COVERAGE-20261026.md) · [What-if prototype PR #21](https://github.com/ODU33104/TimeTree-MCP/pull/21) · [iCalendar export prototype PR #22](https://github.com/ODU33104/TimeTree-MCP/pull/22)
+
 ## TimeTree MCP
 
 Baca kalender dan acara, buat atau ubah acara, kelola komentar dan memo, serta lihat hari libur.
