@@ -14,3 +14,6 @@ The function does not mutate inputs, write TimeTree data, fetch missing pages or
 
 ## Security and integration
 This is not registered in the MCP tool registry and is not an available user-facing feature. Future coordinator-owned adapter should validate response completeness, enforce per-calendar authorization, redact titles by default, and reject ambiguous/partial snapshots. No private/undocumented API calls or checklist mutations.
+
+## Review hardening (2026-10-27)
+Missing selected-calendar snapshots and missing/null requested source arrays now **throw** rather than returning a misleading zero. An explicit empty `[]` remains a valid zero. Known incomplete inputs (`complete:false`, `truncated:true`, `hasMore:true`) fail closed. The upstream adapter **must** verify all pages were fetched and mark incomplete snapshots; absent metadata is not proof of completeness. `includeTitles:true` additionally requires `titlesAuthorized:true` from a trusted, consent-checked caller; this flag is not a substitute for actual calendar permissions. Never expose it as an unrestricted user-supplied MCP argument.
