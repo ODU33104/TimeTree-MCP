@@ -29,3 +29,28 @@ Base: `integration/release-candidate`
 - Existing `get_events` attendee values may require normalization before calling this function; currently only scalar IDs are accepted, and unsupported shapes fail closed.
 - Known roster names are shown by default unless `anonymize: true`; coordinator should consider privacy-default anonymization for remote clients.
 - No main merge, public deployment or release-readiness claim.
+
+## 2026-10-27 review follow-up — PR #26
+
+Reviewed the 2026-10-27 PR #25/#26/#27 submitted review comments. Ownership verified by existing claim: this worker owns PR #26 only. No changes to #25 or #27.
+
+### Follow-up commits and changed files
+- `2b0c65348fd1b780de43048d43d80e4043086926`: `src/features/attendance-summary/index.ts`; validate options, roster arrays/elements, combined roster limit; anonymize by default.
+- `b9f14a0d7c82ec5bc7591f8b8845287a428a10f5`: `tests/native-attendance.test.mjs`; synthetic negative cases and opt-in identity display.
+- `ff54d1e90dbe73eb74038abe035187783b3746c3`: `docs/features/attendance-summary.md`; update disclosure and bounds contract.
+
+### Verification status (this head)
+- `node --version`: PASS (v22.16.0; local runtime inspection only).
+- `tsc --version`: PASS (5.8.3; compiler presence only).
+- `npm ci`: NOT RUN (repository/dependency checkout unavailable).
+- `npm run typecheck`: NOT RUN.
+- `npm run build`: NOT RUN.
+- `npm run test:build && node --test tests/native-attendance*.test.mjs`: NOT RUN.
+- `npm audit --audit-level=high`: NOT RUN.
+- GitHub Actions: NOT RUN (intentionally not triggered).
+
+### Remaining risks and integration decision
+- **HOLD / NOT READY TO INTEGRATE** until tests and typecheck actually run on this commit and coordinator verifies authenticated calendar allowlists and roster acquisition.
+- Actual TimeTree attendee/virtual member response shapes and real provider permissions: NOT VERIFIED. Unsupported input shapes fail closed; no live accounts used.
+- A caller can explicitly request `anonymize: false`; adapter must require an authorized disclosure context and prevent cross-calendar leakage. Roster authorization cannot be proven inside a pure function by an untrusted caller-provided allowlist.
+- This is read-only association, not RSVP, consent, notification delivery or attendance confirmation.
