@@ -10,6 +10,10 @@
 
 **Compatibility:** Les versions publiées par ce fork, l'accès distant depuis ChatGPT mobile et la compatibilité avec tous les clients ne sont pas vérifiés.
 
+## Documentation scope / Feature status
+
+**Quickstart only:** This page is a localized summary, not a complete translation. English, Japanese and Korean have detailed guides. The 13 README languages do not imply that runtime localization, date/time behavior, or compatibility has been verified in 13 languages. The listed capabilities are repository-level features, not a guarantee of full TimeTree app coverage. No official TimeTree affiliation, confirmed ChatGPT mobile/remote connection, or guaranteed release artifacts. Consult the detailed guides for current limitations.
+
 ## TimeTree MCP
 
 Consultez les calendriers et événements, modifiez les événements, gérez les commentaires et mémos, et consultez les jours fériés.
