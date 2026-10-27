@@ -49,6 +49,18 @@ AI 어시스턴트에게 이렇게 물어보면 됩니다.
 - **맥락을 압니다.** 캘린더 멤버와 국가별 공휴일을 조회합니다.
 - **내 컴퓨터에서 실행됩니다.** 이메일과 비밀번호는 TimeTree에만 전송하고, 세션은 메모리에만 둡니다.
 
+## 기능 상태 — 사용 가능 기능과 시제품 구분 (2026-10-27)
+
+- **현재 `main` — MCP 도구 29개:** 캘린더 및 일정 관리, 반복 일정, 메모와 체크리스트 **데이터**, 댓글 및 이미지 읽기, 멤버·가상 멤버, 라벨, 공휴일, 최근 변경 내역. 체크 항목별 완료 전용 도구나 RSVP 변경 기능은 없습니다.
+- **통합 후보 — 도구 32개, 미출시:** 여러 캘린더 검색, 빈 시간 찾기, 일정 충돌 탐지용 읽기 전용 도구 3개가 추가되었습니다. 이전 테스트 172개는 통과했지만 **최종 보안 감사가 실패**했으므로 `main`에 출시된 기능이 아닙니다.
+- **독립 시제품 — MCP에서 아직 사용할 수 없음:** 일정 이동 전후 충돌 시뮬레이션, 허가된 정규화 일정에서 개인 정보 보호형 `.ics` 내보내기. 다른 스마트 요약 및 공유 기능도 통합 검증이 필요합니다.
+- **미지원·미검증:** 모바일 ChatGPT 직접 연결, 공개용 다중 사용자 OAuth, TimeTree 공식 제휴, 사진 업로드, 앨범 관리, RSVP 변경, 프리미엄 파일 첨부, 양방향 동기화. **공개 서버 운영 준비가 끝나지 않았습니다.**
+
+TimeTree의 폭넓은 기능을 이해하고 안전한 독자 기능을 개발하되, 구현과 출시 여부를 명확히 구분합니다.
+
+
+[Feature coverage / 機能対応表](https://github.com/ODU33104/TimeTree-MCP/blob/coordination/parallel-workstreams/docs/coordination/TIMETREE-FEATURE-COVERAGE-20261026.md) · [What-if prototype PR #21](https://github.com/ODU33104/TimeTree-MCP/pull/21) · [iCalendar export prototype PR #22](https://github.com/ODU33104/TimeTree-MCP/pull/22)
+
 ## 설치
 
 ### Claude Desktop (macOS, Windows): 원클릭 확장 프로그램
