@@ -32,3 +32,25 @@ test('missing roster does not infer identities or RSVP', () => {
   assert.ok(result.participants.every(p => p.status === 'unknown'));
   assert.equal('rsvp' in result, false);
 });
+
+test('fails closed for undefined options, null roster and invalid roster collections', () => {
+  assert.throws(() => summarize(event, roster, undefined), /Calendar access denied/);
+  assert.ok(summarize(event, null, options).participants.every(p => p.status === 'unknown'));
+  for (const members of [null, {}, [null], [42], [{ user_id: null }], [{ user_id: 1, name: 123 }], Array(1001).fill({ user_id: 1 })]) {
+    assert.throws(() => summarize(event, { ...roster, members }, options), /Invalid roster/);
+  }
+  for (const virtual_members of [null, 'wrong', [null], [{ id: '' }], [{ id: 'child', is_active: 'yes' }]]) {
+    assert.throws(() => summarize(event, { ...roster, virtual_members }, options), /Invalid roster/);
+  }
+});
+test('anonymizes by default; named disclosure requires explicit opt-in', () => {
+  const privateResult = summarize(event, roster, options);
+  assert.ok(privateResult.participants.every(p => p.label === 'Anonymous'));
+  const named = summarize(event, roster, { ...options, anonymize: false });
+  assert.equal(named.participants[0].label, 'Alice');
+  assert.equal(named.participants[1].label, 'Anonymous');
+});
+test('rejects total roster over limit and invalid event snapshots', () => {
+  assert.throws(() => summarize(event, { ...roster, members: Array(1000).fill({ user_id: 1 }), virtual_members: [{ id: 'child' }] }, options), /Too many roster members/);
+  assert.throws(() => summarize(null, roster, options), /Invalid event/);
+});
