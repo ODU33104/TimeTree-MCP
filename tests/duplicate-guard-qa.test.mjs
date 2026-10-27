@@ -59,3 +59,19 @@ test('private event metadata and tokens are absent from result', () => {
   assert.equal(JSON.stringify(result).includes('会議'), false);
   assert.deepEqual(Object.keys(result.matches[0]).sort(), ['calendarId', 'eventId', 'match', 'startDifferenceMinutes'].sort());
 });
+
+test('invalid Gregorian dates and leap-year boundaries are rejected', () => {
+  for (const start of ['2026-02-30T09:00:00+09:00','2025-02-29T09:00:00+09:00','2026-04-31T09:00:00+09:00']) {
+    assert.throws(() => run([event({ start })]), /Invalid timestamp/);
+  }
+  assert.equal(run([event({ start:'2028-02-29T09:00:00+09:00', end:'2028-02-29T10:00:00+09:00' })],
+    {...draft,start:'2028-02-29T09:00:00+09:00',end:'2028-02-29T10:00:00+09:00'}).totalMatches,1);
+});
+test('DST nonexistent and repeated New York wall-clock timestamps are not IANA validated (known limitation)', () => {
+  const opts={...options,timeZone:'America/New_York'};
+  const nonexistent={...draft,start:'2026-03-08T02:30:00-05:00',end:'2026-03-08T03:00:00-05:00'};
+  // Offset-based parser accepts this nonexistent wall time: integration must not treat it as IANA-valid.
+  assert.equal(run([event({...nonexistent})],nonexistent,opts).totalMatches,1);
+  const repeated={...draft,start:'2026-11-01T01:30:00-04:00',end:'2026-11-01T01:45:00-04:00'};
+  assert.equal(run([event({...repeated,start:'2026-11-01T01:30:00-05:00',end:'2026-11-01T01:45:00-05:00'})],repeated,opts).totalMatches,0);
+});
