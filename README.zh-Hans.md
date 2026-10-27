@@ -10,6 +10,10 @@
 
 **Compatibility:** 此分支的发行包、ChatGPT 移动端远程连接及各客户端兼容性尚未验证。
 
+## Documentation scope / Feature status
+
+**Quickstart only:** This page is a localized summary, not a complete translation. English, Japanese and Korean have detailed guides. The 13 README languages do not imply that runtime localization, date/time behavior, or compatibility has been verified in 13 languages. The listed capabilities are repository-level features, not a guarantee of full TimeTree app coverage. No official TimeTree affiliation, confirmed ChatGPT mobile/remote connection, or guaranteed release artifacts. Consult the detailed guides for current limitations.
+
 ## TimeTree MCP
 
 可读取日历和日程、创建或修改日程、管理评论与备忘录，以及查询节假日。
