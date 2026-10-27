@@ -8,7 +8,7 @@ This is an **unofficial** read-only TimeTree MCP feature prototype, not affiliat
 
 - Account attendee IDs and virtual member associations are **separate categories**; they are not RSVP confirmations, attendance records, consent, or notifications.
 - Unknown, inactive or missing roster entries have `status: unknown` and never reveal an identifier or stale name. Missing roster yields unknown status for all entries.
-- `anonymize: true` suppresses all names. Even without anonymization, only known active same-calendar roster names may be emitted. Default cap: 1000 participant entries; malformed payloads are rejected.
+- `anonymize: true` suppresses all names. Names are anonymized by default; only explicit `anonymize: false` may emit known active same-calendar roster names. Default cap: 1000 participant entries and 1000 combined roster entries; malformed arrays, members and missing options are rejected.
 - Duplicate identifiers are deduplicated **within** each category. IDs are not joined across calendars. Calendar permission denial and mismatched roster fail closed.
 
 ## Test
