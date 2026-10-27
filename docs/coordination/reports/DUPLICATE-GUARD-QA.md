@@ -30,3 +30,6 @@ Ten synthetic Node test cases: Japanese NFKC/punctuation, English case/fullwidth
 
 ## Required next gate
 Run `npm ci && npm run typecheck && npm run test:build && node --test tests/duplicate-guard-qa.test.mjs && npm audit --audit-level=high` in a checked-out branch. Record exact PASS/FAIL counts and fix tests only if expectations are wrong. Do not merge PR #24 or register an MCP tool until review, authorization boundary, provider fixtures and QA pass.
+
+## 2026-10-27 follow-up review
+Added Gregorian invalid-day/leap-year and IANA DST wall-time regression cases in commit `3899fd72b6a40e4bb162151c1762d04ccc2c9701`. The current offset-only comparator **accepts** the nonexistent `2026-03-08 02:30 -05:00` New York wall time; test documents this limitation, not a fix. `2026-02-30` is rejected by strict date validation already present on PR #24. No implementation change to PR #24. New tests authored; `npm ci`, `npm run typecheck`, `npm run build`, `npm test`, `node --test tests/duplicate-guard-qa.test.mjs`: NOT RUN (no verified local checkout). Integration HOLD pending IANA DST validation and actual execution. PR #25 remains based on PR #24 head.
