@@ -54,3 +54,6 @@ Reviewed the 2026-10-27 PR #25/#26/#27 submitted review comments. Ownership veri
 - Actual TimeTree attendee/virtual member response shapes and real provider permissions: NOT VERIFIED. Unsupported input shapes fail closed; no live accounts used.
 - A caller can explicitly request `anonymize: false`; adapter must require an authorized disclosure context and prevent cross-calendar leakage. Roster authorization cannot be proven inside a pure function by an untrusted caller-provided allowlist.
 - This is read-only association, not RSVP, consent, notification delivery or attendance confirmation.
+
+## 2026-10-27 follow-up verification
+Re-read latest PR #26 review and current branch source/test. The source **already** validates `roster.members` / `roster.virtual_members` array type, elements and total count, rejects undefined options before access, and defaults to anonymized labels (`options.anonymize !== false`). Existing tests already cover these paths. No duplicate code changes made. The opt-out `anonymize:false` is still available to callers, so coordinator-owned adapter must enforce authenticated calendar authorization and explicit name-disclosure consent; real TimeTree attendee response shape remains UNVERIFIED. GitHub source review PASS; local typecheck/build/node tests NOT RUN. Integration HOLD.
