@@ -23,3 +23,12 @@ Read-only, standalone pure function using normalized authorized `get_events` / `
 
 ## Coordinator decision
 Do not advertise or merge before running tests and validating upstream response normalization, truncation behavior and calendar permission boundaries.
+
+## 2026-10-27 PR #27 review response
+Reviewed latest review comment https://github.com/ODU33104/TimeTree-MCP/pull/27#pullrequestreview-5666451617 and PR #25/#26 ownership; changed only owned PR #27 files.
+
+Fix commits:
+- `5626d1bd7047fe4ed551eb5e2e3cdb43cde0ce24` — missing/incomplete snapshot rejection and explicit title authorization.
+- `841078cf519112db8068b9b7e7dfe7c795c60e94` — expanded synthetic negative tests (12 total authored).
+
+Verification: GitHub fetch/update file and review inspection **PASS**; `npm ci`, `npm run typecheck`, `npm run build`, `npm test`, `node --test tests/native-checklist-summary.test.mjs` **NOT RUN** (no local checkout/dependency environment verified in this session). No Actions triggered. Static review only; test outcomes not claimed. Integration: **HOLD** until execution, adapter authorization, upstream completeness/page handling and actual TimeTree response compatibility verification.
