@@ -49,6 +49,18 @@ Ask your AI assistant things like:
 - **Knows the context.** Calendar members and public holidays by country.
 - **Runs on your computer.** Your email and password are sent only to TimeTree. The session stays in memory.
 
+## Feature status — available vs experimental (updated 2026-10-27)
+
+- **Current `main` — 29 registered MCP tools:** calendar/event operations, recurring occurrences, memo and checklist **fields**, comments (including image reading), member/virtual-member management, labels, holidays and recent activity. Checklist fields are **not** a dedicated item-level completion tool, and attendance fields do **not** provide RSVP actions.
+- **Integration candidate — 32 tools, not released:** three additional **read-only** tools for cross-calendar event search, available time slots and conflict detection. Their integration branch passed 172 tests in a prior run, but the overall release security audit **failed**; these are **not** advertised as working on `main`.
+- **Research / standalone prototypes — not callable MCP tools:** what-if move simulation (compare conflicts before and after a proposed move) and privacy-first `.ics` export from already-authorized normalized events. Other planning modules, including smart briefings and sharing suggestions, also require integration and verification.
+- **Not supported or not verified:** direct ChatGPT mobile connection, multi-user hosted OAuth, public TimeTree partnership, photo uploads, album management, full RSVP, premium attachments and bidirectional calendar sync. Public multi-user deployment is **not ready**.
+
+We are building both **broad TimeTree feature coverage** and distinctive, safe planning/interoperability features, with source-linked tests rather than inflated feature claims.
+
+
+[Feature coverage / 機能対応表](https://github.com/ODU33104/TimeTree-MCP/blob/coordination/parallel-workstreams/docs/coordination/TIMETREE-FEATURE-COVERAGE-20261026.md) · [What-if prototype PR #21](https://github.com/ODU33104/TimeTree-MCP/pull/21) · [iCalendar export prototype PR #22](https://github.com/ODU33104/TimeTree-MCP/pull/22)
+
 ## Install
 
 ### Claude Desktop (macOS, Windows): one-click extension
