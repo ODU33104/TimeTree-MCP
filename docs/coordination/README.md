@@ -1,5 +1,10 @@
 # Parallel development control room
 
+## 2026-10-27: 新しい司令塔の入口（現行）
+
+**まず [COORDINATOR-HANDOFF.md](COORDINATOR-HANDOFF.md) を読み、次に [ONE-PASTE-DISPATCH.md](ONE-PASTE-DISPATCH.md) を読んでください。** 司令塔は主に割当・Git claims・PR/QAレビュー・競合調整・統合判断を担当します。既存の固定担当一覧・タスク進捗は歴史的情報を含みます。各workerには「URLと本文の1回コピーメッセージ」を送り、二重claimを避けます。開発途中のActions起動・mainマージは禁止です。
+
+
 **Coordinator:** the originating ChatGPT session. This repository is the sole source of truth for task instructions, handoffs, evidence and decisions. Do not create GitHub Issues. Do not contact the human user; questions go to the coordinator through the workstream report in Git.
 
 ## Universal dispatcher — CURRENT RULE (supersedes fixed AUTH/REMOTE/TOOLS assignments)
