@@ -10,6 +10,15 @@
 
 **Compatibility:** Non sono verificati i rilasci di questo fork, l'accesso remoto da ChatGPT mobile o la compatibilità con tutti i client.
 
+## Stato delle funzionalità (27/10/2026)
+
+- **`main`:** 29 strumenti MCP registrati per calendari, eventi, ricorrenze, promemoria e dati di checklist, commenti, membri, etichette, festività e attività recenti.
+- **Candidato di integrazione non rilasciato:** 3 nuovi strumenti di sola lettura (ricerca multi-calendario, disponibilità, conflitti), 32 in totale. Nonostante i test precedenti superati, **l'audit di sicurezza complessivo non è passato**.
+- **Prototipi, non ancora accessibili tramite MCP:** simulazione di spostamento e esportazione `.ics` rispettosa della privacy. Connessione diretta da ChatGPT mobile, servizio pubblico multiutente e autorizzazione ufficiale TimeTree non verificati.
+
+
+[Feature coverage / 機能対応表](https://github.com/ODU33104/TimeTree-MCP/blob/coordination/parallel-workstreams/docs/coordination/TIMETREE-FEATURE-COVERAGE-20261026.md) · [What-if prototype PR #21](https://github.com/ODU33104/TimeTree-MCP/pull/21) · [iCalendar export prototype PR #22](https://github.com/ODU33104/TimeTree-MCP/pull/22)
+
 ## TimeTree MCP
 
 Consulta calendari ed eventi, modifica eventi, gestisci commenti e promemoria e consulta le festività.
