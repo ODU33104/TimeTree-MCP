@@ -10,6 +10,15 @@
 
 **Compatibility:** Keluaran fork ini, sambungan jauh ChatGPT mudah alih dan keserasian semua klien belum disahkan.
 
+## Status ciri (27 Oktober 2026)
+
+- **`main`:** 29 alat MCP berdaftar untuk kalendar, acara, acara berulang, memo dan data senarai semak, komen, ahli, label, cuti umum dan aktiviti terkini.
+- **Calon integrasi, belum dikeluarkan:** 3 alat baca-sahaja tambahan untuk carian rentas kalendar, masa lapang dan konflik jadual (jumlah 32). Walaupun ujian terdahulu lulus, **audit keselamatan keseluruhan gagal**.
+- **Prototaip, belum boleh digunakan melalui MCP:** simulasi perubahan waktu acara dan eksport `.ics` yang mengutamakan privasi. Sambungan terus ChatGPT mudah alih, perkhidmatan awam berbilang pengguna dan kebenaran rasmi TimeTree belum disahkan.
+
+
+[Feature coverage / 機能対応表](https://github.com/ODU33104/TimeTree-MCP/blob/coordination/parallel-workstreams/docs/coordination/TIMETREE-FEATURE-COVERAGE-20261026.md) · [What-if prototype PR #21](https://github.com/ODU33104/TimeTree-MCP/pull/21) · [iCalendar export prototype PR #22](https://github.com/ODU33104/TimeTree-MCP/pull/22)
+
 ## TimeTree MCP
 
 Baca kalendar dan acara, cipta atau ubah acara, urus komen dan memo, serta semak cuti umum.
