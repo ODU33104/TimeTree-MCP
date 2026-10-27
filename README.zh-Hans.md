@@ -10,6 +10,15 @@
 
 **Compatibility:** 此分支的发行包、ChatGPT 移动端远程连接及各客户端兼容性尚未验证。
 
+## 功能开发状态（2026-10-27）
+
+- **当前 `main`：** 已注册 29 个 MCP 工具，覆盖日历、日程、重复事件、备忘录及清单数据、评论、成员、标签、节假日和最近变更。
+- **尚未发布的集成候选：** 另有 3 个只读工具（跨日历搜索、空闲时间、冲突检测），合计 32 个。此前测试虽然通过，**整体依赖安全审计仍失败**。
+- **独立原型，尚不可通过 MCP 使用：** 改期冲突模拟和隐私优先的 `.ics` 导出。ChatGPT 手机端直接连接、公开多用户服务及 TimeTree 官方授权均未验证。
+
+
+[Feature coverage / 機能対応表](https://github.com/ODU33104/TimeTree-MCP/blob/coordination/parallel-workstreams/docs/coordination/TIMETREE-FEATURE-COVERAGE-20261026.md) · [What-if prototype PR #21](https://github.com/ODU33104/TimeTree-MCP/pull/21) · [iCalendar export prototype PR #22](https://github.com/ODU33104/TimeTree-MCP/pull/22)
+
 ## TimeTree MCP
 
 可读取日历和日程、创建或修改日程、管理评论与备忘录，以及查询节假日。
