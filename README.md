@@ -39,6 +39,12 @@ Ask your AI assistant things like:
   <img src="docs/assets/demo-en.gif" alt="Claude Desktop summarizes a week on a TimeTree calendar, flags a conflict, then moves an event and adds a new one" width="760">
 </p>
 
+## Documentation and feature status
+
+**Documentation coverage:** English, Japanese and Korean are detailed guides. The other ten languages are **quick-start summaries only**, not full translations. All 13 pages describe the same MCP server; they do not represent separately tested language implementations.
+
+**Feature status:** The tools listed below describe functionality in this repository, not verified support for every TimeTree app feature. Compatibility depends on undocumented TimeTree web endpoints and the MCP client. No verified ChatGPT mobile/remote connection, official TimeTree partnership, or guaranteed release package is claimed. Country holidays are supported where provided by the implementation; locale-specific date, time zone and DST behavior has not been comprehensively tested.
+
 ## What it does
 
 - **Reads your calendars.** Events with date, keyword, and label filters. Recurring events are expanded into their actual dates.
