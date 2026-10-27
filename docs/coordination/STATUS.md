@@ -1,5 +1,12 @@
 # Integration status
 
+## 2026-10-27 — 新司令塔への引き継ぎ（この項目が現行の要約）
+
+- **最新のGitHub実査と優先順位:** [COORDINATOR-HANDOFF.md](COORDINATOR-HANDOFF.md)。以下の表は**過去2026-10-26時点の歴史的スナップショット**であり、現時点の完了状況として使用しない。
+- **担当への1メッセージ指示の出し方:** [ONE-PASTE-DISPATCH.md](ONE-PASTE-DISPATCH.md)。コピーボタン1つの中にGitHub URLと実行内容をまとめる。
+- **現在の重要事実:** main 29 tools、integration candidate 32（main未統合）；過去172テストPASSでも依存監査FAIL；PR #20〜#24はreview待ち；13言語READMEのPR #23はwork/docs-brand向け；DEP-AUDIT-REMEDIATE claim blocked；新規Actions起動/本番公開/mainマージなし。詳細は引継ぎ書と最新claimsを参照。
+
+
 Updated: 2026-10-26. Coordinator reviewed all four worker branch diffs and Git reports.
 
 | Stream | Branch | Commits ahead of main | Actual deliverable | QA status |
