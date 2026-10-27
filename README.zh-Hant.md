@@ -10,6 +10,15 @@
 
 **Compatibility:** 本分支的發行檔、ChatGPT 行動裝置遠端連線及所有用戶端相容性尚未驗證。
 
+## 功能開發狀態（2026-10-27）
+
+- **目前 `main`：** 29 個已註冊 MCP 工具，涵蓋行事曆、活動、重複事件、備忘錄與清單資料、留言、成員、標籤、假日及最近變更。
+- **尚未發佈的整合候選：** 另有 3 個唯讀工具（跨行事曆搜尋、空閒時段、衝突偵測），共 32 個；雖然先前測試通過，**整體依賴安全稽核仍失敗**。
+- **獨立原型，尚不可由 MCP 呼叫：** 假設性改期衝突分析及保護隱私的 `.ics` 匯出。ChatGPT 手機版直接連線、公開多人服務及 TimeTree 官方授權尚未驗證。
+
+
+[Feature coverage / 機能対応表](https://github.com/ODU33104/TimeTree-MCP/blob/coordination/parallel-workstreams/docs/coordination/TIMETREE-FEATURE-COVERAGE-20261026.md) · [What-if prototype PR #21](https://github.com/ODU33104/TimeTree-MCP/pull/21) · [iCalendar export prototype PR #22](https://github.com/ODU33104/TimeTree-MCP/pull/22)
+
 ## TimeTree MCP
 
 可讀取行事曆與活動、建立或修改活動、管理留言與備忘錄，以及查詢國定假日。
