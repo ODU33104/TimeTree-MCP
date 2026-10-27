@@ -3,12 +3,18 @@ export interface ChecklistSnapshot {
   calendar_id: string | number;
   events?: unknown;
   memos?: unknown;
+  /** Explicit upstream pagination/truncation evidence; false rejects the snapshot. */
+  complete?: boolean;
+  truncated?: boolean;
+  hasMore?: boolean;
 }
 export interface ChecklistFilter {
   calendarIds: readonly (string | number)[];
   scope?: 'events' | 'memos' | 'both';
   ids?: readonly string[];
   includeTitles?: boolean;
+  /** Separate explicit authorization/consent for revealing checklist item titles. */
+  titlesAuthorized?: boolean;
 }
 export interface ChecklistSummary {
   total: number;
@@ -42,6 +48,7 @@ export function summarizeChecklists(
       !Array.isArray(filter.calendarIds) || filter.calendarIds.length === 0 ||
       filter.calendarIds.some(id => !String(id).trim()) ||
       (filter.scope !== undefined && !['events', 'memos', 'both'].includes(filter.scope)) ||
+      (filter.includeTitles === true && filter.titlesAuthorized !== true) ||
       (filter.ids !== undefined && (!Array.isArray(filter.ids) || filter.ids.some(id => !validId(id))))) {
     throw new Error('Invalid checklist summary request');
   }
@@ -50,13 +57,20 @@ export function summarizeChecklists(
   const scope = filter.scope ?? 'both';
   const result: ChecklistSummary = { total: 0, completed: 0, incomplete: 0, empty: 0, unavailable: 0, malformed: 0, entries: [] };
   const seen = new Set<string>();
+  const covered = new Set<string>();
   for (const snapshot of snapshots) {
     if (!isObject(snapshot) || !selected.has(String(snapshot.calendar_id))) continue;
     const calendarId = String(snapshot.calendar_id);
+    if (snapshot.complete === false || snapshot.truncated === true || snapshot.hasMore === true) {
+      throw new Error('Incomplete checklist snapshot: pagination or truncation');
+    }
     for (const kind of ['event', 'memo'] as const) {
       if (scope !== 'both' && scope !== (kind === 'event' ? 'events' : 'memos')) continue;
       const records = kind === 'event' ? snapshot.events : snapshot.memos;
-      if (records === undefined || records === null) continue;
+      if (records === undefined || records === null) {
+        throw new Error('Unavailable checklist source: ' + calendarId + '/' + kind);
+      }
+      covered.add(JSON.stringify([calendarId, kind]));
       if (!Array.isArray(records) || records.length > MAX_RECORDS) throw new Error('Malformed or excessive snapshot records');
       for (const record of records) {
         if (!isObject(record) || !validId(record.uuid) || (ids && !ids.has(record.uuid))) continue;
@@ -93,6 +107,14 @@ export function summarizeChecklists(
           calendarId, id: record.uuid, kind, status, completed, incomplete,
           ...(filter.includeTitles === true && status === 'ok' ? { titles } : {})
         });
+      }
+    }
+  }
+  for (const calendarId of selected) {
+    for (const kind of ['event', 'memo'] as const) {
+      if (scope !== 'both' && scope !== (kind === 'event' ? 'events' : 'memos')) continue;
+      if (!covered.has(JSON.stringify([calendarId, kind]))) {
+        throw new Error('Missing checklist snapshot: ' + calendarId + '/' + kind);
       }
     }
   }
