@@ -31,26 +31,42 @@ export function summarizeEventAttendance(
   roster: CalendarRoster | undefined,
   options: SummaryOptions,
 ): AttendanceSummary {
-  if (!event || !validId(event.calendar_id) || typeof event.uuid !== 'string' || !event.uuid.trim()) throw new TypeError('Invalid event');
-  if (!Array.isArray(options.allowedCalendarIds) || !options.allowedCalendarIds.some(id => validId(id) && key(id) === key(event.calendar_id))) {
+  if (!event || typeof event !== 'object' || !validId(event.calendar_id) || typeof event.uuid !== 'string' || !event.uuid.trim()) throw new TypeError('Invalid event');
+  if (!options || typeof options !== 'object' || !Array.isArray(options.allowedCalendarIds) || !options.allowedCalendarIds.some(id => validId(id) && key(id) === key(event.calendar_id))) {
     throw new Error('Calendar access denied');
   }
-  if (roster && (!validId(roster.calendar_id) || key(roster.calendar_id) !== key(event.calendar_id))) throw new Error('Roster calendar mismatch');
+  if (roster != null && (typeof roster !== 'object' || !validId(roster.calendar_id) || key(roster.calendar_id) !== key(event.calendar_id))) throw new Error('Roster calendar mismatch');
   const max = options.maxParticipants ?? 1000;
   if (!Number.isSafeInteger(max) || max < 1 || max > 1000) throw new RangeError('Invalid participant limit');
   const accountIds = ids(event.attendees, max);
   const virtualIds = ids(event.virtual_user_attendees, max);
   if (accountIds.length + virtualIds.length > max) throw new RangeError('Too many participants');
+  // Validate the complete roster before reading or exposing any member data.
+  const validateRoster = (value: unknown, idField: 'user_id' | 'id'): Array<{ name?: string; is_active?: boolean } & Record<string, unknown>> => {
+    if (value === undefined) return [];
+    if (!Array.isArray(value) || value.length > max) throw new TypeError('Invalid roster list');
+    for (const member of value) {
+      if (!member || typeof member !== 'object' || Array.isArray(member) || !validId(member[idField]) ||
+          (member.name !== undefined && typeof member.name !== 'string') ||
+          (member.is_active !== undefined && typeof member.is_active !== 'boolean')) {
+        throw new TypeError('Invalid roster member');
+      }
+    }
+    return value;
+  };
+  const members = validateRoster(roster?.members, 'user_id');
+  const virtualMembers = validateRoster(roster?.virtual_members, 'id');
+  if (members.length + virtualMembers.length > max) throw new RangeError('Too many roster members');
   const memberMap = new Map<string, MemberSnapshot>();
   const virtualMap = new Map<string, VirtualMemberSnapshot>();
-  for (const member of roster?.members ?? []) if (validId(member.user_id)) memberMap.set(key(member.user_id), member);
-  for (const member of roster?.virtual_members ?? []) if (validId(member.id)) virtualMap.set(key(member.id), member);
+  for (const member of members) memberMap.set(key(member.user_id as Id), member as MemberSnapshot);
+  for (const member of virtualMembers) virtualMap.set(key(member.id as Id), member as VirtualMemberSnapshot);
   const participants: Participant[] = [];
   const append = (items: Id[], map: Map<string, { name?: string; is_active?: boolean }>, kind: Participant['kind']) => {
     for (const id of items) {
       const member = map.get(key(id));
       const known = !!member && member.is_active !== false;
-      participants.push({ kind, status: known ? 'known' : 'unknown', label: options.anonymize || !known ? 'Anonymous' : (typeof member.name === 'string' && member.name.trim() ? member.name : 'Unnamed') });
+      participants.push({ kind, status: known ? 'known' : 'unknown', label: options.anonymize !== false || !known ? 'Anonymous' : (typeof member.name === 'string' && member.name.trim() ? member.name : 'Unnamed') });
     }
   };
   append(accountIds, memberMap, 'account');
