@@ -1,0 +1,14 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { formatMobileBrief } from '../src/features/mobile-brief-view/index.mjs';
+const fixture=()=>({requestedCalendarIds:['family'],authorizedCalendarIds:['family'],fetchedAt:Date.parse('2026-10-29T00:00:00Z'),complete:true,stale:false,items:[{calendarId:'family',at:Date.parse('2026-10-29T01:00:00Z'),kind:'upcoming',message:'SECRET dentist'}]});
+test('Japanese output hides title',()=>{const r=formatMobileBrief(fixture());assert.match(r.text,/予定の要約/);assert.doesNotMatch(r.text,/SECRET|dentist/);});
+test('English text fallback',()=>assert.match(formatMobileBrief(fixture(),{locale:'en-US',timezone:'America/New_York'}).text,/Schedule summary/));
+test('unauthorized item denied',()=>{const s=fixture();s.items[0].calendarId='private';assert.throws(()=>formatMobileBrief(s),/Unauthorized/);});
+test('excluded calendar marks partial',()=>{const s=fixture();s.requestedCalendarIds.push('work');assert.equal(formatMobileBrief(s).partial,true);});
+test('stale snapshot warned',()=>{const s=fixture();s.stale=true;assert.match(formatMobileBrief(s).text,/古い情報/);});
+test('empty is scoped, not universally free',()=>{const s=fixture();s.items=[];assert.match(formatMobileBrief(s).text,/確認した範囲/);});
+test('truncation is explicit',()=>{const s=fixture();s.items.push({...s.items[0],at:s.items[0].at+60000});assert.equal(formatMobileBrief(s,{maxItems:1}).truncated,true);});
+test('invalid timezone rejected',()=>assert.throws(()=>formatMobileBrief(fixture(),{timezone:'Invalid/Zone'}),/timezone/));
+test('missing freshness rejected',()=>{const s=fixture();delete s.fetchedAt;assert.throws(()=>formatMobileBrief(s),/freshness/);});
+test('invalid scope rejected',()=>{const s=fixture();s.authorizedCalendarIds.push('private');assert.throws(()=>formatMobileBrief(s),/scope/);});
