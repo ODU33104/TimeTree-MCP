@@ -2,7 +2,7 @@
   "manifest_version": "0.3",
   "name": "timetree-mcp",
   "display_name": "TimeTree (Unofficial)",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "Read and manage your TimeTree calendars, events, memos, and comments from Claude.",
   "long_description": "Ask Claude about your TimeTree calendars: summarize this week's schedule, find conflicts, search past events, add or change events and memos, and see who changed what.\n\n**Unofficial.** This extension is not affiliated with, endorsed by, or supported by TimeTree, Inc. It uses the TimeTree web app's undocumented endpoints, which may change or stop working at any time. Use it with your own personal account only.\n\nYour email and password are sent only to TimeTree to sign in. The session stays in memory and is never written to disk by this extension.",
   "author": {
@@ -35,6 +35,9 @@
     { "name": "create_calendar", "description": "Create a calendar with an explicit name and purpose, without inviting members." },
     { "name": "get_current_user", "description": "Show your TimeTree user ID and name." },
     { "name": "get_events", "description": "Read events with date, keyword, and label filters; expands recurring events." },
+    { "name": "search_events_across_calendars", "description": "Read-only keyword and date search across explicitly selected calendars." },
+    { "name": "find_available_slots", "description": "Read-only free/busy suggestions across explicitly selected calendars." },
+    { "name": "detect_event_conflicts", "description": "Read-only overlapping event detection across selected calendars." },
     { "name": "get_updated_events", "description": "Find events changed after a point in time." },
     { "name": "create_event", "description": "Create an event." },
     { "name": "update_event", "description": "Change an event." },

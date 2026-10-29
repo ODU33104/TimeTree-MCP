@@ -9,8 +9,15 @@ import { z } from 'zod';
  * Accept both forms so an ID can be passed through unchanged, and normalize to a number.
  */
 export const CalendarIdSchema = z
-  .union([z.number().int().positive(), z.string().regex(/^\d+$/, 'calendar_id must be numeric')])
-  .transform((value) => Number(value));
+  .union([z.number().int().positive().safe(), z.string().regex(/^[1-9]\d*$/, 'calendar_id must be a positive numeric ID')])
+  .transform((value, ctx) => {
+    const id = Number(value);
+    if (!Number.isSafeInteger(id) || id <= 0) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'calendar_id must be a positive safe integer' });
+      return z.NEVER;
+    }
+    return id;
+  });
 
 export const CALENDAR_ID_JSON_SCHEMA = {
   type: 'string',

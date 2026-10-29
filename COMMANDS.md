@@ -11,6 +11,9 @@ Quick reference for using TimeTree MCP Server with AI assistants.
 | **get_current_user** | Show your user ID and name |
 | **get_events** | Get events from a calendar (with date filtering) |
 | **get_updated_events** | Get recently modified or deleted events |
+| **search_events_across_calendars** | Search up to 5 selected calendars by date range and keyword (read-only) |
+| **find_available_slots** | Suggest free time slots across selected calendars (read-only) |
+| **detect_event_conflicts** | Find overlapping events across selected calendars (read-only) |
 | **create_event** | Create a new event |
 | **update_event** | Update an existing event (every occurrence of a recurring event) |
 | **delete_event** | Delete an event (every occurrence of a recurring event) |
@@ -92,6 +95,58 @@ Deleted events are included with `deleted: true` and `deleted_at`, so a deletion
 **Example prompts:**
 - "What changed in my calendar this week?"
 - "Show events updated in the last 24 hours"
+
+---
+
+### search_events_across_calendars
+
+Searches the calendars you list for events in a date range, optionally filtered by a keyword. Read-only. Rows for a recurring event share the same `uuid`.
+
+| Parameter | Required | Description |
+|-----------|----------|-------------|
+| `calendar_ids` | Yes | 1 to 5 calendar IDs to search |
+| `start` | Yes | Start of the range (ISO 8601) |
+| `end` | Yes | End of the range (ISO 8601) |
+| `keyword` | No | Text to look for in the title (max 200 characters) |
+| `limit` | No | Page size, 1 to 200 |
+| `offset` | No | Start position for the next page (`next_offset` from the previous call) |
+
+**Example prompts:**
+- "Search both family calendars for 'dentist' next month"
+
+---
+
+### find_available_slots
+
+Suggests time slots that are free in every selected calendar. Event titles are not returned. Read-only.
+
+| Parameter | Required | Description |
+|-----------|----------|-------------|
+| `calendar_ids` | Yes | 1 to 5 calendar IDs to check |
+| `start` | Yes | Start of the search range (ISO 8601) |
+| `end` | Yes | End of the search range (ISO 8601) |
+| `duration_minutes` | Yes | Length of the slot, 1 to 1440 |
+| `time_zone` | Yes | IANA time zone, for example `Asia/Tokyo` |
+| `step_minutes` | No | Gap between suggested start times |
+| `working_hours` | No | `{ "start": "09:00", "end": "18:00" }` — only suggest slots inside these hours |
+
+**Example prompts:**
+- "Find a 1-hour slot next week when both of our calendars are free"
+
+---
+
+### detect_event_conflicts
+
+Lists pairs of overlapping events in the selected calendars. Nothing is changed. Read-only.
+
+| Parameter | Required | Description |
+|-----------|----------|-------------|
+| `calendar_ids` | Yes | 1 to 5 calendar IDs to check |
+| `start` | Yes | Start of the range (ISO 8601) |
+| `end` | Yes | End of the range (ISO 8601) |
+
+**Example prompts:**
+- "Do any of my events overlap next week?"
 
 ---
 

@@ -17,6 +17,8 @@ import { TimeTreeAuthManager } from './client/auth.js';
 import { TimeTreeAPIClient } from './client/api.js';
 import { registerTools, toolResult } from './tools/index.js';
 import { logger, summarizeToolArguments } from './utils/logger.js';
+import { safeToolErrorResult } from './utils/mcp-errors.js';
+import { isToolAllowed } from './utils/tool-access.js';
 import { SERVER_VERSION as VERSION } from './config/config.js';
 import { fetchNewerVersion, formatUpdateNotice } from './utils/update-check.js';
 
@@ -27,6 +29,7 @@ const SERVER_INSTRUCTIONS = [
   'Memos are notes without a schedule: use the memo tools for them and the event tools for events.',
   'Recurring events: get_events with start_before expands occurrences that share the series uuid. update_event and delete_event change the whole series; update_event_occurrence and delete_event_occurrence change one occurrence or it and the ones after it.',
   'Writes are visible to everyone in the calendar. Confirm before deleting.',
+  'Never request or display TimeTree passwords, session cookies or CSRF tokens in chat. Configure credentials only in the MCP server environment.',
 ].join('\n');
 
 /**
@@ -90,8 +93,9 @@ async function main() {
     }
   );
 
-  // Register tools
+  // Register tools; read-only mode is explicit for stdio compatibility.
   const tools = registerTools(apiClient);
+  const readOnly = process.env.TIMETREE_READ_ONLY === 'true';
 
   // Check for a newer version in the background; shown once in the next tool response.
   let updateNotice: string | null = null;
@@ -107,7 +111,7 @@ async function main() {
   // Handle list_tools request
   server.setRequestHandler(ListToolsRequestSchema, async () => {
     return {
-      tools: tools.map((tool) => ({
+      tools: tools.filter((tool) => isToolAllowed(tool.name, readOnly)).map((tool) => ({
         name: tool.name,
         description: tool.description,
         inputSchema: tool.inputSchema,
@@ -117,6 +121,8 @@ async function main() {
     };
   });
 
+  // Stdio remains write-capable for backwards compatibility; remote transports must
+  // explicitly opt into a separate restrictive policy before exposing tools.
   // Handle call_tool request
   server.setRequestHandler(CallToolRequestSchema, async (request) => {
     const { name, arguments: args } = request.params;
@@ -130,6 +136,10 @@ async function main() {
       throw new Error(`Unknown tool: ${name}`);
     }
 
+    if (!isToolAllowed(name, readOnly)) {
+      return { isError: true, content: [{ type: 'text' as const, text: 'Tool unavailable in read-only mode.' }] };
+    }
+
     try {
       const result = toolResult(tool, await tool.handler(args));
       if (!updateNotice) {
@@ -140,7 +150,7 @@ async function main() {
       return { ...result, content: [...result.content, { type: 'text', text: notice }] };
     } catch (error) {
       logger.error('Tool execution failed', { name, error });
-      throw error;
+      return safeToolErrorResult();
     }
   });
 
@@ -168,6 +178,6 @@ async function main() {
 // Start the server
 main().catch((error) => {
   logger.error('Fatal error', { error });
-  console.error('Fatal error:', error);
+  console.error('Fatal error: TimeTree MCP server could not start. See sanitized server logs.');
   process.exit(1);
 });
