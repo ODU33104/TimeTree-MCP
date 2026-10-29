@@ -10,9 +10,9 @@
 
 **Compatibility:** 此分支的发行包、ChatGPT 移动端远程连接及各客户端兼容性尚未验证。
 
-## 功能开发状态（2026-10-27）
+## 功能开发状态
 
-- **发布目标 v0.8.0（`main` 加发布候选）：32 个 MCP 工具**，覆盖日历、日程、重复事件、备忘录及清单数据、评论、成员、标签、节假日和最近变更。新增 3 个只读工具：`search_events_across_calendars`（跨多个日历搜索日程）、`find_available_slots`（查找空闲时间）、`detect_event_conflicts`（检测重叠日程）。
+- **v0.8.0（`main`）：32 个 MCP 工具**，覆盖日历、日程、重复事件、备忘录及清单数据、评论、成员、标签、节假日和最近变更。新增 3 个只读工具：`search_events_across_calendars`（跨多个日历搜索日程）、`find_available_slots`（查找空闲时间）、`detect_event_conflicts`（检测重叠日程）。
 - **开发中，尚未发布，不能作为 MCP 工具使用：** 改期模拟、隐私优先的 `.ics` 导出、重复防护、出席/清单摘要和移动端简报。ChatGPT 手机端直接连接、公开多用户服务及 TimeTree 官方授权均未验证。
 - **访问方式：** 通过 stdio 仍可像以前一样写入；设置环境变量 `TIMETREE_READ_ONLY=true` 可使服务器只读。远程 HTTP 目前只有策略模块，没有监听连接的服务器，也没有公开的远程服务。
 
@@ -36,7 +36,7 @@ npm run build
 
 Configure your MCP client to launch `node /absolute/path/to/TimeTree-MCP/dist/index.js`. Set `TIMETREE_EMAIL` and `TIMETREE_PASSWORD` only in the client's local protected environment settings; never send credentials in AI prompts. See [MCP client setup](docs/MCP_CLIENTS.md) for the configuration format.
 
-The project uses undocumented TimeTree web endpoints and may stop working when TimeTree changes them. Do not assume this fork has a downloadable release or a working remote/mobile integration.
+The project uses undocumented TimeTree web endpoints and may stop working when TimeTree changes them. This fork is local-only: there is no hosted or remote service, and use from the ChatGPT mobile app has not been tested.
 
 ## License and attribution
 

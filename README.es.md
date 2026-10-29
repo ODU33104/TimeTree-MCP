@@ -10,9 +10,9 @@
 
 **Compatibility:** No se han verificado las versiones de este fork, el acceso remoto desde ChatGPT móvil ni la compatibilidad con todos los clientes.
 
-## Estado de las funciones (27/10/2026)
+## Estado de las funciones
 
-- **Objetivo de la versión v0.8.0 (`main` más el candidato de versión): 32 herramientas MCP** para calendarios, eventos, recurrencias, notas y listas, comentarios, miembros, etiquetas, festivos y actividad reciente. Las 3 nuevas son de solo lectura: `search_events_across_calendars` (buscar eventos en varios calendarios), `find_available_slots` (buscar horarios libres) y `detect_event_conflicts` (detectar eventos solapados).
+- **Versión v0.8.0 (`main`): 32 herramientas MCP** para calendarios, eventos, recurrencias, notas y listas, comentarios, miembros, etiquetas, festivos y actividad reciente. Las 3 nuevas son de solo lectura: `search_events_across_calendars` (buscar eventos en varios calendarios), `find_available_slots` (buscar horarios libres) y `detect_event_conflicts` (detectar eventos solapados).
 - **En desarrollo, sin publicar y sin herramientas MCP utilizables:** simulación de cambios de horario, exportación `.ics` con privacidad por defecto, protección contra duplicados, resúmenes de asistencia/listas y resumen móvil. No se ha verificado la conexión directa desde ChatGPT móvil, la operación pública multiusuario ni una autorización oficial de TimeTree.
 - **Acceso:** por stdio se puede escribir como hasta ahora; con la variable de entorno `TIMETREE_READ_ONLY=true` el servidor es de solo lectura. Para HTTP remoto solo existe un módulo de políticas, sin servidor que acepte conexiones; no hay servicio remoto público.
 
@@ -36,7 +36,7 @@ npm run build
 
 Configure your MCP client to launch `node /absolute/path/to/TimeTree-MCP/dist/index.js`. Set `TIMETREE_EMAIL` and `TIMETREE_PASSWORD` only in the client's local protected environment settings; never send credentials in AI prompts. See [MCP client setup](docs/MCP_CLIENTS.md) for the configuration format.
 
-The project uses undocumented TimeTree web endpoints and may stop working when TimeTree changes them. Do not assume this fork has a downloadable release or a working remote/mobile integration.
+The project uses undocumented TimeTree web endpoints and may stop working when TimeTree changes them. This fork is local-only: there is no hosted or remote service, and use from the ChatGPT mobile app has not been tested.
 
 ## License and attribution
 

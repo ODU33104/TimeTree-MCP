@@ -18,14 +18,10 @@
   <a href="README.md">English</a> · <a href="README.ja.md">日本語</a> · <a href="README.ko.md">한국어</a> · <a href="README.de.md">Deutsch</a> · <a href="README.zh-Hant.md">繁體中文</a> · <a href="README.fr.md">Français</a> · <a href="README.es.md">Español</a> · <a href="README.pt-BR.md">Português (Brasil)</a> · <a href="README.zh-Hans.md">简体中文</a> · <a href="README.it.md">Italiano</a> · <a href="README.th.md">ไทย</a> · <a href="README.id.md">Bahasa Indonesia</a> · <a href="README.ms.md">Bahasa Melayu</a>
 </p>
 
-> **포크 안내:** 이 저장소는 [ODU33104/TimeTree-MCP](https://github.com/ODU33104/TimeTree-MCP)에서 관리하는 비공식 독립 포크입니다. 원본 프로젝트는 [ehs208/TimeTree-MCP](https://github.com/ehs208/TimeTree-MCP) (MIT)입니다. TimeTree, Inc.와 관련이 없습니다. 포크 릴리스 및 클라이언트 호환성은 보장되지 않습니다.
-
-**보안:** TimeTree 로그인 정보를 AI 대화나 코딩 에이전트 프롬프트에 입력하지 마세요. MCP 클라이언트의 로컬 환경 설정에 저장하세요. ChatGPT 모바일 원격 연결은 아직 검증되지 않았습니다.
-
-**포크 설치:** 원본 대신 이 저장소를 clone하세요. 실행 전 스크립트를 검토하세요. 포크 릴리스가 실제로 게시된 경우에만 해당 배포 파일을 사용하세요.
-
 > [!NOTE]
-> 개인 사용을 위한 비공식 프로젝트입니다. TimeTree, Inc.와 관계가 없습니다. TimeTree 웹 앱의 비공개 엔드포인트를 사용하므로 언제든 동작이 바뀔 수 있습니다. 자세한 내용은 [DISCLAIMER.md](DISCLAIMER.md)를 참고하십시오.
+> 개인 사용을 위한 비공식 프로젝트입니다. TimeTree, Inc.와 관련이 없으며 TimeTree의 승인이나 지원을 받지 않았습니다. TimeTree 웹 앱의 비공개 엔드포인트를 사용하므로 언제든 동작이 바뀔 수 있습니다. 자세한 내용은 [DISCLAIMER.md](DISCLAIMER.md)를 참고하십시오.
+>
+> 이 저장소는 [ehs208/TimeTree-MCP](https://github.com/ehs208/TimeTree-MCP) (MIT)의 독립 포크로, 여기에서 관리합니다. TimeTree 비밀번호를 AI 대화에 붙여넣지 마세요. MCP 클라이언트의 환경 설정에만 입력합니다.
 
 AI 어시스턴트에게 이렇게 물어보면 됩니다.
 
@@ -39,15 +35,10 @@ AI 어시스턴트에게 이렇게 물어보면 됩니다.
   <img src="docs/assets/demo-ko.gif" alt="Claude Desktop이 TimeTree 캘린더의 한 주 일정을 정리하고 겹치는 일정을 알려준 뒤, 일정을 옮기고 새 일정을 추가하는 예시" width="760">
 </p>
 
-## 문서 및 기능 지원 상태
-
-**문서 범위:** 영어·일본어·한국어는 상세 안내서입니다. 나머지 10개 언어는 **간단한 Quickstart**이며 전체 번역이 아닙니다. 13개 언어의 README는 동일한 MCP 서버를 설명하며, 13개 언어에서 동작이 검증되었다는 뜻이 아닙니다.
-
-**기능 상태:** 아래 도구 목록은 이 저장소의 기능을 설명하며 TimeTree 앱의 모든 기능을 지원한다는 보장은 없습니다. 비공개 웹 API와 MCP 클라이언트에 따라 달라집니다. ChatGPT 모바일 원격 연결, TimeTree 공식 제휴, 이 포크의 배포 파일은 확인되지 않았습니다. 국가별 공휴일 기능의 범위와 지역별 날짜·시간대·서머타임 동작은 추가 검증이 필요합니다.
-
 ## 할 수 있는 일
 
 - **캘린더를 읽습니다.** 날짜, 키워드, 라벨로 일정을 거르고, 반복 일정은 실제 날짜로 펼쳐서 보여줍니다.
+- **여러 캘린더를 가로질러 봅니다.** 최대 다섯 개의 캘린더를 한 번에 검색하고, 빈 시간을 찾고, 겹치는 일정을 찾아냅니다. 이 세 도구는 읽기 전용입니다.
 - **댓글 이미지를 읽습니다.** 무료 회원이 올린 이미지를 포함해 일정 댓글에 첨부된 이미지를 AI 클라이언트에 전달합니다.
 - **요청하면 바꿉니다.** 일정, 메모, 댓글을 만들고 고치고 복사하고 지우며, 라벨 이름과 색도 바꿉니다. 반복 일정은 한 회차만, 또는 그 회차부터 이후 전부를 고치거나 지울 수 있습니다.
 - **가상 멤버를 관리합니다.** 아이나 반려동물처럼 TimeTree 계정이 없는 멤버를 추가하고 고치고 지웁니다.
@@ -55,17 +46,16 @@ AI 어시스턴트에게 이렇게 물어보면 됩니다.
 - **맥락을 압니다.** 캘린더 멤버와 국가별 공휴일을 조회합니다.
 - **내 컴퓨터에서 실행됩니다.** 이메일과 비밀번호는 TimeTree에만 전송하고, 세션은 메모리에만 둡니다.
 
-## 기능 상태 — 사용 가능 기능과 시제품 구분 (2026-10-27)
+## 범위와 한계
 
-- **릴리스 대상 v0.8.0(`main`과 릴리스 후보) — MCP 도구 32개:** 캘린더 및 일정 관리, 반복 일정, 메모와 체크리스트 **데이터**, 댓글 및 이미지 읽기, 멤버·가상 멤버, 라벨, 공휴일, 최근 변경 내역, 그리고 읽기 전용 도구 3개: `search_events_across_calendars`(여러 캘린더 일정 검색), `find_available_slots`(빈 시간 찾기), `detect_event_conflicts`(겹치는 일정 탐지). 체크 항목별 완료 전용 도구나 RSVP 변경 기능은 없습니다.
-- **개발 중·미공개 시제품 — MCP 도구로 호출할 수 없음:** 일정 이동 전후 충돌 비교, 개인정보 보호 중심 `.ics` 내보내기, 중복 방지, 참석·체크리스트 요약, 모바일 브리핑. 구현 완료로 안내하지 않습니다.
-- **접근 방식:** stdio는 기존처럼 쓰기가 가능하며, 환경 변수 `TIMETREE_READ_ONLY=true`로 읽기 전용으로 만들 수 있습니다. 원격 HTTP는 정책 모듈만 있고 연결을 받는 서버는 제공하지 않으므로 공개 원격 서비스는 없습니다.
-- **미지원·미검증:** 모바일 ChatGPT 직접 연결, 공개용 다중 사용자 OAuth, TimeTree 공식 제휴, 사진 업로드, 앨범 관리, RSVP 변경, 프리미엄 파일 첨부, 양방향 동기화. **공개 서버 운영 준비가 끝나지 않았습니다.**
+- **v0.8.0의 도구는 32개.** [툴](#툴)을 참고하세요. 메모와 일정의 체크리스트 항목은 읽고 쓸 수 있지만, 항목 하나만 체크하는 도구는 없습니다. 참석 관련 필드는 RSVP 동작으로 제공하지 않습니다.
+- **읽기 전용 모드.** stdio에서는 기본적으로 쓰기 도구도 사용할 수 있습니다. MCP `env`에 `TIMETREE_READ_ONLY=true`를 설정하면 읽기 전용 도구 15개만 목록에 나오고 허용됩니다.
+- **로컬 전용.** 서버는 내 컴퓨터에서 stdio로 실행됩니다. 호스팅 또는 원격 서비스는 없으며, 이 저장소의 원격 접속용 코드는 서버 없이 보안 규칙만 모아 둔 것입니다. ChatGPT 모바일 앱에서의 연결은 테스트하지 않았습니다.
+- **미지원.** 사진·파일 업로드, 앨범, RSVP, 프리미엄 첨부, 캘린더 양방향 동기화.
+- **미검증.** 자동 테스트 밖의 시간대·서머타임 경계 사례와 모든 TimeTree 앱 기능. 호환성은 TimeTree의 비공개 엔드포인트와 MCP 클라이언트에 따라 달라집니다.
+- **언어.** 영어·일본어·한국어는 상세 안내서입니다. 나머지 10개 언어는 짧은 빠른 시작 요약입니다.
 
-TimeTree의 폭넓은 기능을 이해하고 안전한 독자 기능을 개발하되, 구현과 출시 여부를 명확히 구분합니다.
-
-
-[Feature coverage / 機能対応表](https://github.com/ODU33104/TimeTree-MCP/blob/coordination/parallel-workstreams/docs/coordination/TIMETREE-FEATURE-COVERAGE-20261026.md) · [What-if prototype PR #21](https://github.com/ODU33104/TimeTree-MCP/pull/21) · [iCalendar export prototype PR #22](https://github.com/ODU33104/TimeTree-MCP/pull/22)
+일정 이동 시뮬레이션, `.ics` 내보내기, 중복 일정 방지 같은 계획 중인 기능은 시제품이며 이번 릴리스에 포함되지 않습니다.
 
 ## 설치
 
@@ -124,7 +114,7 @@ GUI 클라이언트가 `node`를 찾지 못하면 `command -v node`로 나온 �
 
 클라이언트별 설정(Claude Code, Codex, Cursor, Windsurf, VS Code, Antigravity 등): [docs/MCP_CLIENTS.md](docs/MCP_CLIENTS.md)
 
-이 프로젝트는 npm에 배포하지 않습니다. GitHub 릴리스나 이 레포 clone으로 설치합니다.
+이 프로젝트는 npm에 배포하지 않습니다. GitHub 릴리스나 이 레포 clone으로 설치합니다. 서버가 TimeTree 비밀번호를 다루므로, 스크립트는 실행하기 전에 반드시 내용을 읽어 보세요.
 
 ## 업데이트
 
@@ -180,13 +170,13 @@ GUI 클라이언트가 `node`를 찾지 못하면 `command -v node`로 나온 �
 
 이슈와 PR을 환영합니다. [CONTRIBUTING.md](CONTRIBUTING.md)를 참고하십시오.
 
-기여해 주신 모든 분께 감사드립니다.
+## 크레딧
+
+이 프로젝트는 [ehs208/TimeTree-MCP](https://github.com/ehs208/TimeTree-MCP)의 포크입니다. upstream 기여자 여러분께 감사드립니다.
 
 <a href="https://github.com/ehs208/TimeTree-MCP/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=ehs208/TimeTree-MCP" alt="기여자">
+  <img src="https://contrib.rocks/image?repo=ehs208/TimeTree-MCP" alt="upstream contributors">
 </a>
-
-## 크레딧
 
 [@eoleedi](https://github.com/eoleedi)의 [TimeTree-Exporter](https://github.com/eoleedi/TimeTree-Exporter)에서 API 분석 결과를 참고했습니다.
 

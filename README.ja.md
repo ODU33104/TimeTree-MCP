@@ -18,14 +18,10 @@
   <a href="README.md">English</a> · <a href="README.ja.md">日本語</a> · <a href="README.ko.md">한국어</a> · <a href="README.de.md">Deutsch</a> · <a href="README.zh-Hant.md">繁體中文</a> · <a href="README.fr.md">Français</a> · <a href="README.es.md">Español</a> · <a href="README.pt-BR.md">Português (Brasil)</a> · <a href="README.zh-Hans.md">简体中文</a> · <a href="README.it.md">Italiano</a> · <a href="README.th.md">ไทย</a> · <a href="README.id.md">Bahasa Indonesia</a> · <a href="README.ms.md">Bahasa Melayu</a>
 </p>
 
-> **フォークについて:** このリポジトリは [ODU33104/TimeTree-MCP](https://github.com/ODU33104/TimeTree-MCP) が管理する非公式の独立フォークです。原作者のプロジェクトは [ehs208/TimeTree-MCP](https://github.com/ehs208/TimeTree-MCP)（MIT）です。TimeTree, Inc. とは無関係です。フォーク版のリリースやクライアント互換性は未保証です。
-
-**セキュリティ:** TimeTree の認証情報を AI のチャットやコーディングエージェントのプロンプトに入力しないでください。MCP クライアントのローカル設定に保存してください。ChatGPT モバイルからのリモート接続は未検証です。
-
-**フォーク版の導入:** 上流ではなくこのリポジトリを clone してください。スクリプトは実行前に内容を確認してください。フォーク版のリリースが公開されている場合に限り配布物を利用できます。
-
 > [!NOTE]
-> 個人利用向けの非公式プロジェクトです。TimeTree, Inc. とは関係ありません。TimeTree Web アプリの非公開エンドポイントを使うため、いつでも動作が変わる可能性があります。詳細は [DISCLAIMER.md](DISCLAIMER.md) を参照してください。
+> 個人利用向けの非公式プロジェクトです。TimeTree, Inc. とは無関係で、TimeTree の承認やサポートも受けていません。TimeTree Web アプリの非公開エンドポイントを使うため、いつでも動作が変わる可能性があります。詳細は [DISCLAIMER.md](DISCLAIMER.md) を参照してください。
+>
+> これは [ehs208/TimeTree-MCP](https://github.com/ehs208/TimeTree-MCP)（MIT）の独立したフォークで、ここで管理しています。TimeTree のパスワードを AI のチャットに貼り付けないでください。MCP クライアントの環境設定にだけ入力します。
 
 AI アシスタントに次のように聞くだけです。
 
@@ -39,15 +35,10 @@ AI アシスタントに次のように聞くだけです。
   <img src="docs/assets/demo-ja.gif" alt="Claude Desktop が TimeTree カレンダーの1週間の予定をまとめて重なりを指摘し、予定の移動と追加を行う例" width="760">
 </p>
 
-## ドキュメントと機能の対応状況
-
-**文書の範囲:** 英語・日本語・韓国語は詳細版です。その他10言語は**導入用Quickstart**であり、全文翻訳ではありません。13言語のREADMEは同じMCPサーバーを説明するもので、13言語での動作検証完了を意味しません。
-
-**機能の状態:** 下記のツールはこのリポジトリにある機能の説明で、TimeTreeアプリの全機能への対応を保証しません。非公開Web APIやMCPクライアントに依存します。ChatGPTスマホ版からのリモート接続、TimeTree公式との提携、フォーク版配布物の公開は未確認です。国別祝日は実装の対応範囲内で利用できますが、日時・タイムゾーン・夏時間の各地域での検証は未完了です。
-
 ## できること
 
 - **カレンダーを読む。** 日付、キーワード、ラベルで予定を絞り込み、繰り返し予定は実際の日付に展開します。
+- **複数のカレンダーをまたいで見る。** 最大5つのカレンダーを一度に検索し、空き時間を探し、重なっている予定を見つけます。この3つのツールは読み取り専用です。
 - **コメントの画像を読む。** 無料会員が投稿した画像も含め、予定のコメントに添付された画像を AI クライアントに渡せます。
 - **頼めば変更する。** 予定、メモ、コメントの作成、更新、コピー、削除と、ラベル名や色の変更ができます。繰り返し予定は1回分だけ、またはその回以降をまとめて変更・削除できます。
 - **バーチャルメンバーを管理する。** 子どもやペットなど TimeTree アカウントのないメンバーを追加、変更、削除できます。
@@ -55,17 +46,16 @@ AI アシスタントに次のように聞くだけです。
 - **文脈がわかる。** カレンダーのメンバーと国ごとの祝日を取得します。
 - **自分のパソコンで動く。** メールアドレスとパスワードは TimeTree にだけ送信し、セッションはメモリにだけ保持します。
 
-## 機能の開発状況 — 利用可能と試作中を区別（2026-10-27更新）
+## 対応範囲と制限
 
-- **リリース対象 v0.8.0（`main` とリリース候補）— MCPツール32個：** カレンダー・予定操作、繰り返し予定、メモとチェックリスト**項目の読み書き**、コメントと画像の読み取り、メンバー・仮想メンバー、ラベル、祝日、最近の変更履歴に加え、読み取り専用ツール3個：`search_events_across_calendars`（複数カレンダー横断の予定検索）、`find_available_slots`（空き時間の検索）、`detect_event_conflicts`（予定の重複検出）。チェック項目単位の専用完了操作や、正式な参加回答（RSVP）の操作はありません。
-- **開発中・未公開の試作 — MCPからは呼び出せません：** 予定を動かす前後の衝突比較、プライバシー重視の`.ics`書き出し、重複ガード、出欠・チェックリスト要約、モバイルブリーフィング。実装済みとは案内しません。
-- **アクセス：** stdio は従来どおり書き込みできます。環境変数 `TIMETREE_READ_ONLY=true` で読み取り専用にできます。リモート HTTP は方針モジュールのみで待受サーバーは提供しておらず、公開リモートサービスはありません。
-- **未対応／未検証：** スマホ版ChatGPTからの直接接続、一般公開向け複数ユーザー認証、TimeTreeとの公式提携、写真アップロード、アルバム管理、参加回答の変更、プレミアム添付、双方向同期。**一般向けサーバー公開はまだできません。**
+- **v0.8.0 のツールは32個。** [ツール](#ツール)を参照してください。メモと予定のチェックリスト項目は読み書きできますが、項目を1つずつ完了にするツールはありません。参加状況の項目は RSVP 操作としては公開していません。
+- **読み取り専用モード。** stdio では既定で書き込みツールも使えます。MCP の `env` に `TIMETREE_READ_ONLY=true` を設定すると、15個の読み取り専用ツールだけを一覧に出して許可します。
+- **ローカル専用。** サーバーは自分のパソコン上で stdio 経由で動きます。ホスト型やリモートのサービスはなく、このリポジトリにあるリモート接続用のコードはサーバーを持たないセキュリティ規則の集まりです。ChatGPT モバイルアプリからの接続は試していません。
+- **未対応。** 写真・ファイルのアップロード、アルバム、RSVP、プレミアム添付、カレンダーの双方向同期。
+- **未検証。** 自動テスト以外のタイムゾーンや夏時間の端ケース、およびすべての TimeTree アプリ機能。互換性は TimeTree の非公開エンドポイントと MCP クライアントに依存します。
+- **言語。** 英語・日本語・韓国語は詳細版です。その他10言語は短い導入用の要約です。
 
-**TimeTree本体の幅広い機能への対応**と、**安全な予定調整・データ互換性などの独自機能**を並行開発しています。完成済みと試作を混同しないことを重視しています。
-
-
-[Feature coverage / 機能対応表](https://github.com/ODU33104/TimeTree-MCP/blob/coordination/parallel-workstreams/docs/coordination/TIMETREE-FEATURE-COVERAGE-20261026.md) · [What-if prototype PR #21](https://github.com/ODU33104/TimeTree-MCP/pull/21) · [iCalendar export prototype PR #22](https://github.com/ODU33104/TimeTree-MCP/pull/22)
+予定を動かした場合の比較、`.ics` 書き出し、重複予定ガードなどの計画中の機能は試作段階で、このリリースには含まれません。
 
 ## インストール
 
@@ -124,7 +114,7 @@ GUI クライアントが `node` を見つけられない場合は、`command -v
 
 クライアントごとの設定（Claude Code、Codex、Cursor、Windsurf、VS Code、Antigravity など）: [docs/MCP_CLIENTS.md](docs/MCP_CLIENTS.md)
 
-このプロジェクトは npm で公開していません。GitHub リリースか、このリポジトリの clone からインストールします。
+このプロジェクトは npm で公開していません。GitHub リリースか、このリポジトリの clone からインストールします。サーバーは TimeTree のパスワードを扱うため、スクリプトは実行前に必ず内容を読んでください。
 
 ## 更新
 
@@ -180,13 +170,13 @@ GUI クライアントが `node` を見つけられない場合は、`command -v
 
 Issue と Pull Request を歓迎します。[CONTRIBUTING.md](CONTRIBUTING.md) を参照してください。
 
-コントリビュートしてくださった皆さんに感謝します。
+## クレジット
+
+このプロジェクトは [ehs208/TimeTree-MCP](https://github.com/ehs208/TimeTree-MCP) のフォークです。upstream のコントリビューターの皆さんに感謝します。
 
 <a href="https://github.com/ehs208/TimeTree-MCP/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=ehs208/TimeTree-MCP" alt="コントリビューター">
+  <img src="https://contrib.rocks/image?repo=ehs208/TimeTree-MCP" alt="upstream contributors">
 </a>
-
-## クレジット
 
 [@eoleedi](https://github.com/eoleedi) による [TimeTree-Exporter](https://github.com/eoleedi/TimeTree-Exporter) の API に関する知見を参考にしています。
 

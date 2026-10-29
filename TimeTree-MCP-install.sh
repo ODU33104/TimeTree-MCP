@@ -43,7 +43,7 @@ if [ -d "TimeTree-MCP" ]; then
   git pull
 else
   echo "📥 Cloning repository..."
-  git clone https://github.com/ehs208/TimeTree-MCP.git
+  git clone https://github.com/ODU33104/TimeTree-MCP.git
   cd TimeTree-MCP
 fi
 
@@ -95,7 +95,7 @@ echo ""
 echo "Choose your MCP client:"
 echo ""
 echo "Tip: for Claude Desktop on macOS or Windows, the one-click extension needs no config file:"
-echo "     https://github.com/ehs208/TimeTree-MCP/releases/latest (download the .mcpb file and open it)"
+echo "     https://github.com/ODU33104/TimeTree-MCP/releases/latest (download the .mcpb file and open it)"
 echo ""
 echo "1️⃣  Claude Desktop (macOS)"
 echo "2️⃣  Claude Desktop (Windows)"
@@ -298,5 +298,5 @@ echo "   • Keep your credentials secure!"
 echo ""
 echo "🎉 Installation complete! Follow the configuration steps above."
 echo "⭐ If this saved you time, please star the repo:"
-echo "   https://github.com/ehs208/TimeTree-MCP"
+echo "   https://github.com/ODU33104/TimeTree-MCP"
 echo ""
