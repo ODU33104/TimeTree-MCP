@@ -55,6 +55,18 @@ AI アシスタントに次のように聞くだけです。
 - **文脈がわかる。** カレンダーのメンバーと国ごとの祝日を取得します。
 - **自分のパソコンで動く。** メールアドレスとパスワードは TimeTree にだけ送信し、セッションはメモリにだけ保持します。
 
+## 機能の開発状況 — 利用可能と試作中を区別（2026-10-27更新）
+
+- **リリース対象 v0.8.0（`main` とリリース候補）— MCPツール32個：** カレンダー・予定操作、繰り返し予定、メモとチェックリスト**項目の読み書き**、コメントと画像の読み取り、メンバー・仮想メンバー、ラベル、祝日、最近の変更履歴に加え、読み取り専用ツール3個：`search_events_across_calendars`（複数カレンダー横断の予定検索）、`find_available_slots`（空き時間の検索）、`detect_event_conflicts`（予定の重複検出）。チェック項目単位の専用完了操作や、正式な参加回答（RSVP）の操作はありません。
+- **開発中・未公開の試作 — MCPからは呼び出せません：** 予定を動かす前後の衝突比較、プライバシー重視の`.ics`書き出し、重複ガード、出欠・チェックリスト要約、モバイルブリーフィング。実装済みとは案内しません。
+- **アクセス：** stdio は従来どおり書き込みできます。環境変数 `TIMETREE_READ_ONLY=true` で読み取り専用にできます。リモート HTTP は方針モジュールのみで待受サーバーは提供しておらず、公開リモートサービスはありません。
+- **未対応／未検証：** スマホ版ChatGPTからの直接接続、一般公開向け複数ユーザー認証、TimeTreeとの公式提携、写真アップロード、アルバム管理、参加回答の変更、プレミアム添付、双方向同期。**一般向けサーバー公開はまだできません。**
+
+**TimeTree本体の幅広い機能への対応**と、**安全な予定調整・データ互換性などの独自機能**を並行開発しています。完成済みと試作を混同しないことを重視しています。
+
+
+[Feature coverage / 機能対応表](https://github.com/ODU33104/TimeTree-MCP/blob/coordination/parallel-workstreams/docs/coordination/TIMETREE-FEATURE-COVERAGE-20261026.md) · [What-if prototype PR #21](https://github.com/ODU33104/TimeTree-MCP/pull/21) · [iCalendar export prototype PR #22](https://github.com/ODU33104/TimeTree-MCP/pull/22)
+
 ## インストール
 
 ### Claude Desktop（macOS、Windows）: ワンクリック拡張機能
@@ -129,6 +141,7 @@ GUI クライアントが `node` を見つけられない場合は、`command -v
 |---|---|
 | カレンダー | `list_calendars`, `create_calendar`, `get_current_user` |
 | 予定 | `get_events`, `get_updated_events`, `create_event`, `update_event`, `delete_event`, `copy_event` |
+| 複数カレンダー読み取り | `search_events_across_calendars`, `find_available_slots`, `detect_event_conflicts`（読み取り専用） |
 | 繰り返し予定 | `update_event_occurrence`, `delete_event_occurrence` |
 | メモ | `list_memos`, `create_memo`, `update_memo`, `delete_memo` |
 | コメント | `list_event_comments`, `get_event_comment_image`, `add_event_comment`, `update_event_comment`, `delete_event_comment` |
@@ -155,7 +168,7 @@ GUI クライアントが `node` を見つけられない場合は、`command -v
 
 **ログインに失敗する**: 同じメールアドレスとパスワードで TimeTree Web アプリにログインできるか確認します。このサーバーはメールアドレスとパスワードでのログインのみ対応しています。
 
-**カレンダーや予定が表示されない**: アカウントにカレンダーがあるか確認し、クライアントの MCP ログを見てください。TimeTree の Web API が変わった可能性があるため、[Issue](https://github.com/ehs208/TimeTree-MCP/issues) で知らせてください。
+**カレンダーや予定が表示されない**: アカウントにカレンダーがあるか確認し、クライアントの MCP ログを見てください。TimeTree の Web API が変わった可能性があるため、[Issue](https://github.com/ODU33104/TimeTree-MCP/issues) で知らせてください。
 
 ## 仕組み
 

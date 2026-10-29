@@ -55,6 +55,18 @@ AI 어시스턴트에게 이렇게 물어보면 됩니다.
 - **맥락을 압니다.** 캘린더 멤버와 국가별 공휴일을 조회합니다.
 - **내 컴퓨터에서 실행됩니다.** 이메일과 비밀번호는 TimeTree에만 전송하고, 세션은 메모리에만 둡니다.
 
+## 기능 상태 — 사용 가능 기능과 시제품 구분 (2026-10-27)
+
+- **릴리스 대상 v0.8.0(`main`과 릴리스 후보) — MCP 도구 32개:** 캘린더 및 일정 관리, 반복 일정, 메모와 체크리스트 **데이터**, 댓글 및 이미지 읽기, 멤버·가상 멤버, 라벨, 공휴일, 최근 변경 내역, 그리고 읽기 전용 도구 3개: `search_events_across_calendars`(여러 캘린더 일정 검색), `find_available_slots`(빈 시간 찾기), `detect_event_conflicts`(겹치는 일정 탐지). 체크 항목별 완료 전용 도구나 RSVP 변경 기능은 없습니다.
+- **개발 중·미공개 시제품 — MCP 도구로 호출할 수 없음:** 일정 이동 전후 충돌 비교, 개인정보 보호 중심 `.ics` 내보내기, 중복 방지, 참석·체크리스트 요약, 모바일 브리핑. 구현 완료로 안내하지 않습니다.
+- **접근 방식:** stdio는 기존처럼 쓰기가 가능하며, 환경 변수 `TIMETREE_READ_ONLY=true`로 읽기 전용으로 만들 수 있습니다. 원격 HTTP는 정책 모듈만 있고 연결을 받는 서버는 제공하지 않으므로 공개 원격 서비스는 없습니다.
+- **미지원·미검증:** 모바일 ChatGPT 직접 연결, 공개용 다중 사용자 OAuth, TimeTree 공식 제휴, 사진 업로드, 앨범 관리, RSVP 변경, 프리미엄 파일 첨부, 양방향 동기화. **공개 서버 운영 준비가 끝나지 않았습니다.**
+
+TimeTree의 폭넓은 기능을 이해하고 안전한 독자 기능을 개발하되, 구현과 출시 여부를 명확히 구분합니다.
+
+
+[Feature coverage / 機能対応表](https://github.com/ODU33104/TimeTree-MCP/blob/coordination/parallel-workstreams/docs/coordination/TIMETREE-FEATURE-COVERAGE-20261026.md) · [What-if prototype PR #21](https://github.com/ODU33104/TimeTree-MCP/pull/21) · [iCalendar export prototype PR #22](https://github.com/ODU33104/TimeTree-MCP/pull/22)
+
 ## 설치
 
 ### Claude Desktop (macOS, Windows): 원클릭 확장 프로그램
@@ -129,6 +141,7 @@ GUI 클라이언트가 `node`를 찾지 못하면 `command -v node`로 나온 �
 |---|---|
 | 캘린더 | `list_calendars`, `create_calendar`, `get_current_user` |
 | 일정 | `get_events`, `get_updated_events`, `create_event`, `update_event`, `delete_event`, `copy_event` |
+| 여러 캘린더 읽기 | `search_events_across_calendars`, `find_available_slots`, `detect_event_conflicts` (읽기 전용) |
 | 반복 일정 | `update_event_occurrence`, `delete_event_occurrence` |
 | 메모 | `list_memos`, `create_memo`, `update_memo`, `delete_memo` |
 | 댓글 | `list_event_comments`, `get_event_comment_image`, `add_event_comment`, `update_event_comment`, `delete_event_comment` |
@@ -155,7 +168,7 @@ GUI 클라이언트가 `node`를 찾지 못하면 `command -v node`로 나온 �
 
 **로그인 실패**: 같은 이메일과 비밀번호로 TimeTree 웹 앱에 로그인되는지 확인합니다. 이 서버는 이메일과 비밀번호 로그인만 지원합니다.
 
-**캘린더나 일정이 안 나옴**: 계정에 캘린더가 있는지 확인하고 클라이언트의 MCP 로그를 봅니다. TimeTree 웹 API가 바뀌었을 수 있으니 [이슈](https://github.com/ehs208/TimeTree-MCP/issues)로 알려주십시오.
+**캘린더나 일정이 안 나옴**: 계정에 캘린더가 있는지 확인하고 클라이언트의 MCP 로그를 봅니다. TimeTree 웹 API가 바뀌었을 수 있으니 [이슈](https://github.com/ODU33104/TimeTree-MCP/issues)로 알려주십시오.
 
 ## 동작 방식
 

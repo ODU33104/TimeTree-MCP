@@ -10,9 +10,12 @@
 
 **Compatibility:** Non sono verificati i rilasci di questo fork, l'accesso remoto da ChatGPT mobile o la compatibilità con tutti i client.
 
-## Documentation scope / Feature status
+## Stato delle funzionalità (27/10/2026)
 
-**Quickstart only:** This page is a localized summary, not a complete translation. English, Japanese and Korean have detailed guides. The 13 README languages do not imply that runtime localization, date/time behavior, or compatibility has been verified in 13 languages. The listed capabilities are repository-level features, not a guarantee of full TimeTree app coverage. No official TimeTree affiliation, confirmed ChatGPT mobile/remote connection, or guaranteed release artifacts. Consult the detailed guides for current limitations.
+- **Obiettivo della versione v0.8.0 (`main` più il candidato al rilascio): 32 strumenti MCP** per calendari, eventi, ricorrenze, promemoria e dati di checklist, commenti, membri, etichette, festività e attività recenti. I 3 nuovi sono di sola lettura: `search_events_across_calendars` (cercare eventi in più calendari), `find_available_slots` (trovare fasce libere) e `detect_event_conflicts` (rilevare eventi sovrapposti).
+- **In sviluppo, non rilasciato, non utilizzabile come strumento MCP:** simulazione di spostamento, esportazione `.ics` rispettosa della privacy, protezione dai duplicati, riepiloghi di presenze/checklist e briefing mobile. Connessione diretta da ChatGPT mobile, servizio pubblico multiutente e autorizzazione ufficiale TimeTree non verificati.
+- **Accesso:** via stdio la scrittura resta possibile come prima; con la variabile d'ambiente `TIMETREE_READ_ONLY=true` il server è di sola lettura. Per HTTP remoto esiste solo un modulo di policy, senza server in ascolto; non c'è alcun servizio remoto pubblico.
+
 
 ## TimeTree MCP
 

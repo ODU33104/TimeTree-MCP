@@ -10,9 +10,12 @@
 
 **Compatibility:** 本分支的發行檔、ChatGPT 行動裝置遠端連線及所有用戶端相容性尚未驗證。
 
-## Documentation scope / Feature status
+## 功能開發狀態（2026-10-27）
 
-**Quickstart only:** This page is a localized summary, not a complete translation. English, Japanese and Korean have detailed guides. The 13 README languages do not imply that runtime localization, date/time behavior, or compatibility has been verified in 13 languages. The listed capabilities are repository-level features, not a guarantee of full TimeTree app coverage. No official TimeTree affiliation, confirmed ChatGPT mobile/remote connection, or guaranteed release artifacts. Consult the detailed guides for current limitations.
+- **發佈目標 v0.8.0（`main` 加發佈候選）：32 個 MCP 工具**，涵蓋行事曆、活動、重複事件、備忘錄與清單資料、留言、成員、標籤、假日及最近變更。新增 3 個唯讀工具：`search_events_across_calendars`（跨多個行事曆搜尋活動）、`find_available_slots`（尋找空閒時段）、`detect_event_conflicts`（偵測重疊活動）。
+- **開發中，尚未發佈，無法作為 MCP 工具使用：** 假設性改期分析、保護隱私的 `.ics` 匯出、重複防護、出席／清單摘要及行動裝置簡報。ChatGPT 手機版直接連線、公開多人服務及 TimeTree 官方授權尚未驗證。
+- **存取方式：** 透過 stdio 仍可像以往一樣寫入；設定環境變數 `TIMETREE_READ_ONLY=true` 可讓伺服器唯讀。遠端 HTTP 目前只有政策模組，沒有接受連線的伺服器，也沒有公開的遠端服務。
+
 
 ## TimeTree MCP
 

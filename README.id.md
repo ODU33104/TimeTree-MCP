@@ -10,9 +10,12 @@
 
 **Compatibility:** Rilis fork ini, akses jarak jauh melalui ChatGPT seluler, dan kompatibilitas semua klien belum diverifikasi.
 
-## Documentation scope / Feature status
+## Status fitur (27 Oktober 2026)
 
-**Quickstart only:** This page is a localized summary, not a complete translation. English, Japanese and Korean have detailed guides. The 13 README languages do not imply that runtime localization, date/time behavior, or compatibility has been verified in 13 languages. The listed capabilities are repository-level features, not a guarantee of full TimeTree app coverage. No official TimeTree affiliation, confirmed ChatGPT mobile/remote connection, or guaranteed release artifacts. Consult the detailed guides for current limitations.
+- **Target rilis v0.8.0 (`main` ditambah kandidat rilis): 32 alat MCP** untuk kalender, acara, pengulangan, memo dan data daftar periksa, komentar, anggota, label, hari libur, dan aktivitas terbaru. Tiga alat baru bersifat baca-saja: `search_events_across_calendars` (cari acara di beberapa kalender), `find_available_slots` (cari waktu kosong), dan `detect_event_conflicts` (deteksi acara yang bertumpuk).
+- **Dalam pengembangan, belum dirilis, belum menjadi alat MCP yang dapat dipakai:** simulasi pemindahan acara, ekspor `.ics` yang mengutamakan privasi, pencegahan duplikat, ringkasan kehadiran/daftar periksa, dan ringkasan seluler. Koneksi langsung ChatGPT seluler, layanan publik multi-pengguna, dan izin resmi TimeTree belum terverifikasi.
+- **Akses:** melalui stdio penulisan tetap dapat dilakukan seperti sebelumnya; atur variabel lingkungan `TIMETREE_READ_ONLY=true` agar server hanya membaca. Untuk HTTP jarak jauh hanya ada modul kebijakan, tanpa server yang menerima koneksi; tidak ada layanan jarak jauh publik.
+
 
 ## TimeTree MCP
 

@@ -55,6 +55,18 @@ Ask your AI assistant things like:
 - **Knows the context.** Calendar members and public holidays by country.
 - **Runs on your computer.** Your email and password are sent only to TimeTree. The session stays in memory.
 
+## Feature status — available vs experimental (updated 2026-10-27)
+
+- **Release target v0.8.0 (`main` plus the release candidate) — 32 MCP tools:** calendar/event operations, recurring occurrences, memo and checklist **fields**, comments (including image reading), member/virtual-member management, labels, holidays and recent activity, plus three **read-only** tools: `search_events_across_calendars` (search events across several calendars), `find_available_slots` (find free time) and `detect_event_conflicts` (detect overlapping events). Checklist fields are **not** a dedicated item-level completion tool, and attendance fields do **not** provide RSVP actions.
+- **In development, not released — not callable MCP tools:** what-if move simulation, privacy-first `.ics` export, duplicate guard, attendance/checklist summaries and mobile briefing. These are prototypes and are not described as implemented.
+- **Access:** over stdio, writes work as before; set the environment variable `TIMETREE_READ_ONLY=true` to make the server read-only. For remote HTTP there is only a policy module and no listening server, so there is no public remote service.
+- **Not supported or not verified:** direct ChatGPT mobile connection, multi-user hosted OAuth, public TimeTree partnership, photo uploads, album management, full RSVP, premium attachments and bidirectional calendar sync. Public multi-user deployment is **not ready**.
+
+We are building both **broad TimeTree feature coverage** and distinctive, safe planning/interoperability features, with source-linked tests rather than inflated feature claims.
+
+
+[Feature coverage / 機能対応表](https://github.com/ODU33104/TimeTree-MCP/blob/coordination/parallel-workstreams/docs/coordination/TIMETREE-FEATURE-COVERAGE-20261026.md) · [What-if prototype PR #21](https://github.com/ODU33104/TimeTree-MCP/pull/21) · [iCalendar export prototype PR #22](https://github.com/ODU33104/TimeTree-MCP/pull/22)
+
 ## Install
 
 ### Claude Desktop (macOS, Windows): one-click extension
@@ -129,6 +141,7 @@ Details: [docs/UPDATING.md](docs/UPDATING.md). Changes: [CHANGELOG.md](CHANGELOG
 |---|---|
 | Calendars | `list_calendars`, `create_calendar`, `get_current_user` |
 | Events | `get_events`, `get_updated_events`, `create_event`, `update_event`, `delete_event`, `copy_event` |
+| Cross-calendar reads | `search_events_across_calendars`, `find_available_slots`, `detect_event_conflicts` (read-only) |
 | Recurring events | `update_event_occurrence`, `delete_event_occurrence` |
 | Memos | `list_memos`, `create_memo`, `update_memo`, `delete_memo` |
 | Comments | `list_event_comments`, `get_event_comment_image`, `add_event_comment`, `update_event_comment`, `delete_event_comment` |
@@ -155,7 +168,7 @@ If the creation response cannot be validated, check existing calendars before tr
 
 **Sign-in fails**: check that you can sign in on the TimeTree web app with the same email and password. The server signs in with email and password only.
 
-**No calendars or events**: make sure the account has calendars, and check the client's MCP logs. TimeTree may have changed its web API; please [open an issue](https://github.com/ehs208/TimeTree-MCP/issues).
+**No calendars or events**: make sure the account has calendars, and check the client's MCP logs. TimeTree may have changed its web API; please [open an issue](https://github.com/ODU33104/TimeTree-MCP/issues).
 
 ## How it works
 
