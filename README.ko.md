@@ -9,14 +9,20 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/ehs208/TimeTree-MCP/actions/workflows/ci.yml"><img src="https://github.com/ehs208/TimeTree-MCP/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-  <a href="https://github.com/ehs208/TimeTree-MCP/releases/latest"><img src="https://img.shields.io/github/v/release/ehs208/TimeTree-MCP?label=release" alt="최신 릴리스"></a>
+  <a href="https://github.com/ODU33104/TimeTree-MCP/actions/workflows/ci.yml"><img src="https://github.com/ODU33104/TimeTree-MCP/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/ODU33104/TimeTree-MCP/releases"><img src="https://img.shields.io/github/v/release/ODU33104/TimeTree-MCP?label=release" alt="최신 릴리스"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT License"></a>
 </p>
 
 <p align="center">
-  <a href="README.md">English</a> | 한국어 | <a href="README.ja.md">日本語</a>
+  <a href="README.md">English</a> · <a href="README.ja.md">日本語</a> · <a href="README.ko.md">한국어</a> · <a href="README.de.md">Deutsch</a> · <a href="README.zh-Hant.md">繁體中文</a> · <a href="README.fr.md">Français</a> · <a href="README.es.md">Español</a> · <a href="README.pt-BR.md">Português (Brasil)</a> · <a href="README.zh-Hans.md">简体中文</a> · <a href="README.it.md">Italiano</a> · <a href="README.th.md">ไทย</a> · <a href="README.id.md">Bahasa Indonesia</a> · <a href="README.ms.md">Bahasa Melayu</a>
 </p>
+
+> **포크 안내:** 이 저장소는 [ODU33104/TimeTree-MCP](https://github.com/ODU33104/TimeTree-MCP)에서 관리하는 비공식 독립 포크입니다. 원본 프로젝트는 [ehs208/TimeTree-MCP](https://github.com/ehs208/TimeTree-MCP) (MIT)입니다. TimeTree, Inc.와 관련이 없습니다. 포크 릴리스 및 클라이언트 호환성은 보장되지 않습니다.
+
+**보안:** TimeTree 로그인 정보를 AI 대화나 코딩 에이전트 프롬프트에 입력하지 마세요. MCP 클라이언트의 로컬 환경 설정에 저장하세요. ChatGPT 모바일 원격 연결은 아직 검증되지 않았습니다.
+
+**포크 설치:** 원본 대신 이 저장소를 clone하세요. 실행 전 스크립트를 검토하세요. 포크 릴리스가 실제로 게시된 경우에만 해당 배포 파일을 사용하세요.
 
 > [!NOTE]
 > 개인 사용을 위한 비공식 프로젝트입니다. TimeTree, Inc.와 관계가 없습니다. TimeTree 웹 앱의 비공개 엔드포인트를 사용하므로 언제든 동작이 바뀔 수 있습니다. 자세한 내용은 [DISCLAIMER.md](DISCLAIMER.md)를 참고하십시오.
@@ -33,6 +39,12 @@ AI 어시스턴트에게 이렇게 물어보면 됩니다.
   <img src="docs/assets/demo-ko.gif" alt="Claude Desktop이 TimeTree 캘린더의 한 주 일정을 정리하고 겹치는 일정을 알려준 뒤, 일정을 옮기고 새 일정을 추가하는 예시" width="760">
 </p>
 
+## 문서 및 기능 지원 상태
+
+**문서 범위:** 영어·일본어·한국어는 상세 안내서입니다. 나머지 10개 언어는 **간단한 Quickstart**이며 전체 번역이 아닙니다. 13개 언어의 README는 동일한 MCP 서버를 설명하며, 13개 언어에서 동작이 검증되었다는 뜻이 아닙니다.
+
+**기능 상태:** 아래 도구 목록은 이 저장소의 기능을 설명하며 TimeTree 앱의 모든 기능을 지원한다는 보장은 없습니다. 비공개 웹 API와 MCP 클라이언트에 따라 달라집니다. ChatGPT 모바일 원격 연결, TimeTree 공식 제휴, 이 포크의 배포 파일은 확인되지 않았습니다. 국가별 공휴일 기능의 범위와 지역별 날짜·시간대·서머타임 동작은 추가 검증이 필요합니다.
+
 ## 할 수 있는 일
 
 - **캘린더를 읽습니다.** 날짜, 키워드, 라벨로 일정을 거르고, 반복 일정은 실제 날짜로 펼쳐서 보여줍니다.
@@ -43,11 +55,23 @@ AI 어시스턴트에게 이렇게 물어보면 됩니다.
 - **맥락을 압니다.** 캘린더 멤버와 국가별 공휴일을 조회합니다.
 - **내 컴퓨터에서 실행됩니다.** 이메일과 비밀번호는 TimeTree에만 전송하고, 세션은 메모리에만 둡니다.
 
+## 기능 상태 — 사용 가능 기능과 시제품 구분 (2026-10-27)
+
+- **릴리스 대상 v0.8.0(`main`과 릴리스 후보) — MCP 도구 32개:** 캘린더 및 일정 관리, 반복 일정, 메모와 체크리스트 **데이터**, 댓글 및 이미지 읽기, 멤버·가상 멤버, 라벨, 공휴일, 최근 변경 내역, 그리고 읽기 전용 도구 3개: `search_events_across_calendars`(여러 캘린더 일정 검색), `find_available_slots`(빈 시간 찾기), `detect_event_conflicts`(겹치는 일정 탐지). 체크 항목별 완료 전용 도구나 RSVP 변경 기능은 없습니다.
+- **개발 중·미공개 시제품 — MCP 도구로 호출할 수 없음:** 일정 이동 전후 충돌 비교, 개인정보 보호 중심 `.ics` 내보내기, 중복 방지, 참석·체크리스트 요약, 모바일 브리핑. 구현 완료로 안내하지 않습니다.
+- **접근 방식:** stdio는 기존처럼 쓰기가 가능하며, 환경 변수 `TIMETREE_READ_ONLY=true`로 읽기 전용으로 만들 수 있습니다. 원격 HTTP는 정책 모듈만 있고 연결을 받는 서버는 제공하지 않으므로 공개 원격 서비스는 없습니다.
+- **미지원·미검증:** 모바일 ChatGPT 직접 연결, 공개용 다중 사용자 OAuth, TimeTree 공식 제휴, 사진 업로드, 앨범 관리, RSVP 변경, 프리미엄 파일 첨부, 양방향 동기화. **공개 서버 운영 준비가 끝나지 않았습니다.**
+
+TimeTree의 폭넓은 기능을 이해하고 안전한 독자 기능을 개발하되, 구현과 출시 여부를 명확히 구분합니다.
+
+
+[Feature coverage / 機能対応表](https://github.com/ODU33104/TimeTree-MCP/blob/coordination/parallel-workstreams/docs/coordination/TIMETREE-FEATURE-COVERAGE-20261026.md) · [What-if prototype PR #21](https://github.com/ODU33104/TimeTree-MCP/pull/21) · [iCalendar export prototype PR #22](https://github.com/ODU33104/TimeTree-MCP/pull/22)
+
 ## 설치
 
 ### Claude Desktop (macOS, Windows): 원클릭 확장 프로그램
 
-1. [최신 릴리스](https://github.com/ehs208/TimeTree-MCP/releases/latest)에서 `timetree-mcp-<버전>.mcpb`를 내려받습니다.
+1. [최신 릴리스](https://github.com/ODU33104/TimeTree-MCP/releases)에서 `timetree-mcp-<버전>.mcpb`를 내려받습니다.
 2. 파일을 엽니다. Claude Desktop에 설치 창이 뜹니다.
 3. TimeTree 이메일과 비밀번호를 입력하고 확장 프로그램을 켭니다.
 
@@ -59,19 +83,19 @@ Node.js 22 이상과 Git이 필요합니다.
 
 **코딩 에이전트에게 맡기기.** Claude Code, Codex 같은 에이전트에 아래 내용을 붙여넣습니다.
 
-> `https://github.com/ehs208/TimeTree-MCP`를 클론하고, 클론한 디렉토리 안에서 `npm ci && npm run build`를 실행한 뒤, 내 MCP 클라이언트에 `timetree` 서버를 추가해줘. 실행 명령은 `node /absolute/path/to/TimeTree-MCP/dist/index.js` 형태로 실제 clone 경로를 사용하고, `TIMETREE_EMAIL`과 `TIMETREE_PASSWORD`는 MCP 클라이언트의 환경변수 설정에만 저장하며 절대 코드나 로그에 직접 쓰지 마.
+> `https://github.com/ODU33104/TimeTree-MCP`를 클론하고, 클론한 디렉토리 안에서 `npm ci && npm run build`를 실행한 뒤, 내 MCP 클라이언트에 `timetree` 서버를 추가해줘. 실행 명령은 `node /absolute/path/to/TimeTree-MCP/dist/index.js` 형태로 실제 clone 경로를 사용하고, `TIMETREE_EMAIL`과 `TIMETREE_PASSWORD`는 MCP 클라이언트의 환경변수 설정에만 저장하며 절대 코드나 로그에 직접 쓰지 마.
 
 **설치 스크립트 실행.** 클론과 빌드를 하고 클라이언트별 설정 예시를 출력합니다.
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/ehs208/TimeTree-MCP/main/TimeTree-MCP-install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/ODU33104/TimeTree-MCP/main/TimeTree-MCP-install.sh | bash
 ```
 
 <details>
 <summary>수동 설치</summary>
 
 ```bash
-git clone https://github.com/ehs208/TimeTree-MCP.git
+git clone https://github.com/ODU33104/TimeTree-MCP.git
 cd TimeTree-MCP
 npm ci
 npm run build
@@ -106,7 +130,7 @@ GUI 클라이언트가 `node`를 찾지 못하면 `command -v node`로 나온 �
 
 새 버전이 나오면 서버가 툴 응답에 안내를 한 번 덧붙여서 어시스턴트가 알려줄 수 있게 합니다. 끄려면 MCP `env`에 `TIMETREE_UPDATE_CHECK=false`를 설정합니다.
 
-- **Claude Desktop 확장 프로그램:** [최신 릴리스](https://github.com/ehs208/TimeTree-MCP/releases/latest)에서 새 `.mcpb`를 내려받아 엽니다.
+- **Claude Desktop 확장 프로그램:** [최신 릴리스](https://github.com/ODU33104/TimeTree-MCP/releases)에서 새 `.mcpb`를 내려받아 엽니다.
 - **Git clone:** 설치 폴더에서 `git pull origin main && npm ci && npm run build`를 실행하고 MCP 클라이언트를 재시작합니다.
 
 자세한 방법: [docs/UPDATING.md](docs/UPDATING.md). 변경 내역: [CHANGELOG.md](CHANGELOG.md).
@@ -117,6 +141,7 @@ GUI 클라이언트가 `node`를 찾지 못하면 `command -v node`로 나온 �
 |---|---|
 | 캘린더 | `list_calendars`, `create_calendar`, `get_current_user` |
 | 일정 | `get_events`, `get_updated_events`, `create_event`, `update_event`, `delete_event`, `copy_event` |
+| 여러 캘린더 읽기 | `search_events_across_calendars`, `find_available_slots`, `detect_event_conflicts` (읽기 전용) |
 | 반복 일정 | `update_event_occurrence`, `delete_event_occurrence` |
 | 메모 | `list_memos`, `create_memo`, `update_memo`, `delete_memo` |
 | 댓글 | `list_event_comments`, `get_event_comment_image`, `add_event_comment`, `update_event_comment`, `delete_event_comment` |
@@ -143,7 +168,7 @@ GUI 클라이언트가 `node`를 찾지 못하면 `command -v node`로 나온 �
 
 **로그인 실패**: 같은 이메일과 비밀번호로 TimeTree 웹 앱에 로그인되는지 확인합니다. 이 서버는 이메일과 비밀번호 로그인만 지원합니다.
 
-**캘린더나 일정이 안 나옴**: 계정에 캘린더가 있는지 확인하고 클라이언트의 MCP 로그를 봅니다. TimeTree 웹 API가 바뀌었을 수 있으니 [이슈](https://github.com/ehs208/TimeTree-MCP/issues)로 알려주십시오.
+**캘린더나 일정이 안 나옴**: 계정에 캘린더가 있는지 확인하고 클라이언트의 MCP 로그를 봅니다. TimeTree 웹 API가 바뀌었을 수 있으니 [이슈](https://github.com/ODU33104/TimeTree-MCP/issues)로 알려주십시오.
 
 ## 동작 방식
 
