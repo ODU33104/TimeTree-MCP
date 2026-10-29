@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Remote-transport security policy module (bearer token, origin allow-list, body-size limit, writes off by default). No remote server ships yet.
 
 ### Security
+- Update notices and the changelog and release links now point to this repository instead of the upstream project, and malformed version data is ignored.
 - Authenticated requests are restricted to TimeTree hosts, and tool errors no longer include upstream details.
 - Dependency updates (including `zod` 4) clear every `npm audit` advisory at moderate severity or above.
 

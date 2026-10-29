@@ -14,7 +14,7 @@ const CHECK_TIMEOUT_MS = 3000;
 /** True when `candidate` is a higher x.y.z version than `current`. */
 export function isNewerVersion(candidate: string, current: string): boolean {
   const parse = (version: string): number[] | null => {
-    if (!/^\\d+\\.\\d+\\.\\d+$/.test(version)) return null;
+    if (!/^\d+\.\d+\.\d+$/.test(version)) return null;
     const parts = version.split('.').map(Number);
     return parts.every(Number.isSafeInteger) ? parts : null;
   };
