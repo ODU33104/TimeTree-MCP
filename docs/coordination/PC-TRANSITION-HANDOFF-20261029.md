@@ -89,3 +89,39 @@ PRがDraftなのは、未検証・未統合の試作や報告を含むため。*
 - [PR #31 Offline harness](https://github.com/ODU33104/TimeTree-MCP/pull/31)
 - [PR #32 Independent QA](https://github.com/ODU33104/TimeTree-MCP/pull/32)
 - [PR #33 Mobile briefing](https://github.com/ODU33104/TimeTree-MCP/pull/33)
+
+
+## 7. PC実機テスト報告（ユーザー提供・2026-10-29）
+
+> **証拠の出所:** ローカルPC担当者が司令塔チャットへ提出した実測報告。司令塔はGitHub上のPR head SHAと一致することを確認したが、ローカルログ本文は未受領で、司令塔自身が再実行したものではない。従って以下は **PC担当報告値**。実ログの保存場所はWindowsローカルのみ。
+
+環境: Windows 11 / Node v22.23.4 / npm 10.9.9 / git 2.40.1。各PRのheadをdetached worktreeにcheckoutし `git rev-parse HEAD` 一致を確認したとの報告。実TimeTree認証情報、Actions、マージ、既存コード変更なし。
+
+共通実行: `npm ci --ignore-scripts --no-fund`, `npm run typecheck`, `npm test`（build + test:build + node --test tests/*.test.mjs）, `npm run build`, `npm audit --audit-level=high`。
+
+| PR | 検証head SHA | install | typecheck | npm test | build | npm audit |
+| --- | --- | --- | --- | --- | --- | --- |
+| #31 | bcbfa937a2b00ca723655e652e6fd65f9a526f64 | PASS | PASS | PASS 173/173 | PASS | FAIL |
+| #33 | ae7aed40edd698b9204f2b669e59c6ac0ab121a1 | PASS | PASS | PASS 130/130 | PASS | FAIL |
+| #21 | f9b93a8d7c9350d4905b38640728ce06aa510956 | PASS | PASS | PASS 179/179 | PASS | FAIL |
+| #22 | 02f6e0106eefb80171f1906e78047cacb54f0189 | PASS | PASS | PASS 179/179 | PASS | FAIL |
+| #24 | 5ffa4b200e52882ea7b99ee4b564876373e0d9d4 | PASS | PASS | PASS 172/172 | PASS | FAIL |
+| #25 | db91e0c0aa2832ff10ffa3df10103c1f9dc26d83 | PASS | PASS | PASS 184/184 | PASS | FAIL |
+| #26 | fcfa7f3bf3fd969482611b4a5868ab0f167576cf | PASS | PASS | PASS 180/180 | PASS | FAIL |
+| #27 | 53ca3c7972515db7d2db1252c463e412b20d9c5e | PASS | PASS | **FAIL 183/184** | PASS | FAIL |
+
+**#27 fix-required:** `tests/native-checklist-summary.test.mjs:33` の「rejects long or empty titles and avoids accidental leakage」（TAP #40）が `Invalid checklist summary request` で失敗。実装の例外とテスト期待が不一致。既存ownerが入力バリデーションの契約を確認して修正し、同じSHA手順で再テストする。
+
+**全PRのaudit FAIL:** PC担当報告では7件（low 1 / moderate 4 / high 2）、共通lockfile由来。body-parser, zod, fast-uri, qs, ip-address, @hono/node-server, esbuild 等の指摘。厳密なhighの対応先・修正版・依存経路は監査JSON未受領につき未確定。lockfile整合性・互換性・回帰テストを経て修正する。 `npm audit fix --force` を無検証で実行しない。
+
+**注意:** #33はcoordination系統のためテスト総数130、統合先と異なる。#25は#24をbaseとする。#31/#32のスクリプト安全性指摘は今回未検証（NOT RUN）。各PRの成功は**統合ブランチ全体の成功やmainマージ承認を意味しない**。
+
+PC証拠保管場所: `D:\\01.projects\\TimeTree-MCP-verify-logs\\pr<番号>.log`, `summary.json`。作業ディレクトリ: `D:\\01.projects\\TimeTree-MCP-verify`, `D:\\01.projects\\TimeTree-MCP-verify-wt\\pr<番号>`。**削除しない**。ログをGitHubへ提出する場合は秘密情報・端末固有パス等を確認してからサニタイズする。
+
+### 次の優先事項
+
+1. #27既存ownerに失敗箇所の最小修正と回帰テストを依頼。
+2. 依存修正ownerに `npm audit --json` の詳細からhighの厳密な依存経路と安全な更新計画を依頼。
+3. PC担当に integration/release-candidate のexact-SHAで一式を実行させ、個別PR成功との違いを確認。
+4. DOCS-BRANDに13言語READMEをmain向けPRへ整理させる。READMEはテスト/監査の事実に合わせて段階表示。
+5. 司令塔が検証済みの統合順序を作る。**mainマージは個別承認まで禁止**。
