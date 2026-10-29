@@ -31,8 +31,22 @@ test('all-day/timezone metadata never changes item totals; titles are opt-in',()
  assert.equal(r.incomplete,1); assert.deepEqual(r.entries[0].titles,['買い物']);
 });
 test('rejects long or empty titles and avoids accidental leakage',()=>{
- const r=summarize([snap([{checked:true,title:'ok'},{checked:false,title:' '.repeat(2)}])],{...filter,includeTitles:true});
- assert.equal(r.malformed,1); assert.equal(r.total,0); assert.equal('titles' in r.entries[0],false);
+ const authorized={...filter,includeTitles:true,titlesAuthorized:true};
+ const bad=[
+  {checked:false,title:' '.repeat(2)},
+  {checked:false,title:''},
+  {checked:false,title:'x'.repeat(501)},
+  {checked:false,title:null},
+  {checked:false},
+  {checked:false,title:123}
+ ];
+ for(const item of bad){
+  const r=summarize([snap([{checked:true,title:'ok'},item])],authorized);
+  assert.equal(r.malformed,1); assert.equal(r.total,0); assert.equal(r.completed,0);
+  assert.equal('titles' in r.entries[0],false);
+ }
+ const edge=summarize([snap([{checked:true,title:'x'.repeat(500)}])],authorized);
+ assert.deepEqual([edge.malformed,edge.total],[0,1]);
 });
 
 test('missing selected calendar snapshot is not a valid zero',()=>{
