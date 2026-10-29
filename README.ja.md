@@ -9,14 +9,20 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/ehs208/TimeTree-MCP/actions/workflows/ci.yml"><img src="https://github.com/ehs208/TimeTree-MCP/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-  <a href="https://github.com/ehs208/TimeTree-MCP/releases/latest"><img src="https://img.shields.io/github/v/release/ehs208/TimeTree-MCP?label=release" alt="最新リリース"></a>
+  <a href="https://github.com/ODU33104/TimeTree-MCP/actions/workflows/ci.yml"><img src="https://github.com/ODU33104/TimeTree-MCP/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/ODU33104/TimeTree-MCP/releases"><img src="https://img.shields.io/github/v/release/ODU33104/TimeTree-MCP?label=release" alt="最新リリース"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT License"></a>
 </p>
 
 <p align="center">
-  <a href="README.md">English</a> | <a href="README.ko.md">한국어</a> | 日本語
+  <a href="README.md">English</a> · <a href="README.ja.md">日本語</a> · <a href="README.ko.md">한국어</a> · <a href="README.de.md">Deutsch</a> · <a href="README.zh-Hant.md">繁體中文</a> · <a href="README.fr.md">Français</a> · <a href="README.es.md">Español</a> · <a href="README.pt-BR.md">Português (Brasil)</a> · <a href="README.zh-Hans.md">简体中文</a> · <a href="README.it.md">Italiano</a> · <a href="README.th.md">ไทย</a> · <a href="README.id.md">Bahasa Indonesia</a> · <a href="README.ms.md">Bahasa Melayu</a>
 </p>
+
+> **フォークについて:** このリポジトリは [ODU33104/TimeTree-MCP](https://github.com/ODU33104/TimeTree-MCP) が管理する非公式の独立フォークです。原作者のプロジェクトは [ehs208/TimeTree-MCP](https://github.com/ehs208/TimeTree-MCP)（MIT）です。TimeTree, Inc. とは無関係です。フォーク版のリリースやクライアント互換性は未保証です。
+
+**セキュリティ:** TimeTree の認証情報を AI のチャットやコーディングエージェントのプロンプトに入力しないでください。MCP クライアントのローカル設定に保存してください。ChatGPT モバイルからのリモート接続は未検証です。
+
+**フォーク版の導入:** 上流ではなくこのリポジトリを clone してください。スクリプトは実行前に内容を確認してください。フォーク版のリリースが公開されている場合に限り配布物を利用できます。
 
 > [!NOTE]
 > 個人利用向けの非公式プロジェクトです。TimeTree, Inc. とは関係ありません。TimeTree Web アプリの非公開エンドポイントを使うため、いつでも動作が変わる可能性があります。詳細は [DISCLAIMER.md](DISCLAIMER.md) を参照してください。
@@ -33,6 +39,12 @@ AI アシスタントに次のように聞くだけです。
   <img src="docs/assets/demo-ja.gif" alt="Claude Desktop が TimeTree カレンダーの1週間の予定をまとめて重なりを指摘し、予定の移動と追加を行う例" width="760">
 </p>
 
+## ドキュメントと機能の対応状況
+
+**文書の範囲:** 英語・日本語・韓国語は詳細版です。その他10言語は**導入用Quickstart**であり、全文翻訳ではありません。13言語のREADMEは同じMCPサーバーを説明するもので、13言語での動作検証完了を意味しません。
+
+**機能の状態:** 下記のツールはこのリポジトリにある機能の説明で、TimeTreeアプリの全機能への対応を保証しません。非公開Web APIやMCPクライアントに依存します。ChatGPTスマホ版からのリモート接続、TimeTree公式との提携、フォーク版配布物の公開は未確認です。国別祝日は実装の対応範囲内で利用できますが、日時・タイムゾーン・夏時間の各地域での検証は未完了です。
+
 ## できること
 
 - **カレンダーを読む。** 日付、キーワード、ラベルで予定を絞り込み、繰り返し予定は実際の日付に展開します。
@@ -47,7 +59,7 @@ AI アシスタントに次のように聞くだけです。
 
 ### Claude Desktop（macOS、Windows）: ワンクリック拡張機能
 
-1. [最新リリース](https://github.com/ehs208/TimeTree-MCP/releases/latest)から `timetree-mcp-<バージョン>.mcpb` をダウンロードします。
+1. [最新リリース](https://github.com/ODU33104/TimeTree-MCP/releases)から `timetree-mcp-<バージョン>.mcpb` をダウンロードします。
 2. ファイルを開きます。Claude Desktop にインストール画面が表示されます。
 3. TimeTree のメールアドレスとパスワードを入力し、拡張機能を有効にします。
 
@@ -59,19 +71,19 @@ Node.js 22 以上と Git が必要です。
 
 **コーディングエージェントに任せる。** Claude Code、Codex などのエージェントに次の内容を貼り付けます。
 
-> Clone `https://github.com/ehs208/TimeTree-MCP`, enter the cloned directory, run `npm ci && npm run build`, then configure my MCP client with a server named `timetree` that runs `node /absolute/path/to/TimeTree-MCP/dist/index.js` (use the real cloned path). Store `TIMETREE_EMAIL` and `TIMETREE_PASSWORD` only in the MCP client environment configuration, and never hardcode or print secrets.
+> Clone `https://github.com/ODU33104/TimeTree-MCP`, enter the cloned directory, run `npm ci && npm run build`, then configure my MCP client with a server named `timetree` that runs `node /absolute/path/to/TimeTree-MCP/dist/index.js` (use the real cloned path). Store `TIMETREE_EMAIL` and `TIMETREE_PASSWORD` only in the MCP client environment configuration, and never hardcode or print secrets.
 
 **インストーラーを実行する。** clone とビルドを行い、クライアントごとの設定例を表示します。
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/ehs208/TimeTree-MCP/main/TimeTree-MCP-install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/ODU33104/TimeTree-MCP/main/TimeTree-MCP-install.sh | bash
 ```
 
 <details>
 <summary>手動インストール</summary>
 
 ```bash
-git clone https://github.com/ehs208/TimeTree-MCP.git
+git clone https://github.com/ODU33104/TimeTree-MCP.git
 cd TimeTree-MCP
 npm ci
 npm run build
@@ -106,7 +118,7 @@ GUI クライアントが `node` を見つけられない場合は、`command -v
 
 新しいバージョンが出ると、サーバーがツールの応答に一度だけお知らせを追加し、アシスタントから伝えられるようにします。無効にするには MCP の `env` に `TIMETREE_UPDATE_CHECK=false` を設定します。
 
-- **Claude Desktop 拡張機能:** [最新リリース](https://github.com/ehs208/TimeTree-MCP/releases/latest)から新しい `.mcpb` をダウンロードして開きます。
+- **Claude Desktop 拡張機能:** [最新リリース](https://github.com/ODU33104/TimeTree-MCP/releases)から新しい `.mcpb` をダウンロードして開きます。
 - **Git clone:** インストールフォルダで `git pull origin main && npm ci && npm run build` を実行し、MCP クライアントを再起動します。
 
 詳しい手順: [docs/UPDATING.md](docs/UPDATING.md)。変更履歴: [CHANGELOG.md](CHANGELOG.md)。
