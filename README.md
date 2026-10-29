@@ -18,14 +18,10 @@
   <a href="README.md">English</a> · <a href="README.ja.md">日本語</a> · <a href="README.ko.md">한국어</a> · <a href="README.de.md">Deutsch</a> · <a href="README.zh-Hant.md">繁體中文</a> · <a href="README.fr.md">Français</a> · <a href="README.es.md">Español</a> · <a href="README.pt-BR.md">Português (Brasil)</a> · <a href="README.zh-Hans.md">简体中文</a> · <a href="README.it.md">Italiano</a> · <a href="README.th.md">ไทย</a> · <a href="README.id.md">Bahasa Indonesia</a> · <a href="README.ms.md">Bahasa Melayu</a>
 </p>
 
-> **Fork notice:** This is an independent, unofficial fork maintained at [ODU33104/TimeTree-MCP](https://github.com/ODU33104/TimeTree-MCP). Original project: [ehs208/TimeTree-MCP](https://github.com/ehs208/TimeTree-MCP) (MIT). Neither project is affiliated with TimeTree, Inc. Fork releases and client compatibility are not guaranteed.
-
-**Security:** Never paste TimeTree credentials into an AI conversation or coding-agent prompt. Configure secrets locally in your MCP client's protected environment/settings. Remote ChatGPT/mobile access is not currently verified.
-
-**Fork install:** Clone this repository rather than the upstream repository. Review scripts before running them. Release assets are only usable if actually published for this fork.
-
 > [!NOTE]
-> Unofficial and for personal use. Not affiliated with TimeTree, Inc. It uses the TimeTree web app's undocumented endpoints, which can change at any time. See [DISCLAIMER.md](DISCLAIMER.md).
+> Unofficial and for personal use. Not affiliated with, endorsed by, or supported by TimeTree, Inc. It uses the TimeTree web app's undocumented endpoints, which can change at any time. See [DISCLAIMER.md](DISCLAIMER.md).
+>
+> This is an independent fork of [ehs208/TimeTree-MCP](https://github.com/ehs208/TimeTree-MCP) (MIT), maintained here. Never paste your TimeTree password into an AI chat; put it only in your MCP client's environment settings.
 
 Ask your AI assistant things like:
 
@@ -39,15 +35,10 @@ Ask your AI assistant things like:
   <img src="docs/assets/demo-en.gif" alt="Claude Desktop summarizes a week on a TimeTree calendar, flags a conflict, then moves an event and adds a new one" width="760">
 </p>
 
-## Documentation and feature status
-
-**Documentation coverage:** English, Japanese and Korean are detailed guides. The other ten languages are **quick-start summaries only**, not full translations. All 13 pages describe the same MCP server; they do not represent separately tested language implementations.
-
-**Feature status:** The tools listed below describe functionality in this repository, not verified support for every TimeTree app feature. Compatibility depends on undocumented TimeTree web endpoints and the MCP client. No verified ChatGPT mobile/remote connection, official TimeTree partnership, or guaranteed release package is claimed. Country holidays are supported where provided by the implementation; locale-specific date, time zone and DST behavior has not been comprehensively tested.
-
 ## What it does
 
 - **Reads your calendars.** Events with date, keyword, and label filters. Recurring events are expanded into their actual dates.
+- **Looks across calendars.** Search up to five calendars at once, find free time, and spot overlapping events. These three tools are read-only.
 - **Reads comment images.** Pass images attached to event comments to your AI client, including images posted by free accounts.
 - **Changes them when you ask.** Create, update, copy, and delete events, memos, and comments, and rename or recolor labels. Change or delete a single occurrence of a recurring event, or it and the ones after it.
 - **Manages virtual members.** Add, rename, or remove members without a TimeTree account, such as children or pets.
@@ -55,17 +46,16 @@ Ask your AI assistant things like:
 - **Knows the context.** Calendar members and public holidays by country.
 - **Runs on your computer.** Your email and password are sent only to TimeTree. The session stays in memory.
 
-## Feature status — available vs experimental (updated 2026-10-27)
+## Scope and limits
 
-- **Release target v0.8.0 (`main` plus the release candidate) — 32 MCP tools:** calendar/event operations, recurring occurrences, memo and checklist **fields**, comments (including image reading), member/virtual-member management, labels, holidays and recent activity, plus three **read-only** tools: `search_events_across_calendars` (search events across several calendars), `find_available_slots` (find free time) and `detect_event_conflicts` (detect overlapping events). Checklist fields are **not** a dedicated item-level completion tool, and attendance fields do **not** provide RSVP actions.
-- **In development, not released — not callable MCP tools:** what-if move simulation, privacy-first `.ics` export, duplicate guard, attendance/checklist summaries and mobile briefing. These are prototypes and are not described as implemented.
-- **Access:** over stdio, writes work as before; set the environment variable `TIMETREE_READ_ONLY=true` to make the server read-only. For remote HTTP there is only a policy module and no listening server, so there is no public remote service.
-- **Not supported or not verified:** direct ChatGPT mobile connection, multi-user hosted OAuth, public TimeTree partnership, photo uploads, album management, full RSVP, premium attachments and bidirectional calendar sync. Public multi-user deployment is **not ready**.
+- **32 tools in v0.8.0.** See [Tools](#tools). Checklist fields on memos and events can be read and written, but there is no tool that checks off a single item. Attendance fields are not exposed as RSVP actions.
+- **Read-only mode.** Over stdio, write tools are available by default. Set `TIMETREE_READ_ONLY=true` in the MCP `env` to list and allow only the 15 read-only tools.
+- **Local only.** The server runs on your computer over stdio. There is no hosted or remote service, and the remote-access code in this repository is a set of security rules without a server. Connecting from the ChatGPT mobile app has not been tested.
+- **Not supported.** Photo and file uploads, albums, RSVP, premium attachments, and two-way calendar sync.
+- **Not tested.** Time zone and daylight-saving edge cases outside the automated tests, and every TimeTree app feature. Compatibility depends on TimeTree's undocumented endpoints and on your MCP client.
+- **Languages.** English, Japanese, and Korean are full guides. The other ten languages are short quick-start summaries.
 
-We are building both **broad TimeTree feature coverage** and distinctive, safe planning/interoperability features, with source-linked tests rather than inflated feature claims.
-
-
-[Feature coverage / 機能対応表](https://github.com/ODU33104/TimeTree-MCP/blob/coordination/parallel-workstreams/docs/coordination/TIMETREE-FEATURE-COVERAGE-20261026.md) · [What-if prototype PR #21](https://github.com/ODU33104/TimeTree-MCP/pull/21) · [iCalendar export prototype PR #22](https://github.com/ODU33104/TimeTree-MCP/pull/22)
+Planned features such as a what-if event mover, `.ics` export, and a duplicate-event guard are prototypes and are not part of this release.
 
 ## Install
 
@@ -124,7 +114,7 @@ If a GUI client cannot find `node`, use the absolute path from `command -v node`
 
 Setup for each client (Claude Code, Codex, Cursor, Windsurf, VS Code, Antigravity, and more): [docs/MCP_CLIENTS.md](docs/MCP_CLIENTS.md)
 
-This project is not published to npm. Install it from a GitHub release or a clone of this repository.
+This project is not published to npm. Install it from a GitHub release or a clone of this repository. Because the server handles your TimeTree password, read any script before you run it.
 
 ## Updating
 
@@ -180,13 +170,13 @@ Write requests need a CSRF token, which the server reads from the TimeTree web p
 
 Issues and pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
-Thanks to everyone who has contributed.
+## Credits
+
+This project is a fork of [ehs208/TimeTree-MCP](https://github.com/ehs208/TimeTree-MCP). Thanks to the upstream contributors:
 
 <a href="https://github.com/ehs208/TimeTree-MCP/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=ehs208/TimeTree-MCP" alt="Contributors">
+  <img src="https://contrib.rocks/image?repo=ehs208/TimeTree-MCP" alt="Upstream contributors">
 </a>
-
-## Credits
 
 API insights from [TimeTree-Exporter](https://github.com/eoleedi/TimeTree-Exporter) by [@eoleedi](https://github.com/eoleedi).
 

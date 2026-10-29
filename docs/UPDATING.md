@@ -9,7 +9,7 @@ How you update depends on how you installed:
 
 ## Claude Desktop extension
 
-1. Download the new `timetree-mcp-<version>.mcpb` from the [latest release](https://github.com/ehs208/TimeTree-MCP/releases/latest).
+1. Download the new `timetree-mcp-<version>.mcpb` from the [latest release](https://github.com/ODU33104/TimeTree-MCP/releases/latest).
 2. Open the file. Claude Desktop replaces the installed extension.
 3. If Claude Desktop asks for your TimeTree email and password again, enter them.
 
@@ -107,7 +107,7 @@ npm run build
 You can re-run the update steps above from the installation directory, or reinstall:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/ehs208/TimeTree-MCP/main/TimeTree-MCP-install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/ODU33104/TimeTree-MCP/main/TimeTree-MCP-install.sh | bash
 ```
 
 ## Update Notifications
@@ -121,10 +121,10 @@ On startup, the server compares its version with the `version` in `package.json`
 
 ## What's New?
 
-See [CHANGELOG.md](../CHANGELOG.md) for changes in each version. Each version is also published as a [GitHub release](https://github.com/ehs208/TimeTree-MCP/releases) with the Claude Desktop extension attached. Nothing is published to npm.
+See [CHANGELOG.md](../CHANGELOG.md) for changes in each version. Each version is also published as a [GitHub release](https://github.com/ODU33104/TimeTree-MCP/releases) with the Claude Desktop extension attached. Nothing is published to npm.
 
 ## Need Help?
 
 - Check [README.md](../README.md) for general documentation
 - See [MCP_CLIENTS.md](MCP_CLIENTS.md) for client-specific configuration
-- Report issues at https://github.com/ehs208/TimeTree-MCP/issues
+- Report issues at https://github.com/ODU33104/TimeTree-MCP/issues

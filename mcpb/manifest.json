@@ -6,16 +6,16 @@
   "description": "Read and manage your TimeTree calendars, events, memos, and comments from Claude.",
   "long_description": "Ask Claude about your TimeTree calendars: summarize this week's schedule, find conflicts, search past events, add or change events and memos, and see who changed what.\n\n**Unofficial.** This extension is not affiliated with, endorsed by, or supported by TimeTree, Inc. It uses the TimeTree web app's undocumented endpoints, which may change or stop working at any time. Use it with your own personal account only.\n\nYour email and password are sent only to TimeTree to sign in. The session stays in memory and is never written to disk by this extension.",
   "author": {
-    "name": "ehs208",
-    "url": "https://github.com/ehs208"
+    "name": "ODU33104",
+    "url": "https://github.com/ODU33104"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ehs208/TimeTree-MCP.git"
+    "url": "https://github.com/ODU33104/TimeTree-MCP.git"
   },
-  "homepage": "https://github.com/ehs208/TimeTree-MCP",
-  "documentation": "https://github.com/ehs208/TimeTree-MCP#readme",
-  "support": "https://github.com/ehs208/TimeTree-MCP/issues",
+  "homepage": "https://github.com/ODU33104/TimeTree-MCP",
+  "documentation": "https://github.com/ODU33104/TimeTree-MCP#readme",
+  "support": "https://github.com/ODU33104/TimeTree-MCP/issues",
   "icon": "icon.png",
   "server": {
     "type": "node",
