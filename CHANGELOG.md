@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-10-29
+
+### Added
+- `search_events_across_calendars` searches up to 5 selected calendars by date range and keyword.
+- `find_available_slots` suggests free time slots across selected calendars without returning event titles.
+- `detect_event_conflicts` lists overlapping events across selected calendars. All three tools are read-only.
+- `TIMETREE_READ_ONLY=true` turns the server into a read-only server. Only the read-only tools are listed and callable. The default is unchanged: write tools stay available.
+- Remote-transport security policy module (bearer token, origin allow-list, body-size limit, writes off by default). No remote server ships yet.
+
+### Security
+- Authenticated requests are restricted to TimeTree hosts, and tool errors no longer include upstream details.
+- Dependency updates (including `zod` 4) clear every `npm audit` advisory at moderate severity or above.
+
+### Known issues
+- `npm audit` still reports one low-severity advisory in `esbuild`, which the build tool pins. It does not ship in the server at runtime.
+
 ## [0.7.0] - 2026-10-22
 
 ### Added
