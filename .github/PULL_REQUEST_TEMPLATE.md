@@ -1,73 +1,76 @@
 # Pull Request
 
-## Description
+## Purpose and scope
 
-Brief description of the changes in this PR.
+Describe **who benefits** (everyday/mobile users, developers, or both), what changed, and why it is safe. Link to an issue/task where available. If this is a fork of upstream work, name the source PR/commit and preserve attribution.
 
-## Type of Change
+## Change type
 
-- [ ] Bug fix (non-breaking change which fixes an issue)
-- [ ] New feature (non-breaking change which adds functionality)
-- [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)
-- [ ] Documentation update
-- [ ] Refactoring (no functional changes)
-- [ ] Performance improvement
-- [ ] Dependency update
+- [ ] Bug fix / compatibility
+- [ ] User-facing feature
+- [ ] Developer API/tool contract
+- [ ] Security hardening
+- [ ] Documentation / localization
+- [ ] Dependencies / infrastructure
 
-## Related Issue
+## Feature status — choose one
 
-Fixes #(issue number)
+- [ ] Research/design only
+- [ ] Prototype code (not MCP-registered)
+- [ ] MCP-registered but not live-provider validated
+- [ ] Live tested using authorized disposable data (document exact scope)
+- [ ] Proposed for release after all gates pass
 
-## Changes Made
+## Security and data impact
 
-- Change 1
-- Change 2
-- Change 3
+- [ ] No real calendar details, credentials, cookies, access tokens, or user IDs in fixtures, screenshots or logs
+- [ ] Sensitive calendar output is scope-limited; unauthorized calendars denied
+- [ ] Input from events/comments/messages is handled as untrusted content
+- [ ] Changes to write/delete/recurrence scope use explicit preview and authorization
+- [ ] Remote auth/token storage, multi-user isolation and permission changes are described (or N/A)
+- [ ] Provider API rights/terms and undocumented behavior are acknowledged, not overstated
 
-## Testing
+## Reproducible verification evidence
 
-Describe how you tested these changes:
+**Exact commit SHA tested:** `<SHA or NOT RUN>`
 
-- [ ] Tested with MCP Inspector
-- [ ] Tested with Claude Desktop
-- [ ] Tested with Claude Code
-- [ ] Tested with actual TimeTree account (dedicated test calendar; no real data committed)
-- [ ] `npm run verify` passes
-- [ ] Added/updated tests (if applicable)
+**Runtime versions:** Node `<version or NOT RUN>`, npm `<version or NOT RUN>`
 
-### Test Environment
+| Command/check | PASS / FAIL / NOT RUN | Output or evidence link |
+| --- | --- | --- |
+| `npm ci` | | |
+| `npm run typecheck` | | |
+| `npm run build` | | |
+| `npm test` | | |
+| `npm audit --audit-level=high` | | |
+| Security / negative-path tests | | |
+| Manual MCP/mobile/provider smoke test | | |
 
-- **Node.js Version**:
-- **Operating System**:
-- **TimeTree Account**: [Personal/Test account]
+**Do not mark a command PASS unless it was actually executed against this SHA.** If DNS/registry unavailable, mark NOT RUN with the exact blocker. A previous run or a partial green test suite is not an overall green release gate.
 
-## Screenshots (if applicable)
+## Compatibility and UX
 
-Add screenshots to help explain your changes.
+- [ ] New tool names, input/output schema, pagination/completeness and errors documented
+- [ ] Screen-reader-friendly text fallback and concise mobile summary considered
+- [ ] Locale/timezone, ambiguous dates and DST covered (or N/A)
+- [ ] Privacy-by-default sharing and disclosure of fetched-at/source supported (or N/A)
+- [ ] Breaking API/config changes and migrations described (or N/A)
+- [ ] Tests use synthetic fixtures except separately justified authorized smoke checks
 
-## Documentation
+## Change summary and reviewer checklist
 
-- [ ] Updated README.md, README.ko.md, and README.ja.md together (if needed)
-- [ ] Updated COMMANDS.md for tool parameter changes (if needed)
-- [ ] Updated CHANGELOG.md under `[Unreleased]`
-- [ ] Added/updated code comments
-- [ ] Updated type definitions
+Files/modules changed, expected behavior, known limitations and risks:
 
-## Checklist
+- 
+- 
 
-- [ ] My code follows the project's style guidelines
-- [ ] I have performed a self-review of my code
-- [ ] I have commented my code, particularly in hard-to-understand areas
-- [ ] My changes generate no new warnings
-- [ ] I have tested that my changes work correctly
-- [ ] No sensitive data (credentials, session IDs) is exposed
-- [ ] Rate limiting is respected (no API abuse)
-- [ ] "Allow edits by maintainers" is checked (for PRs from forks)
+- [ ] README / release notes are accurate for **this fork** and distinguish prototype from registered functionality
+- [ ] `SECURITY.md` and [release readiness](../docs/engineering/RELEASE-READINESS.md) remain accurate
+- [ ] No GitHub Actions were deliberately triggered during development
+- [ ] This PR does not merge into `main` before a verified final release gate
 
-## Breaking Changes
+## Final decision (maintainer only)
 
-If this PR includes breaking changes, describe them here and how users should update their configuration.
+**GO / NO-GO / NEEDS EVIDENCE:** 
 
-## Additional Notes
-
-Any additional information for reviewers.
+**Reason and risk owner:**
