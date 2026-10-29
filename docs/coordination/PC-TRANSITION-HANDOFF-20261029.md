@@ -1,11 +1,12 @@
-# PC移行・統合引継ぎ書 — 2026-10-29 JST
+# ローカルPC実機検証手順・司令塔向け統合管理メモ — 2026-10-29 JST
 
-> **新しい司令塔／ローカルPC作業の最初の読込先。** この文書は2026-10-29時点のGitHub実査に基づく。実行前にPR・SHA・claims・レビュー・Actionsを再取得すること。既存の [COORDINATOR-HANDOFF](../COORDINATOR-HANDOFF.md) と [QUEUE](../QUEUE.md) も必読。
+> **司令塔は現在のChatGPTセッションが継続担当。PC担当者は実機検証だけを行い、司令塔権限を引き継がない。** この文書は2026-10-29時点のGitHub実査に基づく。実行前にPR・SHA・claims・レビュー・Actionsを再取得すること。既存の [COORDINATOR-HANDOFF](../COORDINATOR-HANDOFF.md) と [QUEUE](../QUEUE.md) も必読。
 
 ## 0. ユーザー決定と最優先事項
 
 - ユーザーは当面スマホで開発を指揮していたが、**Codespacesのスマホ画面が使いづらいため、今後はローカルPCに展開して実行検証する**。
 - ユーザーの懸念: **PRが33件開いたまま、mainのREADMEが初期状態に近い。成果を実際に統合・公開できる状態へ進めたい**。
+- **司令塔は現在のChatGPTセッションから交代しない。** PC担当セッションはGitHubの正確なSHAのチェックアウト、Nodeテスト、ビルド、npm audit、ログ提出のみ担当。PR統合方針、README担当調整、claim配分、マージ判断は引き続き司令塔が行う。
 - 司令塔は新規workerの乱立より、**PCでの実測テスト → 安全なPR統合 → README同期**を優先する。
 - GitHub Actionsの起動、integration/release-candidateへのpush、mainへのマージ、デプロイ、有料契約、実TimeTree認証情報・個人予定の利用は**事前のユーザー承認なしに行わない**。
 - TimeTree非公式フォーク。内部Web APIを公認APIと表現しない。公式モバイルChatGPT接続も未実証。
@@ -69,10 +70,10 @@ PRがDraftなのは、未検証・未統合の試作や報告を含むため。*
 - **機能:** #33の `calendarId` provenance、#27の完全snapshot/明示同意、#26のroster検証・匿名化、#21のDST/recurrence、#22の情報漏洩・UID/折返しを統合前に解決。
 - **README:** mainは上流リンク中心。#23はwork/docs-brandがbaseで、mainへ直接反映されない。DOCS-BRANDの作業を尊重し、main向けPRを調整する。
 
-## 5. 次の司令塔への実行指示
+## 5. 現司令塔の継続タスク（PC担当には委譲しない）
 
-1. 最新PR/claims/reviews/reports/Actionsを再読し、ユーザーに現在の進捗を短く報告。
-2. PCで安全にソース取得できたら、**まずPR #31、#33のexact-SHAテスト**を実行。次に#21/#22/#24–#27、基盤/統合ブランチの回帰テストと監査。
+1. **現司令塔が継続して**最新PR/claims/reviews/reports/Actionsを再読し、ユーザーに現在の進捗を短く報告。
+2. **PC担当者にのみ依頼:** 安全にソース取得できたら、まずPR #31、#33のexact-SHAテストを実行。次に#21/#22/#24–#27、基盤/統合ブランチの回帰テストと監査。結果をPR/SHA/コマンド/ログ付きで司令塔へ返す。PC担当者はREADME・統合・マージを担当しない。
 3. DOCS-BRAND担当のREADMEをmain向けに整えるため、**既存担当への具体的依頼**を先行。未完成機能を実装済みと表現しない。
 4. テスト結果を根拠にPRを `merge-ready` / `fix-required` / `blocked` / `superseded` に分類し、統合順序を提示。
 5. mainマージ・Actions起動は必ずユーザーの個別承認を得る。自動巡回は停止中、勝手に再開しない。
