@@ -1,6 +1,6 @@
 {
   "name": "timetree-mcp",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "Unofficial TimeTree MCP Server for personal use - access and manage TimeTree calendar data with MCP-compatible AI clients",
   "private": true,
   "type": "module",
@@ -28,7 +28,7 @@
   "license": "MIT",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.31.0",
-    "zod": "^3.24.1"
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@types/node": "^26.6.4",
