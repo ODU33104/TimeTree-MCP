@@ -65,7 +65,7 @@ export class TimeTreeAuthManager {
         logger.warn('CSRF token not found in HTML - write operations may fail');
       }
     } catch (error) {
-      logger.error('Failed to extract CSRF token', { error });
+      logger.warn('Failed to extract CSRF token');
       // Don't throw - allow read-only operations to continue
     }
   }
@@ -74,7 +74,7 @@ export class TimeTreeAuthManager {
    * Authenticate with TimeTree and obtain session cookie
    */
   async authenticate(): Promise<void> {
-    logger.info('Authenticating with TimeTree', { email: this.email });
+    logger.info('Authenticating with TimeTree');
 
     const uuid = this.generateUUID();
     const authRequest: AuthRequest = {
@@ -118,7 +118,7 @@ export class TimeTreeAuthManager {
       }
 
       throw new AuthenticationError(
-        `Authentication failed: ${(error as Error).message}`
+        'Authentication failed; check credentials and connection'
       );
     }
   }

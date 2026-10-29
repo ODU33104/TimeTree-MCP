@@ -87,17 +87,30 @@ export class HttpClient {
   ): Promise<T> {
     const { method = 'GET', body, headers, timeout = this.defaultTimeout, requiresCsrf = false } = options;
 
+    // Credentials must never be sent to an arbitrary or redirected host.
+    let parsedUrl: URL;
+    try {
+      parsedUrl = new URL(url);
+    } catch {
+      throw new Error('Invalid TimeTree API URL');
+    }
+    if (parsedUrl.protocol !== 'https:' || parsedUrl.hostname !== 'timetreeapp.com' ||
+        parsedUrl.port || parsedUrl.username || parsedUrl.password) {
+      throw new Error('Untrusted TimeTree API origin');
+    }
+
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeout);
 
     try {
-      logger.debug(`HTTP ${method} ${url}`);
+      logger.debug(`HTTP ${method}`);
 
       const response = await fetch(url, {
         method,
         headers: this.buildHeaders(headers, requiresCsrf),
         body: body ? JSON.stringify(body) : undefined,
         signal: controller.signal,
+        redirect: 'error', // Never forward credentials across redirects.
       });
 
       clearTimeout(timeoutId);
@@ -121,17 +134,28 @@ export class HttpClient {
 
       // Handle non-2xx responses
       if (!response.ok) {
-        const errorBody = await response.text();
-        logger.error(`HTTP ${response.status} ${response.statusText}`, {
-          url,
-          status: response.status,
-          body: errorBody,
-        });
+        logger.error(`HTTP request failed with status ${response.status}`);
+        // Preserve only the numeric API error code used for session renewal.
+        // Never keep arbitrary private response data on the thrown exception.
+        let code: number | undefined;
+        try {
+          const raw = await response.text();
+          const parsed: unknown = JSON.parse(raw);
+          if (parsed && typeof parsed === 'object' && 'error' in parsed) {
+            const errorField = (parsed as { error?: unknown }).error;
+            if (errorField && typeof errorField === 'object' && 'code' in errorField) {
+              const candidate = (errorField as { code?: unknown }).code;
+              if (typeof candidate === 'number' && Number.isSafeInteger(candidate)) code = candidate;
+            }
+          }
+        } catch {
+          // Invalid or non-JSON response: no code.
+        }
 
         throw new HttpError(
           response.status,
           `HTTP ${response.status}: ${response.statusText}`,
-          errorBody
+          code === undefined ? undefined : JSON.stringify({ error: { code } })
         );
       }
 
@@ -150,12 +174,12 @@ export class HttpClient {
       }
 
       if ((error as any).name === 'AbortError') {
-        logger.error('Request timeout', { url, timeout });
+        logger.error('Request timeout', { timeout });
         throw new Error(`Request timeout after ${timeout}ms`);
       }
 
-      logger.error('Network error', { url, error });
-      throw new Error(`Network error: ${(error as Error).message}`);
+      logger.error('Network error');
+      throw new Error('Network request failed');
     }
   }
 

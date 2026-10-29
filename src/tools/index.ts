@@ -3,6 +3,7 @@
  * Exports all MCP tools for the TimeTree server.
  */
 
+import { createSearchAcrossCalendarsTool, createFindAvailableSlotsTool, createDetectEventConflictsTool } from './ux-read-tools.js';
 import type { TimeTreeAPIClient } from '../client/api.js';
 import { createCreateCalendarTool, createGetCurrentUserTool, createListCalendarsTool } from './calendar-tools.js';
 import {
@@ -44,6 +45,9 @@ export function registerTools(apiClient: TimeTreeAPIClient) {
     createCreateCalendarTool(apiClient),
     createGetCurrentUserTool(apiClient),
     createGetEventsTool(apiClient),
+    createSearchAcrossCalendarsTool(apiClient),
+    createFindAvailableSlotsTool(apiClient),
+    createDetectEventConflictsTool(apiClient),
     createGetUpdatedEventsTool(apiClient),
     createCreateEventTool(apiClient),
     createUpdateEventTool(apiClient),
