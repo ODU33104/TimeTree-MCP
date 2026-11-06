@@ -57,6 +57,6 @@ export function skippedItemsFields(skipped: number): { skipped_items?: number; s
     skipped_items: skipped,
     skipped_items_note:
       `${skipped} item(s) returned by TimeTree could not be read and were left out of this result. ` +
-      `TimeTree から読めなかった項目を ${skipped} 件除外した。`,
+      `TimeTree から読めなかった項目を ${skipped} 件除外しました。`,
   };
 }
