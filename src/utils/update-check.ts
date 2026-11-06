@@ -70,16 +70,23 @@ export function formatUpdateNotice(
   latestVersion: string,
   installSource: string | undefined = process.env.TIMETREE_INSTALL_SOURCE
 ): string {
-  const howTo =
-    installSource === 'mcpb'
-      ? [
-          `To update: download the latest timetree-mcp .mcpb file from ${RELEASES_URL}`,
-          'and open it to reinstall the Claude Desktop extension.',
-        ]
-      : [
-          'To update: re-run the TimeTree MCP installer, or run `git pull origin main && npm ci && npm run build`',
-          'in the TimeTree-MCP folder, then restart the MCP client.',
-        ];
+  let howTo: string[];
+  if (installSource === 'mcpb') {
+    howTo = [
+      `To update: download the latest timetree-mcp .mcpb file from ${RELEASES_URL}`,
+      'and open it to reinstall the Claude Desktop extension.',
+    ];
+  } else if (installSource === 'npx') {
+    howTo = [
+      `To update: change the release tag in the install command (github:ODU33104/TimeTree-MCP#vX.Y.Z) to v${latestVersion},`,
+      `for example by running \`claude mcp remove timetree\` and adding it again, then restart Claude Code. Releases: ${RELEASES_URL}`,
+    ];
+  } else {
+    howTo = [
+      'To update: re-run the TimeTree MCP installer, or run `git pull origin main && npm ci && npm run build`',
+      'in the TimeTree-MCP folder, then restart the MCP client.',
+    ];
+  }
   return [
     `[TimeTree MCP update available: ${currentVersion} -> ${latestVersion}]`,
     'Please tell the user about this update in your reply.',

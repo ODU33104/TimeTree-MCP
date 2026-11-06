@@ -27,6 +27,35 @@ All clients use the same basic configuration format:
 | `TIMETREE_UPDATE_CHECK` | `true` | Set to `false` to skip the startup check for a newer version (see [UPDATING.md](UPDATING.md#update-notifications)) |
 | `TIMETREE_READ_ONLY` | `false` | Set to `true` to list and allow only the 15 read-only tools. In the Claude Desktop extension, use the "Read-only mode" checkbox instead |
 
+## Claude Code: install without cloning
+
+Claude Code can run the server straight from GitHub, with no clone or build. Node.js 22 or later is required. The first start downloads and builds the package, which can take a few minutes, so raise Claude Code's startup timeout with `MCP_TIMEOUT` (milliseconds) for that first start.
+
+Windows (PowerShell). The password is typed at a hidden prompt and stays in the shell session; the config file only stores `${TIMETREE_EMAIL}` and `${TIMETREE_PASSWORD}` references:
+
+```powershell
+$env:TIMETREE_EMAIL = 'your-email@example.com'
+$secure = Read-Host 'TimeTree password' -AsSecureString
+$env:TIMETREE_PASSWORD = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($secure))
+$env:MCP_TIMEOUT = '300000'
+claude mcp add --scope user timetree -e 'TIMETREE_EMAIL=${TIMETREE_EMAIL}' -e 'TIMETREE_PASSWORD=${TIMETREE_PASSWORD}' -e 'TIMETREE_INSTALL_SOURCE=npx' -- npx -y 'github:ODU33104/TimeTree-MCP#v0.9.0'
+```
+
+Start Claude Code from a shell where these variables are set. Otherwise the server stops with "Missing environment variables". To remove the server: `claude mcp remove timetree --scope user`.
+
+`#v0.9.0` pins the release tag, so the server code does not change until you change the tag. To update, remove the server (`claude mcp remove timetree --scope user`) and add it again with the newest tag from the [releases page](https://github.com/ODU33104/TimeTree-MCP/releases). Avoid `#main`: it would run whatever is on the main branch each time the server starts.
+
+macOS and Linux (bash or zsh):
+
+```bash
+export TIMETREE_EMAIL='your-email@example.com'
+read -rs -p 'TimeTree password: ' TIMETREE_PASSWORD; echo; export TIMETREE_PASSWORD
+export MCP_TIMEOUT=300000
+claude mcp add --scope user timetree -e 'TIMETREE_EMAIL=${TIMETREE_EMAIL}' -e 'TIMETREE_PASSWORD=${TIMETREE_PASSWORD}' -e 'TIMETREE_INSTALL_SOURCE=npx' -- npx -y 'github:ODU33104/TimeTree-MCP#v0.9.0'
+```
+
+The bash form is the same command with the shell syntax changed; it has not been run on macOS or Linux.
+
 ## Supported Clients
 
 <details>

@@ -1,0 +1,14 @@
+{
+  "name": "timetree-mcp",
+  "owner": {
+    "name": "ODU33104"
+  },
+  "description": "Unofficial TimeTree MCP server (not affiliated with TimeTree) for Claude Code",
+  "plugins": [
+    {
+      "name": "timetree",
+      "source": "./plugin",
+      "description": "Read and manage TimeTree calendars, events, memos, labels and members through the timetree-mcp server (unofficial)"
+    }
+  ]
+}

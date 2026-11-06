@@ -33,3 +33,12 @@ test('update notice uses fork URLs', () => {
   assert.ok(notice.includes(RELEASES_URL));
   assert.ok(notice.includes(CHANGELOG_URL));
 });
+
+test('update notice tells npx installs to change the release tag, not to git pull', () => {
+  const notice = formatUpdateNotice('0.9.0', '0.9.1', 'npx');
+  assert.match(notice, /#vX\.Y\.Z/);
+  assert.match(notice, /v0\.9\.1/);
+  assert.doesNotMatch(notice, /git pull/);
+  assert.match(formatUpdateNotice('0.9.0', '0.9.1', 'mcpb'), /\.mcpb/);
+  assert.match(formatUpdateNotice('0.9.0', '0.9.1', undefined), /git pull/);
+});
