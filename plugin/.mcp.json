@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "timetree": {
+      "command": "npx",
+      "args": ["-y", "github:ODU33104/TimeTree-MCP#main"],
+      "env": {
+        "TIMETREE_EMAIL": "${user_config.email}",
+        "TIMETREE_PASSWORD": "${user_config.password}"
+      }
+    }
+  }
+}
