@@ -36,7 +36,8 @@ export type EventAttachmentInput = z.infer<typeof EventAttachmentInputSchema>;
 export const CalendarUserSchema = z.object({
   id: z.number(),
   user_id: z.number(),
-  name: z.string(),
+  // TimeTree returns null for some members (observed on real accounts); one such member must not fail the whole list.
+  name: z.string().nullable().optional(),
   role: z.number().optional(), // 1 = owner, 0 = member
   deactivated_at: z.number().nullable().optional(),
   birth_day: z.number().optional().nullable(),

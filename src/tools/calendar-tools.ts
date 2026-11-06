@@ -57,11 +57,11 @@ export function createListCalendarsTool(apiClient: TimeTreeAPIClient) {
         const calendars = await apiClient.getCalendars();
 
         const formattedCalendars = calendars.map((cal) => {
-          // Filter active users only (deactivated_at is null)
+          // Active users only (deactivated_at is null). Members without a name cannot be used to pick a calendar, so they are left out.
           const activeUsers = cal.calendar_users
-            ?.filter((user) => !user.deactivated_at)
+            ?.filter((user) => !user.deactivated_at && typeof user.name === 'string' && user.name !== '')
             .map((user) => ({
-              name: user.name,
+              name: user.name as string,
               role: user.role === 1 ? 'owner' : 'member',
             })) || [];
 
