@@ -1,55 +1,41 @@
 ---
 name: Bug Report
-about: Report a bug or issue with TimeTree MCP Server
+about: Something does not work with TimeTree MCP
 title: '[BUG] '
 labels: bug
 assignees: ''
 ---
 
-## ⚠️ Security Notice
+**Do not put your TimeTree email, password, cookies, or real event details in this issue.**
+Hide names, calendar titles, and event contents in logs and screenshots.
 
-**DO NOT** include your TimeTree credentials (email/password) in this issue!
+## What happened
 
-## Bug Description
+A short description of the problem, and what you expected instead.
 
-A clear and concise description of the bug.
+## Steps to reproduce
 
-## Steps to Reproduce
-
-1. Go to '...'
-2. Run command '...'
-3. See error
-
-## Expected Behavior
-
-What you expected to happen.
-
-## Actual Behavior
-
-What actually happened.
+1. What you asked your AI assistant (example: "list my calendars")
+2. What happened
 
 ## Environment
 
-- **TimeTree MCP Version**: [e.g., 0.3.0]
-- **Node.js Version**: [run `node --version`]
-- **Operating System**: [e.g., macOS 14.0, Ubuntu 22.04, Windows 11]
-- **Claude Client**: [e.g., Claude Desktop, Claude Code]
+- **TimeTree MCP version**: [for example 0.8.2. If the `check_connection` tool is available, its output is the quickest way to get this]
+- **How you installed it**: [Claude Desktop extension (.mcpb) / git clone]
+- **Client**: [Claude Desktop, Claude Code, Codex, Cursor, ...]
+- **Operating system**: [for example Windows 11, macOS 15]
+- **Node.js version** (git clone only): [`node --version`]
 
-## Logs
+## Error message or logs
 
-Please include relevant log output (with sensitive data removed):
+Paste the error text the assistant showed, or the relevant lines from the logs, with private details removed.
+For the Claude Desktop extension, open Settings, then Extensions, then TimeTree (Unofficial) to find its logs.
 
 ```
-[Paste logs here]
+[Paste here]
 ```
-
-## Additional Context
-
-Any other context about the problem (screenshots, related issues, etc.)
 
 ## Checklist
 
-- [ ] I have checked existing issues for duplicates
-- [ ] I have removed all sensitive data from this report
-- [ ] I am using the latest version of TimeTree MCP Server
-- [ ] I have included relevant log output
+- [ ] I removed all personal data from this report
+- [ ] I am using the latest release: https://github.com/ODU33104/TimeTree-MCP/releases/latest
