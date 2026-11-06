@@ -48,6 +48,12 @@ const nullable = (type: string) => ({ type: [type, 'null'] });
 
 export const ISO_DATE_TIME = { type: 'string', description: 'ISO 8601 date-time (UTC)' } as const;
 
+/** Present on list results only when TimeTree items were left out (see skippedItemsFields). */
+export const SKIPPED_ITEMS_OUTPUT_PROPERTIES = {
+  skipped_items: { type: 'number', description: 'Number of TimeTree items left out of this result because they could not be read' },
+  skipped_items_note: { type: 'string', description: 'Short note (English and Japanese) about the left-out items' },
+} as const;
+
 /** An event as returned by the write tools. */
 export const EVENT_OUTPUT_SCHEMA = {
   type: 'object',
