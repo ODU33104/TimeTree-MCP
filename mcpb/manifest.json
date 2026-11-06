@@ -26,6 +26,7 @@
       "env": {
         "TIMETREE_EMAIL": "${user_config.email}",
         "TIMETREE_PASSWORD": "${user_config.password}",
+        "TIMETREE_READ_ONLY": "${user_config.read_only}",
         "TIMETREE_INSTALL_SOURCE": "mcpb"
       }
     }
@@ -89,6 +90,13 @@
       "description": "Sent only to TimeTree to sign in.",
       "sensitive": true,
       "required": true
+    },
+    "read_only": {
+      "type": "boolean",
+      "title": "読み取り専用で使う (Read-only mode)",
+      "description": "When on, events cannot be added, changed, or deleted. オンにすると予定の追加・変更・削除ができなくなります。",
+      "default": false,
+      "required": false
     }
   }
 }
