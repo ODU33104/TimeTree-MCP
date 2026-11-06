@@ -374,8 +374,8 @@ test('create_calendar requires explicit purpose and returns only documented fiel
     {name: 'Sample', purpose: 'unsupported-input-value'}, {name: 'Sample', purpose: 'work', extra: 'hidden'}]) {
     const result = await tool.handler(args);
     assert.equal(result.isError, true);
-    assert.equal(parseToolText(result).error, 'Invalid calendar input');
-    assert.ok(parseToolText(result).issues.length);
+    assert.match(result.content[0].text, /^\[INVALID_INPUT\]/);
+    assert.match(result.content[0].text, /引数が不正です（/);
     assert.equal(JSON.stringify(result).includes('unsupported-input-value'), false);
   }
   assert.equal(calls.length, 1);
@@ -391,8 +391,9 @@ test('create_calendar distinguishes auth and uncertain failures without forwardi
     const result = await tool.handler({name: 'Sample', purpose: 'work'});
     assert.equal(result.isError, true);
     assert.equal(JSON.stringify(result).includes('upstream detail'), false);
-    assert.equal(parseToolText(result).error, error instanceof AuthenticationError || error.statusCode === 401 || error.statusCode === 403
-      ? 'Authentication failed' : 'Calendar creation failed. Check existing calendars before retrying.');
+    const isAuth = error instanceof AuthenticationError || error.statusCode === 401 || error.statusCode === 403;
+    assert.ok(result.content[0].text.startsWith(isAuth ? '[AUTH_FAILED]\n' : '[UNKNOWN]\n'));
+    if (!isAuth) assert.match(result.content[0].text, /list_calendars/);
   }
 });
 
@@ -413,9 +414,8 @@ test('create_calendar treats response validation errors as uncertain creation ou
 
     assert.equal(requests, 1);
     assert.equal(result.isError, true);
-    assert.deepEqual(parseToolText(result), {
-      error: 'Calendar creation failed. Check existing calendars before retrying.',
-    });
+    assert.match(result.content[0].text, /^\[UPSTREAM_FORMAT\]/);
+    assert.match(result.content[0].text, /list_calendars/);
   }
 });
 
@@ -441,7 +441,7 @@ test('create_calendar reports persistent TimeTree auth rejections as authenticat
     assert.equal(requests, 2);
     assert.equal(signIns, 1);
     assert.equal(result.isError, true);
-    assert.deepEqual(parseToolText(result), {error: 'Authentication failed'});
+    assert.match(result.content[0].text, /^\[AUTH_FAILED\]/);
     assert.equal(JSON.stringify(result).includes('upstream detail'), false);
   }
 });

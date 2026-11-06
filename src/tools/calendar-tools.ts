@@ -5,8 +5,8 @@
 
 import { z } from 'zod';
 import type { TimeTreeAPIClient } from '../client/api.js';
-import { AuthenticationError } from '../client/auth.js';
 import { logger } from '../utils/logger.js';
+import { toolErrorResult, InvalidInputError } from '../utils/mcp-errors.js';
 import { ADDITIVE, READ_ONLY, SKIPPED_ITEMS_OUTPUT_PROPERTIES } from './shared-schemas.js';
 import { skippedItemsFields, type SkipTally } from '../utils/lenient-list.js';
 
@@ -96,22 +96,7 @@ export function createListCalendarsTool(apiClient: TimeTreeAPIClient) {
       } catch (error) {
         logger.error('Tool: list_calendars failed', { error });
 
-        return {
-          content: [
-            {
-              type: 'text',
-              text: JSON.stringify(
-                {
-                  error: 'Failed to fetch calendars',
-                  message: (error as Error).message,
-                },
-                null,
-                2
-              ),
-            },
-          ],
-          isError: true,
-        };
+        return toolErrorResult(error);
       }
     },
   };
@@ -149,17 +134,7 @@ export function createCreateCalendarTool(apiClient: TimeTreeAPIClient) {
     handler: async (args: unknown) => {
       const parsed = CreateCalendarInputSchema.safeParse(args);
       if (!parsed.success) {
-        const issues = parsed.error.issues.map((issue) => ({
-          field: issue.path[0] === 'name' || issue.path[0] === 'purpose' ? issue.path[0] : 'input',
-          reason: issue.code === 'too_small' ? 'Must contain at least 1 character'
-            : issue.code === 'too_big' ? 'Must contain at most 20 characters'
-            : issue.code === 'invalid_value' ? 'Choose a supported calendar purpose'
-            : issue.code === 'unrecognized_keys' ? 'Only name and purpose are allowed'
-            : 'Required field with a supported type and value',
-        }));
-        return { content: [{ type: 'text', text: JSON.stringify({
-          error: 'Invalid calendar input', issues,
-        }) }], isError: true };
+        return toolErrorResult(new InvalidInputError(parsed.error.issues));
       }
       // Response validation can fail after the calendar was created; keep it out of input errors.
       try {
@@ -168,17 +143,8 @@ export function createCreateCalendarTool(apiClient: TimeTreeAPIClient) {
           id: String(calendar.id), name: calendar.name, alias_code: calendar.alias_code ?? null,
         }) }] };
       } catch (error) {
-        const statusCode = error && typeof error === 'object' && 'statusCode' in error
-          ? error.statusCode : undefined;
-        if (error instanceof AuthenticationError || statusCode === 401 || statusCode === 403) {
-          return { content: [{ type: 'text', text: JSON.stringify({
-            error: 'Authentication failed',
-          }) }], isError: true };
-        }
         logger.error('Tool: create_calendar failed', { error });
-        return { content: [{ type: 'text', text: JSON.stringify({
-          error: 'Calendar creation failed. Check existing calendars before retrying.',
-        }) }], isError: true };
+        return toolErrorResult(error, { writeMayHaveSucceeded: true });
       }
     },
   };
@@ -211,10 +177,7 @@ export function createGetCurrentUserTool(apiClient: TimeTreeAPIClient) {
         };
       } catch (error) {
         logger.error('Tool: get_current_user failed', { error });
-        return {
-          content: [{ type: 'text', text: JSON.stringify({ error: 'Failed to fetch current user', message: (error as Error).message }, null, 2) }],
-          isError: true,
-        };
+        return toolErrorResult(error);
       }
     },
   };

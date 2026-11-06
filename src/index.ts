@@ -17,7 +17,7 @@ import { TimeTreeAuthManager } from './client/auth.js';
 import { TimeTreeAPIClient } from './client/api.js';
 import { registerTools, toolResult } from './tools/index.js';
 import { logger, summarizeToolArguments } from './utils/logger.js';
-import { safeToolErrorResult } from './utils/mcp-errors.js';
+import { toolErrorResult } from './utils/mcp-errors.js';
 import { isToolAllowed } from './utils/tool-access.js';
 import { SERVER_VERSION as VERSION } from './config/config.js';
 import { fetchNewerVersion, formatUpdateNotice } from './utils/update-check.js';
@@ -150,7 +150,7 @@ async function main() {
       return { ...result, content: [...result.content, { type: 'text', text: notice }] };
     } catch (error) {
       logger.error('Tool execution failed', { name, error });
-      return safeToolErrorResult();
+      return toolErrorResult(error);
     }
   });
 

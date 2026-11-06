@@ -16,6 +16,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `check_connection` reports in one call whether sign-in to TimeTree works, the server version, whether an update is available, and whether read-only mode is on. It returns the next step to take when something fails. It is read-only and works in read-only mode.
 - The Claude Desktop extension has a "Read-only mode" checkbox (off by default) that sets `TIMETREE_READ_ONLY`, so only the read-only tools are listed and callable.
 
+### Changed
+- Failed tool calls now start with a category code and give a bilingual next step (`[AUTH_FAILED]`, `[UPSTREAM_FORMAT]`, `[NETWORK]`, `[RATE_LIMITED]`, `[INVALID_INPUT]`, `[NOT_FOUND]`, `[UNKNOWN]`) instead of raw exception text. Responses no longer include raw TimeTree response data, validation issue dumps, or argument values; the detail stays in the server log. `[UPSTREAM_FORMAT]` names only the response field path and the version to report in the issue tracker.
+
 ## [0.8.2] - 2026-11-06
 
 ### Changed

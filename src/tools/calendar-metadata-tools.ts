@@ -5,8 +5,8 @@
 
 import { z } from 'zod';
 import type { TimeTreeAPIClient } from '../client/api.js';
-import { InvalidCalendarError, TimeTreeAPIError } from '../client/api.js';
 import { logger } from '../utils/logger.js';
+import { parseToolInput, toolErrorResult, InvalidArgumentError } from '../utils/mcp-errors.js';
 import {
   ADDITIVE,
   CALENDAR_ID_JSON_SCHEMA,
@@ -83,46 +83,6 @@ function formatVirtualMember(member: CalendarVirtualUser, calendarId: number) {
   };
 }
 
-function errorContent(error: string, message: string, details?: unknown) {
-  return {
-    content: [
-      {
-        type: 'text',
-        text: JSON.stringify(
-          {
-            error,
-            message,
-            ...(details !== undefined && { details }),
-          },
-          null,
-          2
-        ),
-      },
-    ],
-    isError: true,
-  };
-}
-
-function metadataError(error: unknown, action: string) {
-  if (error instanceof InvalidCalendarError) {
-    return errorContent('Invalid calendar', 'Calendar not found. Please use list_calendars to get valid calendar IDs.');
-  }
-
-  if (error instanceof TimeTreeAPIError && error.statusCode === 403) {
-    return errorContent('Authentication failed', 'CSRF token missing or invalid. Please try again.');
-  }
-
-  if (error instanceof TimeTreeAPIError && error.statusCode === 404) {
-    return errorContent('Not found', error.message);
-  }
-
-  if ((error as { name?: string }).name === 'ZodError') {
-    return errorContent('Invalid input', `Please provide valid data to ${action}`, (error as { errors?: unknown }).errors);
-  }
-
-  return errorContent(`Failed to ${action}`, (error as Error).message);
-}
-
 export function createGetCalendarLabelsTool(apiClient: TimeTreeAPIClient) {
   return {
     name: 'get_calendar_labels',
@@ -144,7 +104,7 @@ export function createGetCalendarLabelsTool(apiClient: TimeTreeAPIClient) {
     },
     handler: async (args: unknown) => {
       try {
-        const input = GetCalendarMetadataInputSchema.parse(args);
+        const input = parseToolInput(GetCalendarMetadataInputSchema, args);
         logger.info('Tool: get_calendar_labels called', { calendar_id: input.calendar_id });
 
         const labels = await apiClient.getCalendarLabels(input.calendar_id.toString());
@@ -173,7 +133,7 @@ export function createGetCalendarLabelsTool(apiClient: TimeTreeAPIClient) {
         };
       } catch (error) {
         logger.error('Tool: get_calendar_labels failed', { error });
-        return metadataError(error, 'get calendar labels');
+        return toolErrorResult(error);
       }
     },
   };
@@ -218,7 +178,7 @@ export function createUpdateCalendarLabelsTool(apiClient: TimeTreeAPIClient) {
     },
     handler: async (args: unknown) => {
       try {
-        const input = UpdateCalendarLabelsInputSchema.parse(args);
+        const input = parseToolInput(UpdateCalendarLabelsInputSchema, args);
         logger.info('Tool: update_calendar_labels called', {
           calendar_id: input.calendar_id,
           label_ids: input.labels.map((label) => label.id),
@@ -251,7 +211,7 @@ export function createUpdateCalendarLabelsTool(apiClient: TimeTreeAPIClient) {
         };
       } catch (error) {
         logger.error('Tool: update_calendar_labels failed', { error });
-        return metadataError(error, 'update calendar labels');
+        return toolErrorResult(error);
       }
     },
   };
@@ -298,7 +258,7 @@ export function createGetCalendarMembersTool(apiClient: TimeTreeAPIClient) {
     },
     handler: async (args: unknown) => {
       try {
-        const input = GetCalendarMetadataInputSchema.parse(args);
+        const input = parseToolInput(GetCalendarMetadataInputSchema, args);
         logger.info('Tool: get_calendar_members called', { calendar_id: input.calendar_id });
 
         const tally: SkipTally = { skipped: 0 };
@@ -332,7 +292,7 @@ export function createGetCalendarMembersTool(apiClient: TimeTreeAPIClient) {
         };
       } catch (error) {
         logger.error('Tool: get_calendar_members failed', { error });
-        return metadataError(error, 'get calendar members');
+        return toolErrorResult(error);
       }
     },
   };
@@ -366,7 +326,7 @@ export function createGetCalendarVirtualMembersTool(apiClient: TimeTreeAPIClient
     },
     handler: async (args: unknown) => {
       try {
-        const input = GetCalendarMetadataInputSchema.parse(args);
+        const input = parseToolInput(GetCalendarMetadataInputSchema, args);
         logger.info('Tool: get_calendar_virtual_members called', { calendar_id: input.calendar_id });
 
         const tally: SkipTally = { skipped: 0 };
@@ -394,7 +354,7 @@ export function createGetCalendarVirtualMembersTool(apiClient: TimeTreeAPIClient
         };
       } catch (error) {
         logger.error('Tool: get_calendar_virtual_members failed', { error });
-        return metadataError(error, 'get calendar virtual members');
+        return toolErrorResult(error);
       }
     },
   };
@@ -473,7 +433,7 @@ export function createCreateVirtualMemberTool(apiClient: TimeTreeAPIClient) {
     },
     handler: async (args: unknown) => {
       try {
-        const input = CreateVirtualMemberInputSchema.parse(args);
+        const input = parseToolInput(CreateVirtualMemberInputSchema, args);
         logger.info('Tool: create_virtual_member called', { calendar_id: input.calendar_id });
 
         const member = await apiClient.createVirtualUser(input.calendar_id.toString(), virtualUserInput(input));
@@ -484,7 +444,7 @@ export function createCreateVirtualMemberTool(apiClient: TimeTreeAPIClient) {
         });
       } catch (error) {
         logger.error('Tool: create_virtual_member failed', { error });
-        return metadataError(error, 'create virtual member');
+        return toolErrorResult(error);
       }
     },
   };
@@ -509,10 +469,10 @@ export function createUpdateVirtualMemberTool(apiClient: TimeTreeAPIClient) {
     },
     handler: async (args: unknown) => {
       try {
-        const input = UpdateVirtualMemberInputSchema.parse(args);
+        const input = parseToolInput(UpdateVirtualMemberInputSchema, args);
         const changes = virtualUserInput(input);
         if (Object.keys(changes).length === 0) {
-          return errorContent('Invalid input', 'Provide at least one field to change.');
+          return toolErrorResult(new InvalidArgumentError('fields', '変更する項目を 1 つ以上指定してください', 'provide at least one field to change'));
         }
         logger.info('Tool: update_virtual_member called', { calendar_id: input.calendar_id });
 
@@ -528,7 +488,7 @@ export function createUpdateVirtualMemberTool(apiClient: TimeTreeAPIClient) {
         });
       } catch (error) {
         logger.error('Tool: update_virtual_member failed', { error });
-        return metadataError(error, 'update virtual member');
+        return toolErrorResult(error);
       }
     },
   };
@@ -560,7 +520,7 @@ export function createDeleteVirtualMemberTool(apiClient: TimeTreeAPIClient) {
     },
     handler: async (args: unknown) => {
       try {
-        const input = DeleteVirtualMemberInputSchema.parse(args);
+        const input = parseToolInput(DeleteVirtualMemberInputSchema, args);
         logger.info('Tool: delete_virtual_member called', { calendar_id: input.calendar_id });
 
         await apiClient.deleteVirtualUser(input.calendar_id.toString(), input.virtual_member_uuid);
@@ -571,7 +531,7 @@ export function createDeleteVirtualMemberTool(apiClient: TimeTreeAPIClient) {
         });
       } catch (error) {
         logger.error('Tool: delete_virtual_member failed', { error });
-        return metadataError(error, 'delete virtual member');
+        return toolErrorResult(error);
       }
     },
   };
