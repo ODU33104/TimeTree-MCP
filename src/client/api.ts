@@ -745,6 +745,11 @@ export class TimeTreeAPIClient {
     return new TimeTreeAPIError(`Failed to ${action}: ${getErrorMessage(error)}`, getStatusCode(error));
   }
 
+  /** Sign in if no session is held (rate limited). Throws when TimeTree rejects the credentials. */
+  async signIn(): Promise<void> {
+    await this.ensureAuthenticated();
+  }
+
   /** The signed-in TimeTree user. */
   async getCurrentUser(): Promise<CurrentUser> {
     await this.ensureAuthenticated();

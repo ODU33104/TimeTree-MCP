@@ -3,6 +3,7 @@
  * Only explicitly allowlisted tools may run; newly added tools default to denied.
  */
 const READ_ONLY_TOOLS = new Set([
+  'check_connection',
   'list_calendars',
   'get_current_user',
   'get_events',

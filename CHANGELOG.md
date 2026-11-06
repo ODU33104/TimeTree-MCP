@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- `check_connection` reports in one call whether sign-in to TimeTree works, the server version, whether an update is available, and whether read-only mode is on. It returns the next step to take when something fails. It is read-only and works in read-only mode.
+
 ## [0.8.2] - 2026-11-06
 
 ### Changed
