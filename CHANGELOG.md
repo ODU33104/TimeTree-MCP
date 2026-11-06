@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Lists no longer fail as a whole when one TimeTree item does not match the expected shape. `list_calendars`, `get_events`, `get_updated_events`, `list_memos`, `list_event_comments`, `get_calendar_members`, and `get_calendar_virtual_members` return the valid items and leave out the rest. A calendar with one malformed member keeps its other members.
 - When items are left out, these tools add `skipped_items` (the count) and `skipped_items_note` to the result. Results with nothing left out are unchanged. The skipped items are logged by field path only, without their values.
 - The `get_calendar_members` output schema now allows `name` to be `null`, matching what the tool already returns for a member TimeTree does not name.
+- `search_events_across_calendars`, `find_available_slots`, and `detect_event_conflicts` no longer drop unreadable events silently. They report `skipped_items` and `skipped_items_note` when events are left out, and the free-slot and conflict tools also say that their answer may not be accurate.
 
 ### Added
 - `check_connection` reports in one call whether sign-in to TimeTree works, the server version, whether an update is available, and whether read-only mode is on. It returns the next step to take when something fails. It is read-only and works in read-only mode.

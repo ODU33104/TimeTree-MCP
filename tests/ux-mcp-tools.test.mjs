@@ -3,6 +3,9 @@ import assert from 'node:assert/strict';
 import { createSearchAcrossCalendarsTool, createFindAvailableSlotsTool,
   createDetectEventConflictsTool } from '../.test-dist/tools/ux-read-tools.js';
 import { isToolAllowed } from '../.test-dist/utils/tool-access.js';
+import { AjvJsonSchemaValidator } from '@modelcontextprotocol/sdk/validation/ajv';
+import { TimeTreeAPIClient } from '../.test-dist/client/api.js';
+import { toolResult } from '../.test-dist/tools/index.js';
 
 const FROM = '2026-10-26T00:00:00Z';
 const TO = '2026-10-26T04:00:00Z';
@@ -112,4 +115,111 @@ test('upstream errors never leak private provider responses into tool results', 
   });
   assert.equal(response.isError,true);
   assert.equal(JSON.stringify(response).includes('secret-cookie'),false);
+});
+
+// ---------------------------------------------------------------------------
+// Unreadable events are left out and counted, never silently dropped (synthetic data only)
+// ---------------------------------------------------------------------------
+
+const validator = new AjvJsonSchemaValidator();
+const SECRET_TITLE = 'SECRET-TITLE-VALUE';
+
+async function withStderr(fn) {
+  const lines = [];
+  const original = console.error;
+  console.error = (...args) => lines.push(args.join(' '));
+  try {
+    const value = await fn();
+    return { value, log: lines.join('\n') };
+  } finally {
+    console.error = original;
+  }
+}
+
+/** A complete TimeTree event shape; `overrides` lets a test break one field. */
+function fullEvent(uuid, title, start, end, overrides = {}) {
+  return { id: uuid, uuid, calendar_id: 1, title, all_day: false, start_at: time(start), end_at: time(end),
+    start_timezone: 'UTC', end_timezone: 'UTC', category: 1, label_id: 1, alerts: [], recurrences: [],
+    attendees: [], attachment: null, created_at: 1, updated_at: 2, ...overrides };
+}
+
+/** The real client, fed by a fake HTTP layer that serves the given events per calendar. */
+function syncClient(eventsByCalendar) {
+  return new TimeTreeAPIClient({
+    isAuthenticated: () => true,
+    authenticate: async () => {},
+    getHttpClient: () => ({
+      get: async url => {
+        const id = /\/calendar\/([^/?]+)\/events\/sync/.exec(url)[1];
+        return { chunk: false, since: 0, events: eventsByCalendar[id] ?? [] };
+      },
+    }),
+  });
+}
+
+const badEvent = fullEvent('bad', null, '2026-10-26T00:30:00Z', '2026-10-26T01:30:00Z');
+const goodA = fullEvent('a', SECRET_TITLE, '2026-10-26T01:00:00Z', '2026-10-26T02:00:00Z');
+const goodB = fullEvent('b', 'Team sync', '2026-10-26T01:30:00Z', '2026-10-26T02:30:00Z');
+
+const PLANNER_CASES = [
+  {
+    name: 'search_events_across_calendars',
+    make: client => createSearchAcrossCalendarsTool(client),
+    args: { calendar_ids: ['1', '2'], start: FROM, end: TO, keyword: 'sync' },
+    check: out => {
+      assert.equal(out.total, 1);
+      assert.deepEqual(out.events.map(e => e.uuid), ['b']);
+    },
+  },
+  {
+    name: 'find_available_slots',
+    make: client => createFindAvailableSlotsTool(client),
+    args: { calendar_ids: ['1', '2'], start: FROM, end: TO, duration_minutes: 60, time_zone: 'UTC', step_minutes: 30 },
+    check: out => assert.ok(out.total > 0),
+  },
+  {
+    name: 'detect_event_conflicts',
+    make: client => createDetectEventConflictsTool(client),
+    args: { calendar_ids: ['1', '2'], start: FROM, end: TO },
+    check: out => {
+      assert.equal(out.total, 1);
+      assert.equal(out.conflicts[0].overlap_start, '2026-10-26T01:30:00.000Z');
+    },
+  },
+];
+
+for (const planner of PLANNER_CASES) {
+  test(`${planner.name} keeps the readable events and reports skipped_items=1 when one event is unreadable`, async () => {
+    const tool = planner.make(syncClient({ 1: [goodA, badEvent], 2: [goodB] }));
+    const { value: response, log } = await withStderr(() => tool.handler(planner.args));
+    assert.equal(response.isError, undefined);
+    const result = toolResult(tool, response);
+    assert.equal(result.structuredContent.skipped_items, 1);
+    assert.match(result.structuredContent.skipped_items_note, /could not be read/);
+    assert.equal(validator.getValidator(tool.outputSchema)(result.structuredContent).valid, true);
+    planner.check(result.structuredContent);
+    assert.match(log, /events\.\d+\.title/);
+    assert.doesNotMatch(log, /SECRET-TITLE-VALUE/);
+    assert.equal(JSON.stringify(response).includes(SECRET_TITLE), false);
+  });
+
+  test(`${planner.name} adds no skipped fields when every event is readable`, async () => {
+    const tool = planner.make(syncClient({ 1: [goodA], 2: [goodB] }));
+    const result = toolResult(tool, await tool.handler(planner.args));
+    assert.equal('skipped_items' in result.structuredContent, false);
+    assert.equal('skipped_items_note' in result.structuredContent, false);
+    assert.equal(validator.getValidator(tool.outputSchema)(result.structuredContent).valid, true);
+  });
+}
+
+test('find_available_slots and detect_event_conflicts warn that free time and conflicts may be inaccurate', async () => {
+  for (const planner of PLANNER_CASES.filter(p => p.name !== 'search_events_across_calendars')) {
+    const tool = planner.make(syncClient({ 1: [goodA, badEvent], 2: [goodB] }));
+    const result = toolResult(tool, await tool.handler(planner.args));
+    assert.match(result.structuredContent.skipped_items_note, /may not be accurate/);
+    assert.match(result.structuredContent.skipped_items_note, /正確でない可能性/);
+  }
+  const search = createSearchAcrossCalendarsTool(syncClient({ 1: [goodA, badEvent], 2: [goodB] }));
+  const searchResult = toolResult(search, await search.handler(PLANNER_CASES[0].args));
+  assert.doesNotMatch(searchResult.structuredContent.skipped_items_note, /may not be accurate/);
 });

@@ -9,7 +9,8 @@ import { parseToolInput, toolErrorResult } from '../utils/mcp-errors.js';
 import { searchEvents, type SearchEvent } from '../features/search/index.js';
 import { findAvailableSlots, type BusyEvent as SlotBusyEvent } from '../features/availability/index.js';
 import { findConflicts, type BusyEvent as ConflictBusyEvent } from '../features/conflicts/index.js';
-import { CALENDAR_ID_JSON_SCHEMA, CalendarIdSchema, READ_ONLY } from './shared-schemas.js';
+import { skippedItemsFields, type SkipTally } from '../utils/lenient-list.js';
+import { CALENDAR_ID_JSON_SCHEMA, CalendarIdSchema, READ_ONLY, SKIPPED_ITEMS_OUTPUT_PROPERTIES } from './shared-schemas.js';
 
 const DateTime = z.string().regex(/^\d{4}-\d{2}-\d{2}T.+(?:Z|[+-]\d{2}:\d{2})$/i);
 const CalendarIds = z.array(CalendarIdSchema).min(1).max(5);
@@ -38,12 +39,31 @@ function checkWindow(input: WindowInput): { from: number; to: number } {
   return { from, to };
 }
 
+/**
+ * Added to the skipped-items note of the two planners. Their answers (free slots, conflicts) are
+ * wrong in a specific direction when an event is missing, so the caller is told to not rely on them.
+ */
+const SKIPPED_PLANNING_RISK =
+  ' Because the unreadable items are not included in this result, free slots and conflicts may not be accurate. ' +
+  '読めなかった予定が結果に含まれていないため、空きや衝突が正確でない可能性があります。';
+
+function skippedFieldsForPlanning(skipped: number) {
+  const fields = skippedItemsFields(skipped);
+  return fields.skipped_items_note
+    ? { ...fields, skipped_items_note: fields.skipped_items_note + SKIPPED_PLANNING_RISK }
+    : fields;
+}
+
 /** Bound the data we hand to the pure planning functions. Fetch only explicitly selected calendars. */
-async function readOccurrences(apiClient: TimeTreeAPIClient, input: WindowInput): Promise<CalendarOccurrence[]> {
+async function readOccurrences(
+  apiClient: TimeTreeAPIClient,
+  input: WindowInput,
+  tally: SkipTally
+): Promise<CalendarOccurrence[]> {
   const { from, to } = checkWindow(input);
   const rows: CalendarOccurrence[] = [];
   for (const id of input.calendar_ids) {
-    const events = await apiClient.getEventsByCalendar(String(id), 0);
+    const events = await apiClient.getEventsByCalendar(String(id), 0, tally);
     for (const event of events) {
       if (event.category === 2 || event.deactivated_at) continue;
       const duration = event.end_at - event.start_at;
@@ -115,13 +135,15 @@ export function createSearchAcrossCalendarsTool(apiClient: TimeTreeAPIClient) {
           title: {type:'string'}, start_at: {type:'string'}, end_at: {type:'string'}, all_day: {type:'boolean'},
         }, required: ['uuid','calendar_id','title','start_at','end_at','all_day'] } },
         total: {type:'integer'}, next_offset: {type:['integer','null']},
+        ...SKIPPED_ITEMS_OUTPUT_PROPERTIES,
       },
       required: ['events','total','next_offset'],
     },
     handler: async (args: unknown) => {
       try {
         const input = parseToolInput(Input, args);
-        const rows = await readOccurrences(apiClient, input);
+        const tally: SkipTally = { skipped: 0 };
+        const rows = await readOccurrences(apiClient, input, tally);
         const page = searchEvents(rows, { start: input.start, end: input.end,
           keyword: input.keyword, limit: input.limit, offset: input.offset });
         return asText({
@@ -131,6 +153,7 @@ export function createSearchAcrossCalendarsTool(apiClient: TimeTreeAPIClient) {
             end_at: new Date(Number(e.end_at)).toISOString(), all_day: Boolean(e.all_day),
           })),
           total: page.total, next_offset: page.nextOffset,
+          ...skippedItemsFields(tally.skipped),
         });
       } catch (error) {
         return toolErrorResult(error);
@@ -175,13 +198,15 @@ export function createFindAvailableSlotsTool(apiClient: TimeTreeAPIClient) {
           start:{type:'string'},end:{type:'string'},
         },required:['start','end']}},
         total:{type:'integer'},
+        ...SKIPPED_ITEMS_OUTPUT_PROPERTIES,
       },
       required:['slots','total'],
     },
     handler: async (args: unknown) => {
       try {
         const input = parseToolInput(Input, args);
-        const occurrences = await readOccurrences(apiClient, input);
+        const tally: SkipTally = { skipped: 0 };
+        const occurrences = await readOccurrences(apiClient, input, tally);
         const busy: SlotBusyEvent[] = occurrences.map(e => ({
           start: new Date(Number(e.start_at)).toISOString(),
           end: new Date(Number(e.end_at)).toISOString(),
@@ -194,7 +219,7 @@ export function createFindAvailableSlotsTool(apiClient: TimeTreeAPIClient) {
           timeZone: input.time_zone, workingHours: input.working_hours,
         });
         if (slots.length > 5000) throw new Error('Too many slots');
-        return asText({ slots, total: slots.length });
+        return asText({ slots, total: slots.length, ...skippedFieldsForPlanning(tally.skipped) });
       } catch (error) {
         return toolErrorResult(error);
       }
@@ -217,11 +242,13 @@ export function createDetectEventConflictsTool(apiClient: TimeTreeAPIClient) {
         overlap_start:{type:'string'},overlap_end:{type:'string'},
       },required:['first_id','first_calendar_id','second_id','second_calendar_id','overlap_start','overlap_end']}},
       total:{type:'integer'},
+      ...SKIPPED_ITEMS_OUTPUT_PROPERTIES,
     },required:['conflicts','total']},
     handler: async (args: unknown) => {
       try {
         const input = parseToolInput(Window, args);
-        const occurrences = await readOccurrences(apiClient, input);
+        const tally: SkipTally = { skipped: 0 };
+        const occurrences = await readOccurrences(apiClient, input, tally);
         const busy: ConflictBusyEvent[] = occurrences.map(e => ({
           id: e.uuid + '@' + String(e.start_at), calendarId: String(e.calendar_id),
           start: Number(e.start_at), end: Number(e.end_at), allDay: e.all_day,
@@ -236,6 +263,7 @@ export function createDetectEventConflictsTool(apiClient: TimeTreeAPIClient) {
             overlap_end:new Date(c.overlapEnd).toISOString(),
           })),
           total: conflicts.length,
+          ...skippedFieldsForPlanning(tally.skipped),
         });
       } catch (error) {
         return toolErrorResult(error);
