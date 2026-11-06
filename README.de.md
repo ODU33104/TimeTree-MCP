@@ -12,9 +12,9 @@
 
 ## Funktionsstatus
 
-- **Version v0.8.0 (`main`): 32 MCP-Tools** für Kalender, Termine, Wiederholungen, Notizen/Checklisten-Daten, Kommentare, Mitglieder, Labels, Feiertage und Aktivitäten. Neu sind 3 schreibgeschützte Tools: `search_events_across_calendars` (Termine mehrerer Kalender durchsuchen), `find_available_slots` (freie Zeitfenster finden), `detect_event_conflicts` (überlappende Termine erkennen).
+- **Version v0.9.0 (`main`): 33 MCP-Tools** für Kalender, Termine, Wiederholungen, Notizen/Checklisten-Daten, Kommentare, Mitglieder, Labels, Feiertage und Aktivitäten. Neu sind 3 schreibgeschützte Tools: `search_events_across_calendars` (Termine mehrerer Kalender durchsuchen), `find_available_slots` (freie Zeitfenster finden), `detect_event_conflicts` (überlappende Termine erkennen). Neu in v0.9.0: `check_connection` (schreibgeschützt) prüft Anmeldung, Version und Update-Status in einem Aufruf.
 - **In Entwicklung, nicht veröffentlicht, keine nutzbaren MCP-Tools:** Was-wäre-wenn-Verschiebung, datensparsamer `.ics`-Export, Duplikatschutz, Teilnahme-/Checklisten-Zusammenfassungen und mobile Briefings. Direkter ChatGPT-Mobilzugang, öffentliche Mehrbenutzer-Anbindung und offizielle TimeTree-Unterstützung sind nicht bestätigt.
-- **Zugriff:** Über stdio sind Schreibvorgänge wie bisher möglich; mit der Umgebungsvariable `TIMETREE_READ_ONLY=true` läuft der Server schreibgeschützt. Für Remote-HTTP gibt es nur ein Richtlinienmodul, aber keinen Server, der Verbindungen annimmt; einen öffentlichen Remote-Dienst gibt es nicht.
+- **Zugriff:** Über stdio sind Schreibvorgänge wie bisher möglich; mit der Umgebungsvariable `TIMETREE_READ_ONLY=true` läuft der Server schreibgeschützt. Für Remote-HTTP gibt es nur ein Richtlinienmodul, aber keinen Server, der Verbindungen annimmt; einen öffentlichen Remote-Dienst gibt es nicht. In der Claude-Desktop-Erweiterung aktiviert das Kontrollkästchen „Schreibgeschützt (Read-only mode)“ in den Einstellungen den schreibgeschützten Modus; im Modus sind 16 Tools verfügbar.
 
 
 ## TimeTree MCP

@@ -48,8 +48,8 @@ Ask your AI assistant things like:
 
 ## Scope and limits
 
-- **32 tools in v0.8.0.** See [Tools](#tools). Checklist fields on memos and events can be read and written, but there is no tool that checks off a single item. Attendance fields are not exposed as RSVP actions.
-- **Read-only mode.** Over stdio, write tools are available by default. Set `TIMETREE_READ_ONLY=true` in the MCP `env` to list and allow only the 15 read-only tools.
+- **33 tools in v0.9.0.** See [Tools](#tools). Checklist fields on memos and events can be read and written, but there is no tool that checks off a single item. Attendance fields are not exposed as RSVP actions.
+- **Read-only mode.** Over stdio, write tools are available by default. To list and allow only the 16 read-only tools, tick "Read-only mode" in the Claude Desktop extension's settings, or set `TIMETREE_READ_ONLY=true` in the MCP `env` for a git clone.
 - **Local only.** The server runs on your computer over stdio. There is no hosted or remote service, and the remote-access code in this repository is a set of security rules without a server. Connecting from the ChatGPT mobile app has not been tested.
 - **Not supported.** Photo and file uploads, albums, RSVP, premium attachments, and two-way calendar sync.
 - **Not tested.** Time zone and daylight-saving edge cases outside the automated tests, and every TimeTree app feature. Compatibility depends on TimeTree's undocumented endpoints and on your MCP client.
@@ -66,6 +66,16 @@ Planned features such as a what-if event mover, `.ics` export, and a duplicate-e
 3. Enter your TimeTree email and password, then enable the extension.
 
 No Git, Node.js install, or config file editing is needed. The extension runs on the Node.js that comes with Claude Desktop on macOS and Windows.
+
+### Claude Code, without cloning
+
+Requires Node.js 22 or later and Git. This installs the `v0.9.0` release tag straight from GitHub:
+
+```bash
+claude mcp add --scope user timetree -e TIMETREE_EMAIL=your-email@example.com -e TIMETREE_PASSWORD=your-password -e TIMETREE_INSTALL_SOURCE=npx -- npx -y github:ODU33104/TimeTree-MCP#v0.9.0
+```
+
+The first start builds the server and can take a few minutes, so raise `MCP_TIMEOUT` (in milliseconds) when you start Claude Code. The password is stored as plain text in Claude's configuration. [docs/MCP_CLIENTS.md](docs/MCP_CLIENTS.md) has a variant that keeps it out of the file, with commands for Windows PowerShell and macOS/Linux: [docs/MCP_CLIENTS.md](docs/MCP_CLIENTS.md)
 
 ### Claude Code, Codex, Cursor, and other clients
 
@@ -136,6 +146,7 @@ Details: [docs/UPDATING.md](docs/UPDATING.md). Changes: [CHANGELOG.md](CHANGELOG
 | Memos | `list_memos`, `create_memo`, `update_memo`, `delete_memo` |
 | Comments | `list_event_comments`, `get_event_comment_image`, `add_event_comment`, `update_event_comment`, `delete_event_comment` |
 | Labels and members | `get_calendar_labels`, `update_calendar_labels`, `get_calendar_members`, `get_calendar_virtual_members`, `create_virtual_member`, `update_virtual_member`, `delete_virtual_member` |
+| Diagnostics | `check_connection` (read-only) |
 | Other | `get_holidays`, `get_recent_activity` |
 
 Parameters and examples: [COMMANDS.md](COMMANDS.md)
@@ -154,11 +165,17 @@ If the creation response cannot be validated, check existing calendars before tr
 
 ## Troubleshooting
 
+**Not sure what is wrong**: ask your assistant to run `check_connection`. It reports whether sign-in works, the server version, whether an update is available, and whether read-only mode is on, and says what to do next. Failed tool calls start with a category code such as `[AUTH_FAILED]` or `[NETWORK]` followed by the next step.
+
+**Some items are missing from a list**: if TimeTree returns an item in an unexpected shape, the list still returns the valid items and reports how many were left out as `skipped_items`.
+
 **"Missing required environment variables"**: set `TIMETREE_EMAIL` and `TIMETREE_PASSWORD` in your MCP configuration. For the Claude Desktop extension, open its settings and enter them again.
 
 **Sign-in fails**: check that you can sign in on the TimeTree web app with the same email and password. The server signs in with email and password only.
 
 **No calendars or events**: make sure the account has calendars, and check the client's MCP logs. TimeTree may have changed its web API; please [open an issue](https://github.com/ODU33104/TimeTree-MCP/issues).
+
+Questions and bug reports are welcome on [GitHub Issues](https://github.com/ODU33104/TimeTree-MCP/issues).
 
 ## How it works
 
