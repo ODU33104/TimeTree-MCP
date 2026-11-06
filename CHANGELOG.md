@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Claude Code can install the server without a clone: `claude mcp add ... -- npx -y github:ODU33104/TimeTree-MCP#main` (see docs/MCP_CLIENTS.md). The package now builds `dist` on install (`prepare`) and ships only `dist` (`files`).
+- A Claude Code plugin marketplace entry (`.claude-plugin/marketplace.json`, `plugin/`). The plugin asks for the email and password through its user options.
+
 ## [0.8.2] - 2026-11-06
 
 ### Changed

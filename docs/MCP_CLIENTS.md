@@ -26,6 +26,24 @@ All clients use the same basic configuration format:
 |----------|---------|-------------|
 | `TIMETREE_UPDATE_CHECK` | `true` | Set to `false` to skip the startup check for a newer version (see [UPDATING.md](UPDATING.md#update-notifications)) |
 
+## Claude Code: install without cloning
+
+Claude Code can run the server straight from GitHub, with no clone or build. Node.js 22 or later is required. The first start downloads and builds the package, which can take a few minutes, so raise Claude Code's startup timeout with `MCP_TIMEOUT` (milliseconds) for that first start.
+
+Windows (PowerShell). The password is typed at a hidden prompt and stays in the shell session; the config file only stores `${TIMETREE_EMAIL}` and `${TIMETREE_PASSWORD}` references:
+
+```powershell
+$env:TIMETREE_EMAIL = 'your-email@example.com'
+$secure = Read-Host 'TimeTree password' -AsSecureString
+$env:TIMETREE_PASSWORD = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($secure))
+$env:MCP_TIMEOUT = '300000'
+claude mcp add --scope user timetree -e 'TIMETREE_EMAIL=${TIMETREE_EMAIL}' -e 'TIMETREE_PASSWORD=${TIMETREE_PASSWORD}' -- npx -y 'github:ODU33104/TimeTree-MCP#main'
+```
+
+Start Claude Code from a shell where these variables are set. Otherwise the server stops with "Missing environment variables". To remove the server: `claude mcp remove timetree --scope user`.
+
+`#main` installs the current `main` branch each time the server starts. To run a fixed version, replace `main` with a release tag or commit once one includes the build step.
+
 ## Supported Clients
 
 <details>
