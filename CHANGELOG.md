@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-11-06
+
 ### Fixed
 - Lists no longer fail as a whole when one TimeTree item does not match the expected shape. `list_calendars`, `get_events`, `get_updated_events`, `list_memos`, `list_event_comments`, `get_calendar_members`, and `get_calendar_virtual_members` return the valid items and leave out the rest. A calendar with one malformed member keeps its other members.
 - When items are left out, these tools add `skipped_items` (the count) and `skipped_items_note` to the result. Results with nothing left out are unchanged. The skipped items are logged by field path only, without their values.
