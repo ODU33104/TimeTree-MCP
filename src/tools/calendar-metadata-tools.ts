@@ -13,7 +13,9 @@ import {
   CalendarIdSchema,
   DESTRUCTIVE_IDEMPOTENT,
   READ_ONLY,
+  SKIPPED_ITEMS_OUTPUT_PROPERTIES,
 } from './shared-schemas.js';
+import { skippedItemsFields, type SkipTally } from '../utils/lenient-list.js';
 import { VIRTUAL_MEMBER_TYPES, type CalendarVirtualUser, type VirtualUserInput } from '../types/timetree.js';
 
 export const GetCalendarMetadataInputSchema = z.object({
@@ -234,7 +236,7 @@ export function createGetCalendarMembersTool(apiClient: TimeTreeAPIClient) {
             properties: {
               id: { type: 'number' },
               user_id: { type: 'number', description: 'Use in event attendees' },
-              name: { type: 'string' },
+              name: { type: ['string', 'null'], description: 'Null for a member TimeTree does not name' },
               role: { type: 'string', enum: ['owner', 'member'] },
               is_active: { type: 'boolean' },
             },
@@ -242,6 +244,7 @@ export function createGetCalendarMembersTool(apiClient: TimeTreeAPIClient) {
           },
         },
         total: { type: 'number' },
+        ...SKIPPED_ITEMS_OUTPUT_PROPERTIES,
       },
       required: ['calendar_id', 'members', 'total'],
     },
@@ -258,7 +261,8 @@ export function createGetCalendarMembersTool(apiClient: TimeTreeAPIClient) {
         const input = parseToolInput(GetCalendarMetadataInputSchema, args);
         logger.info('Tool: get_calendar_members called', { calendar_id: input.calendar_id });
 
-        let members = await apiClient.getCalendarMembers(input.calendar_id.toString());
+        const tally: SkipTally = { skipped: 0 };
+        let members = await apiClient.getCalendarMembers(input.calendar_id.toString(), tally);
         if (!input.include_deactivated) {
           members = members.filter((member) => !member.deactivated_at);
         }
@@ -278,6 +282,7 @@ export function createGetCalendarMembersTool(apiClient: TimeTreeAPIClient) {
                     is_active: !member.deactivated_at,
                   })),
                   total: members.length,
+                  ...skippedItemsFields(tally.skipped),
                 },
                 null,
                 2
@@ -307,6 +312,7 @@ export function createGetCalendarVirtualMembersTool(apiClient: TimeTreeAPIClient
         calendar_id: { type: 'number' },
         virtual_members: { type: 'array', items: VIRTUAL_MEMBER_OUTPUT_SCHEMA },
         total: { type: 'number' },
+        ...SKIPPED_ITEMS_OUTPUT_PROPERTIES,
       },
       required: ['calendar_id', 'virtual_members', 'total'],
     },
@@ -323,7 +329,8 @@ export function createGetCalendarVirtualMembersTool(apiClient: TimeTreeAPIClient
         const input = parseToolInput(GetCalendarMetadataInputSchema, args);
         logger.info('Tool: get_calendar_virtual_members called', { calendar_id: input.calendar_id });
 
-        let virtualMembers = await apiClient.getCalendarVirtualUsers(input.calendar_id.toString());
+        const tally: SkipTally = { skipped: 0 };
+        let virtualMembers = await apiClient.getCalendarVirtualUsers(input.calendar_id.toString(), tally);
         if (!input.include_deactivated) {
           virtualMembers = virtualMembers.filter((member) => !member.deactivated_at);
         }
@@ -337,6 +344,7 @@ export function createGetCalendarVirtualMembersTool(apiClient: TimeTreeAPIClient
                   calendar_id: input.calendar_id,
                   virtual_members: virtualMembers.map((member) => formatVirtualMember(member, input.calendar_id)),
                   total: virtualMembers.length,
+                  ...skippedItemsFields(tally.skipped),
                 },
                 null,
                 2

@@ -25,6 +25,7 @@ All clients use the same basic configuration format:
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `TIMETREE_UPDATE_CHECK` | `true` | Set to `false` to skip the startup check for a newer version (see [UPDATING.md](UPDATING.md#update-notifications)) |
+| `TIMETREE_READ_ONLY` | `false` | Set to `true` to list and allow only the 15 read-only tools. In the Claude Desktop extension, use the "Read-only mode" checkbox instead |
 
 ## Supported Clients
 

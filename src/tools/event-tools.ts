@@ -14,7 +14,9 @@ import {
   ISO_DATE_TIME,
   LABEL_ID_DESCRIPTION,
   READ_ONLY,
+  SKIPPED_ITEMS_OUTPUT_PROPERTIES,
 } from './shared-schemas.js';
+import { skippedItemsFields, type SkipTally } from '../utils/lenient-list.js';
 import { expandRecurrence, parseRecurrence, stringRecurrences } from '../utils/recurrence.js';
 import type { Event } from '../types/timetree.js';
 
@@ -121,6 +123,7 @@ export function createGetEventsTool(apiClient: TimeTreeAPIClient) {
         total_fetched: { type: 'number' },
         truncated_series: { type: 'array', items: { type: 'string' } },
         truncation_note: { type: 'string' },
+        ...SKIPPED_ITEMS_OUTPUT_PROPERTIES,
       },
       required: ['calendar_id', 'events', 'total'],
     },
@@ -170,7 +173,8 @@ export function createGetEventsTool(apiClient: TimeTreeAPIClient) {
 
         logger.info('Tool: get_events called', { calendar_id, start_after, start_before, limit });
 
-        const events = await apiClient.getEventsByCalendar(calendar_id, 0);
+        const tally: SkipTally = { skipped: 0 };
+        const events = await apiClient.getEventsByCalendar(calendar_id, 0, tally);
 
         const keyword = query?.toLowerCase();
         const matchingEvents = events
@@ -257,6 +261,7 @@ export function createGetEventsTool(apiClient: TimeTreeAPIClient) {
           events: formattedEvents,
           total: formattedEvents.length,
           total_fetched: events.length,
+          ...skippedItemsFields(tally.skipped),
           ...(truncatedSeries.length && {
             truncated_series: truncatedSeries,
             truncation_note: `Each recurring series is limited to ${MAX_OCCURRENCES_PER_EVENT} occurrences; narrow start_after/start_before to see the rest.`,
@@ -312,6 +317,7 @@ export function createGetUpdatedEventsTool(apiClient: TimeTreeAPIClient) {
         },
         total: { type: 'number' },
         total_fetched: { type: 'number' },
+        ...SKIPPED_ITEMS_OUTPUT_PROPERTIES,
       },
       required: ['calendar_id', 'updated_after', 'events', 'total'],
     },
@@ -340,7 +346,8 @@ export function createGetUpdatedEventsTool(apiClient: TimeTreeAPIClient) {
 
         logger.info('Tool: get_updated_events called', { calendar_id, updated_after, limit });
 
-        const events = await apiClient.getUpdatedEvents(calendar_id, updated_after);
+        const tally: SkipTally = { skipped: 0 };
+        const events = await apiClient.getUpdatedEvents(calendar_id, updated_after, tally);
 
         // Limit results if provided
         let filteredEvents = events;
@@ -385,6 +392,7 @@ export function createGetUpdatedEventsTool(apiClient: TimeTreeAPIClient) {
           events: formattedEvents,
           total: formattedEvents.length,
           total_fetched: events.length,
+          ...skippedItemsFields(tally.skipped),
         };
 
         logger.info('Tool: get_updated_events completed', {

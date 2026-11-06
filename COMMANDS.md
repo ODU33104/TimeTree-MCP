@@ -8,6 +8,7 @@ Quick reference for using TimeTree MCP Server with AI assistants.
 |------|-------------|
 | **list_calendars** | List all active calendars with participating users |
 | **create_calendar** | Create an empty calendar without inviting anyone |
+| **check_connection** | Check TimeTree sign-in, server version, and update status in one call (read-only) |
 | **get_current_user** | Show your user ID and name |
 | **get_events** | Get events from a calendar (with date filtering) |
 | **get_updated_events** | Get recently modified or deleted events |
@@ -40,6 +41,18 @@ Quick reference for using TimeTree MCP Server with AI assistants.
 | **get_recent_activity** | See who recently created, changed, or deleted events and memos |
 
 ## Tool Details
+
+### check_connection
+
+Checks the setup in one call. Use it first when a tool does not work. Read-only; works in read-only mode.
+
+| Parameter | Required | Description |
+|-----------|----------|-------------|
+| *(none)* | — | No input needed |
+
+Result fields: `server_version`, `read_only_mode`, `sign_in` (`ok` or `failed`), `sign_in_message` (only when sign-in failed), `calendars_count` (only when signed in), `latest_version` (null when the check fails), `update_available`, `update_check` (`ok`, `disabled` when `TIMETREE_UPDATE_CHECK=false`, or `failed`), and `next_step`.
+
+The update check sends a plain request to GitHub with a 3-second timeout and no TimeTree credentials. A failed check never makes this tool fail.
 
 ### list_calendars
 

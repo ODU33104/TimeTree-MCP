@@ -247,6 +247,15 @@ test('mcpb manifest version and tool list match the server', () => {
   assert.deepEqual(manifest.tools.map((tool) => tool.name).sort(), serverTools);
 });
 
+test('mcpb read_only option is a boolean that defaults to off and maps to TIMETREE_READ_ONLY', () => {
+  const manifest = JSON.parse(readFileSync(new URL('../mcpb/manifest.json', import.meta.url), 'utf8'));
+  const option = manifest.user_config.read_only;
+  assert.equal(option.type, 'boolean');
+  assert.equal(option.default, false);
+  assert.notEqual(option.required, true);
+  assert.equal(manifest.server.mcp_config.env.TIMETREE_READ_ONLY, '${user_config.read_only}');
+});
+
 test('update notice points .mcpb installs at the release download', () => {
   const mcpb = formatUpdateNotice('0.3.0', '0.4.0', 'mcpb');
   assert.match(mcpb, /releases\/latest/);

@@ -158,7 +158,8 @@ test('list_calendars returns UPSTREAM_FORMAT for a malformed TimeTree response, 
   const client = new TimeTreeAPIClient({
     isAuthenticated: () => true,
     getCsrfToken: () => SECRET_TOKEN,
-    getHttpClient: () => ({ get: async () => ({ calendars: [{ id: SECRET_BODY, name: 99 }] }) }),
+    // The list itself is not an array: still a hard failure (one bad item inside a valid list is skipped instead).
+    getHttpClient: () => ({ get: async () => ({ calendars: { id: SECRET_BODY, name: 99 } }) }),
   });
   const result = await createListCalendarsTool(client).handler({});
   assert.equal(result.isError, true);

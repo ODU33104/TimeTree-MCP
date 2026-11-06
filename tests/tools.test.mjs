@@ -40,6 +40,7 @@ test('registerTools exposes every tool', () => {
 
   assert.deepEqual(names, [
     'add_event_comment',
+    'check_connection',
     'copy_event',
     'create_calendar',
     'create_event',

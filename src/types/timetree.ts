@@ -120,6 +120,17 @@ export const CalendarSchema = z.object({
 
 export type Calendar = z.infer<typeof CalendarSchema>;
 
+/**
+ * A calendar in a list response. Its members and labels are left as raw items here, so the
+ * list parser can skip one bad member without dropping the whole calendar (see getCalendars).
+ * Write responses (createCalendar) keep the strict CalendarSchema.
+ */
+export const CalendarListItemSchema = CalendarSchema.extend({
+  alias_code: z.string().nullish().transform((value) => value ?? undefined),
+  calendar_users: z.array(z.unknown()).optional(),
+  calendar_labels: z.array(z.unknown()).optional(),
+});
+
 // ============================================================================
 // Event and activity types
 // ============================================================================
@@ -157,6 +168,11 @@ export const EventSchema = z.object({
 
 export type Event = z.infer<typeof EventSchema>;
 
+/** An event in a list response: label_id may be null (no label). Write responses keep the strict EventSchema. */
+export const EventListItemSchema = EventSchema.extend({
+  label_id: z.number().nullish().transform((value) => value ?? undefined),
+});
+
 export const CommentImageSchema = z.object({
   object_key: z.string().min(1),
   filename: z.string().optional().nullable(),
@@ -191,7 +207,8 @@ export type EventActivity = z.infer<typeof EventActivitySchema>;
 // ============================================================================
 
 export const CalendarsResponseSchema = z.object({
-  calendars: z.array(CalendarSchema),
+  // Items are checked one by one by the client (see parseListLenient).
+  calendars: z.array(z.unknown()),
 }).passthrough();
 
 export type CalendarsResponse = z.infer<typeof CalendarsResponseSchema>;
@@ -248,19 +265,19 @@ export type LatestActivitiesResponse = z.infer<typeof LatestActivitiesResponseSc
 export type MemorialDaysResponse = z.infer<typeof MemorialDaysResponseSchema>;
 
 export const CalendarUsersResponseSchema = z.object({
-  calendar_users: z.array(CalendarUserSchema),
+  calendar_users: z.array(z.unknown()),
 }).passthrough();
 
 export type CalendarUsersResponse = z.infer<typeof CalendarUsersResponseSchema>;
 
 export const CalendarVirtualUsersResponseSchema = z.object({
-  calendar_virtual_users: z.array(CalendarVirtualUserSchema),
+  calendar_virtual_users: z.array(z.unknown()),
 }).passthrough();
 
 export type CalendarVirtualUsersResponse = z.infer<typeof CalendarVirtualUsersResponseSchema>;
 
 export const EventsSyncResponseSchema = z.object({
-  events: z.array(EventSchema),
+  events: z.array(z.unknown()),
   chunk: z.boolean(),
   since: z.number(),
 }).passthrough();
@@ -274,7 +291,7 @@ export const EventActivityResponseSchema = z.object({
 export type EventActivityResponse = z.infer<typeof EventActivityResponseSchema>;
 
 export const EventActivitiesResponseSchema = z.object({
-  event_activities: z.array(EventActivitySchema),
+  event_activities: z.array(z.unknown()),
   since: z.number().optional(),
 }).passthrough();
 
