@@ -5,7 +5,7 @@
 import { z } from 'zod';
 import type { TimeTreeAPIClient } from '../client/api.js';
 import { expandRecurrence, parseRecurrence } from '../utils/recurrence.js';
-import { safeToolErrorResult } from '../utils/mcp-errors.js';
+import { parseToolInput, toolErrorResult } from '../utils/mcp-errors.js';
 import { searchEvents, type SearchEvent } from '../features/search/index.js';
 import { findAvailableSlots, type BusyEvent as SlotBusyEvent } from '../features/availability/index.js';
 import { findConflicts, type BusyEvent as ConflictBusyEvent } from '../features/conflicts/index.js';
@@ -120,7 +120,7 @@ export function createSearchAcrossCalendarsTool(apiClient: TimeTreeAPIClient) {
     },
     handler: async (args: unknown) => {
       try {
-        const input = Input.parse(args);
+        const input = parseToolInput(Input, args);
         const rows = await readOccurrences(apiClient, input);
         const page = searchEvents(rows, { start: input.start, end: input.end,
           keyword: input.keyword, limit: input.limit, offset: input.offset });
@@ -132,8 +132,8 @@ export function createSearchAcrossCalendarsTool(apiClient: TimeTreeAPIClient) {
           })),
           total: page.total, next_offset: page.nextOffset,
         });
-      } catch {
-        return safeToolErrorResult();
+      } catch (error) {
+        return toolErrorResult(error);
       }
     },
   };
@@ -180,7 +180,7 @@ export function createFindAvailableSlotsTool(apiClient: TimeTreeAPIClient) {
     },
     handler: async (args: unknown) => {
       try {
-        const input = Input.parse(args);
+        const input = parseToolInput(Input, args);
         const occurrences = await readOccurrences(apiClient, input);
         const busy: SlotBusyEvent[] = occurrences.map(e => ({
           start: new Date(Number(e.start_at)).toISOString(),
@@ -195,8 +195,8 @@ export function createFindAvailableSlotsTool(apiClient: TimeTreeAPIClient) {
         });
         if (slots.length > 5000) throw new Error('Too many slots');
         return asText({ slots, total: slots.length });
-      } catch {
-        return safeToolErrorResult();
+      } catch (error) {
+        return toolErrorResult(error);
       }
     },
   };
@@ -220,7 +220,7 @@ export function createDetectEventConflictsTool(apiClient: TimeTreeAPIClient) {
     },required:['conflicts','total']},
     handler: async (args: unknown) => {
       try {
-        const input = Window.parse(args);
+        const input = parseToolInput(Window, args);
         const occurrences = await readOccurrences(apiClient, input);
         const busy: ConflictBusyEvent[] = occurrences.map(e => ({
           id: e.uuid + '@' + String(e.start_at), calendarId: String(e.calendar_id),
@@ -237,8 +237,8 @@ export function createDetectEventConflictsTool(apiClient: TimeTreeAPIClient) {
           })),
           total: conflicts.length,
         });
-      } catch {
-        return safeToolErrorResult();
+      } catch (error) {
+        return toolErrorResult(error);
       }
     },
   };

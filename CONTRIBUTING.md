@@ -14,7 +14,7 @@ This is an **UNOFFICIAL** project using reverse-engineered APIs:
 ### Reporting Bugs
 
 Before creating a bug report:
-1. Check if the bug has already been reported in [Issues](https://github.com/ehs208/TimeTree-MCP/issues)
+1. Check if the bug has already been reported in [Issues](https://github.com/ODU33104/TimeTree-MCP/issues)
 2. Verify you're using the latest version
 3. Test with different credentials/calendars to isolate the issue
 
@@ -71,7 +71,7 @@ Feature suggestions are welcome, but keep in mind:
 ### Installation
 
 ```bash
-git clone https://github.com/ehs208/TimeTree-MCP.git
+git clone https://github.com/ODU33104/TimeTree-MCP.git
 cd TimeTree-MCP
 npm ci
 npm run build
@@ -216,7 +216,7 @@ To build the extension locally: `npm run build:mcpb`. Install the result in Clau
 
 ## Questions?
 
-Open an [Issue](https://github.com/ehs208/TimeTree-MCP/issues) for questions or bugs.
+Open an [Issue](https://github.com/ODU33104/TimeTree-MCP/issues) for questions or bugs.
 
 ## License
 

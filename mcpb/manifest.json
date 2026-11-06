@@ -26,11 +26,13 @@
       "env": {
         "TIMETREE_EMAIL": "${user_config.email}",
         "TIMETREE_PASSWORD": "${user_config.password}",
+        "TIMETREE_READ_ONLY": "${user_config.read_only}",
         "TIMETREE_INSTALL_SOURCE": "mcpb"
       }
     }
   },
   "tools": [
+    { "name": "check_connection", "description": "Check TimeTree sign-in, server version, and update status in one call (read-only)." },
     { "name": "list_calendars", "description": "List your TimeTree calendars." },
     { "name": "create_calendar", "description": "Create a calendar with an explicit name and purpose, without inviting members." },
     { "name": "get_current_user", "description": "Show your TimeTree user ID and name." },
@@ -89,6 +91,13 @@
       "description": "Sent only to TimeTree to sign in.",
       "sensitive": true,
       "required": true
+    },
+    "read_only": {
+      "type": "boolean",
+      "title": "読み取り専用で使う (Read-only mode)",
+      "description": "When on, events, memos, comments, labels, and members cannot be added, changed, or deleted. オンにすると、予定・メモ・コメント・ラベル・メンバーの追加・変更・削除ができなくなります。",
+      "default": false,
+      "required": false
     }
   }
 }

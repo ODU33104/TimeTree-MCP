@@ -5,8 +5,8 @@
 
 import { z } from 'zod';
 import type { TimeTreeAPIClient } from '../client/api.js';
-import { InvalidCalendarError } from '../client/api.js';
 import { logger } from '../utils/logger.js';
+import { parseToolInput, toolErrorResult } from '../utils/mcp-errors.js';
 import { getLabelColorName } from '../types/label-colors.js';
 import {
   CALENDAR_ID_JSON_SCHEMA,
@@ -14,7 +14,9 @@ import {
   ISO_DATE_TIME,
   LABEL_ID_DESCRIPTION,
   READ_ONLY,
+  SKIPPED_ITEMS_OUTPUT_PROPERTIES,
 } from './shared-schemas.js';
+import { skippedItemsFields, type SkipTally } from '../utils/lenient-list.js';
 import { expandRecurrence, parseRecurrence, stringRecurrences } from '../utils/recurrence.js';
 import type { Event } from '../types/timetree.js';
 
@@ -121,6 +123,7 @@ export function createGetEventsTool(apiClient: TimeTreeAPIClient) {
         total_fetched: { type: 'number' },
         truncated_series: { type: 'array', items: { type: 'string' } },
         truncation_note: { type: 'string' },
+        ...SKIPPED_ITEMS_OUTPUT_PROPERTIES,
       },
       required: ['calendar_id', 'events', 'total'],
     },
@@ -164,13 +167,14 @@ export function createGetEventsTool(apiClient: TimeTreeAPIClient) {
     },
     handler: async (args: unknown) => {
       try {
-        const input = GetEventsInputSchema.parse(args);
+        const input = parseToolInput(GetEventsInputSchema, args);
         const { start_after, start_before, query, label_id, include_memos, expand_recurring, limit } = input;
         const calendar_id = String(input.calendar_id);
 
         logger.info('Tool: get_events called', { calendar_id, start_after, start_before, limit });
 
-        const events = await apiClient.getEventsByCalendar(calendar_id, 0);
+        const tally: SkipTally = { skipped: 0 };
+        const events = await apiClient.getEventsByCalendar(calendar_id, 0, tally);
 
         const keyword = query?.toLowerCase();
         const matchingEvents = events
@@ -257,6 +261,7 @@ export function createGetEventsTool(apiClient: TimeTreeAPIClient) {
           events: formattedEvents,
           total: formattedEvents.length,
           total_fetched: events.length,
+          ...skippedItemsFields(tally.skipped),
           ...(truncatedSeries.length && {
             truncated_series: truncatedSeries,
             truncation_note: `Each recurring series is limited to ${MAX_OCCURRENCES_PER_EVENT} occurrences; narrow start_after/start_before to see the rest.`,
@@ -279,62 +284,7 @@ export function createGetEventsTool(apiClient: TimeTreeAPIClient) {
       } catch (error) {
         logger.error('Tool: get_events failed', { error });
 
-        // Handle specific error types
-        if (error instanceof InvalidCalendarError) {
-          return {
-            content: [
-              {
-                type: 'text',
-                text: JSON.stringify(
-                  {
-                    error: 'Invalid calendar',
-                    message: `Calendar not found. Please use list_calendars to get valid calendar IDs.`,
-                  },
-                  null,
-                  2
-                ),
-              },
-            ],
-            isError: true,
-          };
-        }
-
-        if ((error as any).name === 'ZodError') {
-          return {
-            content: [
-              {
-                type: 'text',
-                text: JSON.stringify(
-                  {
-                    error: 'Invalid input',
-                    message: 'Please provide a valid calendar_id',
-                    details: (error as any).errors,
-                  },
-                  null,
-                  2
-                ),
-              },
-            ],
-            isError: true,
-          };
-        }
-
-        return {
-          content: [
-            {
-              type: 'text',
-              text: JSON.stringify(
-                {
-                  error: 'Failed to fetch events',
-                  message: (error as Error).message,
-                },
-                null,
-                2
-              ),
-            },
-          ],
-          isError: true,
-        };
+        return toolErrorResult(error);
       }
     },
   };
@@ -367,6 +317,7 @@ export function createGetUpdatedEventsTool(apiClient: TimeTreeAPIClient) {
         },
         total: { type: 'number' },
         total_fetched: { type: 'number' },
+        ...SKIPPED_ITEMS_OUTPUT_PROPERTIES,
       },
       required: ['calendar_id', 'updated_after', 'events', 'total'],
     },
@@ -389,13 +340,14 @@ export function createGetUpdatedEventsTool(apiClient: TimeTreeAPIClient) {
     },
     handler: async (args: unknown) => {
       try {
-        const input = GetUpdatedEventsInputSchema.parse(args);
+        const input = parseToolInput(GetUpdatedEventsInputSchema, args);
         const { updated_after, limit } = input;
         const calendar_id = String(input.calendar_id);
 
         logger.info('Tool: get_updated_events called', { calendar_id, updated_after, limit });
 
-        const events = await apiClient.getUpdatedEvents(calendar_id, updated_after);
+        const tally: SkipTally = { skipped: 0 };
+        const events = await apiClient.getUpdatedEvents(calendar_id, updated_after, tally);
 
         // Limit results if provided
         let filteredEvents = events;
@@ -440,6 +392,7 @@ export function createGetUpdatedEventsTool(apiClient: TimeTreeAPIClient) {
           events: formattedEvents,
           total: formattedEvents.length,
           total_fetched: events.length,
+          ...skippedItemsFields(tally.skipped),
         };
 
         logger.info('Tool: get_updated_events completed', {
@@ -458,62 +411,7 @@ export function createGetUpdatedEventsTool(apiClient: TimeTreeAPIClient) {
       } catch (error) {
         logger.error('Tool: get_updated_events failed', { error });
 
-        // Handle specific error types
-        if (error instanceof InvalidCalendarError) {
-          return {
-            content: [
-              {
-                type: 'text',
-                text: JSON.stringify(
-                  {
-                    error: 'Invalid calendar',
-                    message: `Calendar not found. Please use list_calendars to get valid calendar IDs.`,
-                  },
-                  null,
-                  2
-                ),
-              },
-            ],
-            isError: true,
-          };
-        }
-
-        if ((error as any).name === 'ZodError') {
-          return {
-            content: [
-              {
-                type: 'text',
-                text: JSON.stringify(
-                  {
-                    error: 'Invalid input',
-                    message: 'Please provide valid calendar_id and updated_after (number) parameters',
-                    details: (error as any).errors,
-                  },
-                  null,
-                  2
-                ),
-              },
-            ],
-            isError: true,
-          };
-        }
-
-        return {
-          content: [
-            {
-              type: 'text',
-              text: JSON.stringify(
-                {
-                  error: 'Failed to fetch updated events',
-                  message: (error as Error).message,
-                },
-                null,
-                2
-              ),
-            },
-          ],
-          isError: true,
-        };
+        return toolErrorResult(error);
       }
     },
   };

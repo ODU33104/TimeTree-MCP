@@ -157,7 +157,9 @@ test('delete_event rejects path-traversal event_uuid', async () => {
 
   assert.deepEqual(requested, [], `request escaped to: ${requested.join(', ')}`);
   assert.equal(result.isError, true);
-  assert.match(JSON.parse(result.content[0].text).message, /Invalid identifier/);
+  // The identifier guard's own message echoes the rejected value, so the response must only carry the category.
+  assert.match(result.content[0].text, /^\[UNKNOWN\]/);
+  assert.doesNotMatch(result.content[0].text, /999|\.\.\//);
 });
 
 test('update_memo refuses to convert a regular event into a memo', async () => {
@@ -175,7 +177,8 @@ test('update_memo refuses to convert a regular event into a memo', async () => {
   const result = await tool.handler({ calendar_id: '123', memo_uuid: 'evt-1', title: 'renamed' });
 
   assert.deepEqual(puts, [], `sent PUT with category=${puts[0]?.category}`);
-  assert.match(JSON.parse(result.content[0].text).message, /not a memo/);
+  assert.match(result.content[0].text, /^\[INVALID_INPUT\]/);
+  assert.doesNotMatch(result.content[0].text, /evt-1/);
 });
 
 test('delete_memo refuses to delete a regular event', async () => {
@@ -244,6 +247,15 @@ test('mcpb manifest version and tool list match the server', () => {
   assert.deepEqual(manifest.tools.map((tool) => tool.name).sort(), serverTools);
 });
 
+test('mcpb read_only option is a boolean that defaults to off and maps to TIMETREE_READ_ONLY', () => {
+  const manifest = JSON.parse(readFileSync(new URL('../mcpb/manifest.json', import.meta.url), 'utf8'));
+  const option = manifest.user_config.read_only;
+  assert.equal(option.type, 'boolean');
+  assert.equal(option.default, false);
+  assert.notEqual(option.required, true);
+  assert.equal(manifest.server.mcp_config.env.TIMETREE_READ_ONLY, '${user_config.read_only}');
+});
+
 test('update notice points .mcpb installs at the release download', () => {
   const mcpb = formatUpdateNotice('0.3.0', '0.4.0', 'mcpb');
   assert.match(mcpb, /releases\/latest/);
@@ -301,7 +313,8 @@ test('unknown calendar (400, code -425) is reported as an invalid calendar', asy
   const client = makeClient({ get: async () => { throw timeTreeError(400, -425); } });
   const result = await createGetCalendarLabelsTool(client).handler({ calendar_id: '1' });
   assert.equal(result.isError, true);
-  assert.match(result.content[0].text, /Invalid calendar|Calendar not found/);
+  assert.match(result.content[0].text, /^\[INVALID_INPUT\]/);
+  assert.match(result.content[0].text, /calendar_id: .*calendar not found/);
 });
 
 test('delete_event reports a missing event (400, code -403) without sending DELETE', async () => {

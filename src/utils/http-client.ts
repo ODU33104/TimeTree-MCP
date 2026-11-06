@@ -175,11 +175,11 @@ export class HttpClient {
 
       if ((error as any).name === 'AbortError') {
         logger.error('Request timeout', { timeout });
-        throw new Error(`Request timeout after ${timeout}ms`);
+        throw Object.assign(new Error(`Request timeout after ${timeout}ms`), { code: 'NETWORK' });
       }
 
       logger.error('Network error');
-      throw new Error('Network request failed');
+      throw Object.assign(new Error('Network request failed'), { code: 'NETWORK' });
     }
   }
 

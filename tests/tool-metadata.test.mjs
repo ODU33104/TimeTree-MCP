@@ -3,6 +3,9 @@ import assert from 'node:assert/strict';
 import { AjvJsonSchemaValidator } from '@modelcontextprotocol/sdk/validation/ajv';
 import { registerTools, toolResult } from '../.test-dist/tools/index.js';
 
+// Keep the update check off the network in these tests (check_connection reads this at call time).
+process.env.TIMETREE_UPDATE_CHECK = 'false';
+
 const validator = new AjvJsonSchemaValidator();
 
 const event = (overrides = {}) => ({
@@ -40,6 +43,7 @@ const defined = (data) => Object.fromEntries(Object.entries(data).filter(([, val
 
 /** A fake client answering every method with data shaped like TimeTree's responses. */
 const fakeClient = {
+  signIn: async () => {},
   getCalendars: async () => [{ id: 123, name: 'Work', alias_code: 'abc', calendar_users: [{ id: 1, user_id: 7, name: 'Alex', role: 1 }, { id: 2, user_id: 8, name: null, role: 0 }] }],
   createCalendar: async (name) => ({ id: 124, name, alias_code: 'new' }),
   getCurrentUser: async () => ({ id: 7, name: 'Alex', birthday: 0, gender: 'x' }),
@@ -73,6 +77,7 @@ const fakeClient = {
 };
 
 const sampleArgs = {
+  check_connection: {},
   list_calendars: {},
   create_calendar: { name: 'Team', purpose: 'work' },
   get_current_user: {},
@@ -111,7 +116,7 @@ test('every tool declares annotations and an output schema', () => {
   for (const tool of registerTools(fakeClient)) {
     assert.ok(tool.annotations, `${tool.name} has annotations`);
     assert.equal(tool.annotations.openWorldHint, true, `${tool.name} talks to TimeTree`);
-    const readOnly = /^(get|list)_/.test(tool.name) || ['search_events_across_calendars','find_available_slots','detect_event_conflicts'].includes(tool.name);
+    const readOnly = /^(get|list)_/.test(tool.name) || ['check_connection','search_events_across_calendars','find_available_slots','detect_event_conflicts'].includes(tool.name);
     assert.equal(tool.annotations.readOnlyHint, readOnly, `${tool.name} readOnlyHint`);
     if (/^delete_/.test(tool.name)) assert.equal(tool.annotations.destructiveHint, true, `${tool.name} is destructive`);
     assert.equal(tool.outputSchema?.type, 'object', `${tool.name} has an object outputSchema`);

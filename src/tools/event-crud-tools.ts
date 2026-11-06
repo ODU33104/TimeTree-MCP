@@ -5,8 +5,8 @@
 
 import { z } from 'zod';
 import type { TimeTreeAPIClient } from '../client/api.js';
-import { InvalidCalendarError, TimeTreeAPIError } from '../client/api.js';
 import { logger } from '../utils/logger.js';
+import { parseToolInput, toolErrorResult } from '../utils/mcp-errors.js';
 import { stringRecurrences } from '../utils/recurrence.js';
 import {
   ADDITIVE,
@@ -66,59 +66,6 @@ export function formatEvent(event: Event) {
     created_at: event.created_at ? new Date(event.created_at).toISOString() : null,
     updated_at: event.updated_at ? new Date(event.updated_at).toISOString() : null,
   };
-}
-
-function errorContent(error: string, message: string, details?: unknown) {
-  return {
-    content: [
-      {
-        type: 'text',
-        text: JSON.stringify(
-          {
-            error,
-            message,
-            ...(details !== undefined && { details }),
-          },
-          null,
-          2
-        ),
-      },
-    ],
-    isError: true,
-  };
-}
-
-export function commonWriteError(error: unknown, action: string) {
-  if (error instanceof InvalidCalendarError) {
-    return errorContent(
-      'Invalid calendar',
-      'Calendar not found. Please use list_calendars to get valid calendar IDs.'
-    );
-  }
-
-  if (error instanceof TimeTreeAPIError && error.statusCode === 404) {
-    return errorContent(
-      'Event not found',
-      'The specified event UUID does not exist. Please use get_events to find valid event UUIDs.'
-    );
-  }
-
-  if (error instanceof TimeTreeAPIError && error.statusCode === 403) {
-    return errorContent(
-      'Authentication failed',
-      'CSRF token missing or invalid. Please try again.'
-    );
-  }
-
-  if ((error as { name?: string }).name === 'ZodError') {
-    return errorContent(
-      'Invalid input',
-      `Please provide valid data to ${action}`,
-      (error as { errors?: unknown }).errors
-    );
-  }
-
-  return errorContent(`Failed to ${action}`, (error as Error).message);
 }
 
 // ============================================================================
@@ -225,7 +172,7 @@ export function createCreateEventTool(apiClient: TimeTreeAPIClient) {
     },
     handler: async (args: unknown) => {
       try {
-        const input = CreateEventInputSchema.parse(args);
+        const input = parseToolInput(CreateEventInputSchema, args);
         logger.info('Tool: create_event called', { calendar_id: input.calendar_id, title: input.title });
 
         const event = await apiClient.createEvent(input.calendar_id.toString(), {
@@ -267,7 +214,7 @@ export function createCreateEventTool(apiClient: TimeTreeAPIClient) {
         };
       } catch (error) {
         logger.error('Tool: create_event failed', { error });
-        return commonWriteError(error, 'create event');
+        return toolErrorResult(error);
       }
     },
   };
@@ -367,7 +314,7 @@ export function createUpdateEventTool(apiClient: TimeTreeAPIClient) {
     },
     handler: async (args: unknown) => {
       try {
-        const input = UpdateEventInputSchema.parse(args);
+        const input = parseToolInput(UpdateEventInputSchema, args);
         logger.info('Tool: update_event called', {
           calendar_id: input.calendar_id,
           event_uuid: input.event_uuid,
@@ -416,7 +363,7 @@ export function createUpdateEventTool(apiClient: TimeTreeAPIClient) {
         };
       } catch (error) {
         logger.error('Tool: update_event failed', { error });
-        return commonWriteError(error, 'update event');
+        return toolErrorResult(error);
       }
     },
   };
@@ -449,7 +396,7 @@ export function createDeleteEventTool(apiClient: TimeTreeAPIClient) {
     },
     handler: async (args: unknown) => {
       try {
-        const input = DeleteEventInputSchema.parse(args);
+        const input = parseToolInput(DeleteEventInputSchema, args);
         logger.info('Tool: delete_event called', {
           calendar_id: input.calendar_id,
           event_uuid: input.event_uuid,
@@ -477,7 +424,7 @@ export function createDeleteEventTool(apiClient: TimeTreeAPIClient) {
         };
       } catch (error) {
         logger.error('Tool: delete_event failed', { error });
-        return commonWriteError(error, 'delete event');
+        return toolErrorResult(error);
       }
     },
   };
@@ -531,7 +478,7 @@ export function createCopyEventTool(apiClient: TimeTreeAPIClient) {
     },
     handler: async (args: unknown) => {
       try {
-        const input = CopyEventInputSchema.parse(args);
+        const input = parseToolInput(CopyEventInputSchema, args);
         const sourceCalendarId = input.calendar_id.toString();
         const targetCalendarId = (input.target_calendar_id ?? input.calendar_id).toString();
         const sameCalendar = targetCalendarId === sourceCalendarId;
@@ -585,7 +532,7 @@ export function createCopyEventTool(apiClient: TimeTreeAPIClient) {
         };
       } catch (error) {
         logger.error('Tool: copy_event failed', { error });
-        return commonWriteError(error, 'copy event');
+        return toolErrorResult(error);
       }
     },
   };

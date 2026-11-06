@@ -5,8 +5,8 @@
 
 import { z } from 'zod';
 import type { TimeTreeAPIClient } from '../client/api.js';
-import { TimeTreeAPIError } from '../client/api.js';
 import { logger } from '../utils/logger.js';
+import { parseToolInput, toolErrorResult } from '../utils/mcp-errors.js';
 import {
   ADDITIVE,
   CALENDAR_ID_JSON_SCHEMA,
@@ -14,7 +14,9 @@ import {
   deletionOutputSchema,
   DESTRUCTIVE_IDEMPOTENT,
   READ_ONLY,
+  SKIPPED_ITEMS_OUTPUT_PROPERTIES,
 } from './shared-schemas.js';
+import { skippedItemsFields, type SkipTally } from '../utils/lenient-list.js';
 import type { CommentImage, EventActivity } from '../types/timetree.js';
 
 export const AddEventCommentInputSchema = z.object({
@@ -102,42 +104,6 @@ function formatComment(comment: EventActivity) {
   };
 }
 
-function errorContent(error: string, message: string, details?: unknown) {
-  return {
-    content: [
-      {
-        type: 'text',
-        text: JSON.stringify(
-          {
-            error,
-            message,
-            ...(details !== undefined && { details }),
-          },
-          null,
-          2
-        ),
-      },
-    ],
-    isError: true,
-  };
-}
-
-function commentError(error: unknown, action: string) {
-  if (error instanceof TimeTreeAPIError && error.statusCode === 404) {
-    return errorContent('Not found', 'The specified event, comment, or image could not be found. Check list_event_comments for current comments and image indices.');
-  }
-
-  if (error instanceof TimeTreeAPIError && error.statusCode === 403) {
-    return errorContent('Authentication failed', 'CSRF token missing or invalid. Please try again.');
-  }
-
-  if ((error as { name?: string }).name === 'ZodError') {
-    return errorContent('Invalid input', `Please provide valid data to ${action}`, (error as { errors?: unknown }).errors);
-  }
-
-  return errorContent(`Failed to ${action}`, (error as Error).message);
-}
-
 export function createAddEventCommentTool(apiClient: TimeTreeAPIClient) {
   return {
     name: 'add_event_comment',
@@ -159,7 +125,7 @@ export function createAddEventCommentTool(apiClient: TimeTreeAPIClient) {
     },
     handler: async (args: unknown) => {
       try {
-        const input = AddEventCommentInputSchema.parse(args);
+        const input = parseToolInput(AddEventCommentInputSchema, args);
         logger.info('Tool: add_event_comment called', { calendar_id: input.calendar_id, event_uuid: input.event_uuid });
 
         const comment = await apiClient.addEventComment(
@@ -187,7 +153,7 @@ export function createAddEventCommentTool(apiClient: TimeTreeAPIClient) {
         };
       } catch (error) {
         logger.error('Tool: add_event_comment failed', { error });
-        return commentError(error, 'add event comment');
+        return toolErrorResult(error);
       }
     },
   };
@@ -207,6 +173,7 @@ export function createListEventCommentsTool(apiClient: TimeTreeAPIClient) {
         event_uuid: { type: 'string' },
         comments: { type: 'array', items: COMMENT_OUTPUT_SCHEMA },
         total: { type: 'number' },
+        ...SKIPPED_ITEMS_OUTPUT_PROPERTIES,
       },
       required: ['calendar_id', 'event_uuid', 'comments', 'total'],
     },
@@ -220,10 +187,11 @@ export function createListEventCommentsTool(apiClient: TimeTreeAPIClient) {
     },
     handler: async (args: unknown) => {
       try {
-        const input = ListEventCommentsInputSchema.parse(args);
+        const input = parseToolInput(ListEventCommentsInputSchema, args);
         logger.info('Tool: list_event_comments called', { calendar_id: input.calendar_id, event_uuid: input.event_uuid });
 
-        const comments = await apiClient.listEventComments(input.calendar_id.toString(), input.event_uuid);
+        const tally: SkipTally = { skipped: 0 };
+        const comments = await apiClient.listEventComments(input.calendar_id.toString(), input.event_uuid, tally);
 
         return {
           content: [
@@ -235,6 +203,7 @@ export function createListEventCommentsTool(apiClient: TimeTreeAPIClient) {
                   event_uuid: input.event_uuid,
                   comments: comments.map(formatComment),
                   total: comments.length,
+                  ...skippedItemsFields(tally.skipped),
                 },
                 null,
                 2
@@ -244,7 +213,7 @@ export function createListEventCommentsTool(apiClient: TimeTreeAPIClient) {
         };
       } catch (error) {
         logger.error('Tool: list_event_comments failed', { error });
-        return commentError(error, 'list event comments');
+        return toolErrorResult(error);
       }
     },
   };
@@ -283,7 +252,7 @@ export function createGetEventCommentImageTool(apiClient: TimeTreeAPIClient) {
     },
     handler: async (args: unknown) => {
       try {
-        const input = GetEventCommentImageInputSchema.parse(args);
+        const input = parseToolInput(GetEventCommentImageInputSchema, args);
         logger.info('Tool: get_event_comment_image called', {
           calendar_id: input.calendar_id, event_uuid: input.event_uuid, comment_id: input.comment_id, image_index: input.image_index,
         });
@@ -304,7 +273,7 @@ export function createGetEventCommentImageTool(apiClient: TimeTreeAPIClient) {
         };
       } catch (error) {
         logger.error('Tool: get_event_comment_image failed', { error });
-        return commentError(error, 'get event comment image');
+        return toolErrorResult(error);
       }
     },
   };
@@ -330,7 +299,7 @@ export function createUpdateEventCommentTool(apiClient: TimeTreeAPIClient) {
     },
     handler: async (args: unknown) => {
       try {
-        const input = UpdateEventCommentInputSchema.parse(args);
+        const input = parseToolInput(UpdateEventCommentInputSchema, args);
         logger.info('Tool: update_event_comment called', {
           calendar_id: input.calendar_id,
           event_uuid: input.event_uuid,
@@ -362,7 +331,7 @@ export function createUpdateEventCommentTool(apiClient: TimeTreeAPIClient) {
         };
       } catch (error) {
         logger.error('Tool: update_event_comment failed', { error });
-        return commentError(error, 'update event comment');
+        return toolErrorResult(error);
       }
     },
   };
@@ -387,7 +356,7 @@ export function createDeleteEventCommentTool(apiClient: TimeTreeAPIClient) {
     },
     handler: async (args: unknown) => {
       try {
-        const input = DeleteEventCommentInputSchema.parse(args);
+        const input = parseToolInput(DeleteEventCommentInputSchema, args);
         logger.info('Tool: delete_event_comment called', {
           calendar_id: input.calendar_id,
           event_uuid: input.event_uuid,
@@ -414,7 +383,7 @@ export function createDeleteEventCommentTool(apiClient: TimeTreeAPIClient) {
         };
       } catch (error) {
         logger.error('Tool: delete_event_comment failed', { error });
-        return commentError(error, 'delete event comment');
+        return toolErrorResult(error);
       }
     },
   };

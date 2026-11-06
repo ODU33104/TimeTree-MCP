@@ -29,14 +29,11 @@ export function isNewerVersion(candidate: string, current: string): boolean {
 }
 
 /**
- * Fetch the latest version and return it when it is newer than `currentVersion`.
- * Any failure (offline, timeout, bad response) returns null: the check must never
- * affect the server. Uses plain fetch so no TimeTree cookies are sent to GitHub.
+ * Fetch the version published on the default branch. Any failure (offline, timeout, bad
+ * response) returns null: the check must never affect the server. Uses plain fetch so no
+ * TimeTree cookies are sent to GitHub.
  */
-export async function fetchNewerVersion(
-  currentVersion: string,
-  fetchImpl: typeof fetch = fetch
-): Promise<string | null> {
+export async function fetchLatestVersion(fetchImpl: typeof fetch = fetch): Promise<string | null> {
   try {
     const response = await fetchImpl(UPDATE_CHECK_URL, {
       signal: AbortSignal.timeout(CHECK_TIMEOUT_MS),
@@ -46,13 +43,22 @@ export async function fetchNewerVersion(
     const payload: unknown = await response.json();
     if (!payload || typeof payload !== 'object' || !('version' in payload)) return null;
     const version = payload.version;
-    if (typeof version !== 'string') return null;
+    if (typeof version !== 'string' || !/^\d+\.\d+\.\d+$/.test(version)) return null;
 
-    return isNewerVersion(version, currentVersion) ? version : null;
+    return version;
   } catch (error) {
     logger.debug('Update check skipped', { error });
     return null;
   }
+}
+
+/** Fetch the latest version and return it when it is newer than `currentVersion`. */
+export async function fetchNewerVersion(
+  currentVersion: string,
+  fetchImpl: typeof fetch = fetch
+): Promise<string | null> {
+  const latest = await fetchLatestVersion(fetchImpl);
+  return latest !== null && isNewerVersion(latest, currentVersion) ? latest : null;
 }
 
 /**
@@ -64,16 +70,23 @@ export function formatUpdateNotice(
   latestVersion: string,
   installSource: string | undefined = process.env.TIMETREE_INSTALL_SOURCE
 ): string {
-  const howTo =
-    installSource === 'mcpb'
-      ? [
-          `To update: download the latest timetree-mcp .mcpb file from ${RELEASES_URL}`,
-          'and open it to reinstall the Claude Desktop extension.',
-        ]
-      : [
-          'To update: re-run the TimeTree MCP installer, or run `git pull origin main && npm ci && npm run build`',
-          'in the TimeTree-MCP folder, then restart the MCP client.',
-        ];
+  let howTo: string[];
+  if (installSource === 'mcpb') {
+    howTo = [
+      `To update: download the latest timetree-mcp .mcpb file from ${RELEASES_URL}`,
+      'and open it to reinstall the Claude Desktop extension.',
+    ];
+  } else if (installSource === 'npx') {
+    howTo = [
+      `To update: change the release tag in the install command (github:ODU33104/TimeTree-MCP#vX.Y.Z) to v${latestVersion},`,
+      `for example by running \`claude mcp remove timetree\` and adding it again, then restart Claude Code. Releases: ${RELEASES_URL}`,
+    ];
+  } else {
+    howTo = [
+      'To update: re-run the TimeTree MCP installer, or run `git pull origin main && npm ci && npm run build`',
+      'in the TimeTree-MCP folder, then restart the MCP client.',
+    ];
+  }
   return [
     `[TimeTree MCP update available: ${currentVersion} -> ${latestVersion}]`,
     'Please tell the user about this update in your reply.',

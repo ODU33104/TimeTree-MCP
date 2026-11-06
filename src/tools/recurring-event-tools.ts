@@ -20,6 +20,7 @@ import { z } from 'zod';
 import type { TimeTreeAPIClient } from '../client/api.js';
 import { TimeTreeAPIError } from '../client/api.js';
 import { logger } from '../utils/logger.js';
+import { parseToolInput, toolErrorResult } from '../utils/mcp-errors.js';
 import {
   addExdate,
   isOccurrence,
@@ -31,7 +32,7 @@ import {
   type SeriesTiming,
 } from '../utils/recurrence.js';
 import type { CreateEventInput, Event } from '../types/timetree.js';
-import { buildAttachment, ChecklistSchema, commonWriteError, formatEvent, VirtualUserAttendeesSchema } from './event-crud-tools.js';
+import { buildAttachment, ChecklistSchema, formatEvent, VirtualUserAttendeesSchema } from './event-crud-tools.js';
 import {
   CALENDAR_ID_JSON_SCHEMA,
   CalendarIdSchema,
@@ -77,6 +78,7 @@ class OccurrenceError extends TimeTreeAPIError {
   constructor(message: string) {
     super(message, 400);
     this.name = 'OccurrenceError';
+    Object.assign(this, { safeMessage: message });
   }
 }
 
@@ -235,7 +237,7 @@ export function createDeleteEventOccurrenceTool(apiClient: TimeTreeAPIClient) {
     },
     handler: async (args: unknown) => {
       try {
-        const input = DeleteEventOccurrenceInputSchema.parse(args);
+        const input = parseToolInput(DeleteEventOccurrenceInputSchema, args);
         const calendarId = input.calendar_id.toString();
         const at = input.occurrence_start_at;
         logger.info('Tool: delete_event_occurrence called', { calendar_id: calendarId, event_uuid: input.event_uuid, scope: input.scope });
@@ -269,7 +271,7 @@ export function createDeleteEventOccurrenceTool(apiClient: TimeTreeAPIClient) {
         });
       } catch (error) {
         logger.error('Tool: delete_event_occurrence failed', { error });
-        return commonWriteError(error, 'delete event occurrence');
+        return toolErrorResult(error);
       }
     },
   };
@@ -411,7 +413,7 @@ export function createUpdateEventOccurrenceTool(apiClient: TimeTreeAPIClient) {
     },
     handler: async (args: unknown) => {
       try {
-        const input = UpdateEventOccurrenceInputSchema.parse(args);
+        const input = parseToolInput(UpdateEventOccurrenceInputSchema, args);
         if (!CHANGE_FIELDS.some((field) => input[field] !== undefined)) {
           throw new OccurrenceError('Provide at least one field to change.');
         }
@@ -492,7 +494,7 @@ export function createUpdateEventOccurrenceTool(apiClient: TimeTreeAPIClient) {
         });
       } catch (error) {
         logger.error('Tool: update_event_occurrence failed', { error });
-        return commonWriteError(error, 'update event occurrence');
+        return toolErrorResult(error);
       }
     },
   };
