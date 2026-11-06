@@ -14,7 +14,9 @@ import {
   deletionOutputSchema,
   DESTRUCTIVE_IDEMPOTENT,
   READ_ONLY,
+  SKIPPED_ITEMS_OUTPUT_PROPERTIES,
 } from './shared-schemas.js';
+import { skippedItemsFields, type SkipTally } from '../utils/lenient-list.js';
 import type { CommentImage, EventActivity } from '../types/timetree.js';
 
 export const AddEventCommentInputSchema = z.object({
@@ -207,6 +209,7 @@ export function createListEventCommentsTool(apiClient: TimeTreeAPIClient) {
         event_uuid: { type: 'string' },
         comments: { type: 'array', items: COMMENT_OUTPUT_SCHEMA },
         total: { type: 'number' },
+        ...SKIPPED_ITEMS_OUTPUT_PROPERTIES,
       },
       required: ['calendar_id', 'event_uuid', 'comments', 'total'],
     },
@@ -223,7 +226,8 @@ export function createListEventCommentsTool(apiClient: TimeTreeAPIClient) {
         const input = ListEventCommentsInputSchema.parse(args);
         logger.info('Tool: list_event_comments called', { calendar_id: input.calendar_id, event_uuid: input.event_uuid });
 
-        const comments = await apiClient.listEventComments(input.calendar_id.toString(), input.event_uuid);
+        const tally: SkipTally = { skipped: 0 };
+        const comments = await apiClient.listEventComments(input.calendar_id.toString(), input.event_uuid, tally);
 
         return {
           content: [
@@ -235,6 +239,7 @@ export function createListEventCommentsTool(apiClient: TimeTreeAPIClient) {
                   event_uuid: input.event_uuid,
                   comments: comments.map(formatComment),
                   total: comments.length,
+                  ...skippedItemsFields(tally.skipped),
                 },
                 null,
                 2

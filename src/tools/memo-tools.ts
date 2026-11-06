@@ -15,7 +15,9 @@ import {
   DESTRUCTIVE_IDEMPOTENT,
   LABEL_ID_DESCRIPTION,
   READ_ONLY,
+  SKIPPED_ITEMS_OUTPUT_PROPERTIES,
 } from './shared-schemas.js';
+import { skippedItemsFields, type SkipTally } from '../utils/lenient-list.js';
 import { getLabelColorName } from '../types/label-colors.js';
 import type { Event } from '../types/timetree.js';
 
@@ -167,6 +169,7 @@ export function createListMemosTool(apiClient: TimeTreeAPIClient) {
         calendar_id: { type: 'number' },
         memos: { type: 'array', items: MEMO_OUTPUT_SCHEMA },
         total: { type: 'number' },
+        ...SKIPPED_ITEMS_OUTPUT_PROPERTIES,
       },
       required: ['calendar_id', 'memos', 'total'],
     },
@@ -184,7 +187,8 @@ export function createListMemosTool(apiClient: TimeTreeAPIClient) {
         const input = ListMemosInputSchema.parse(args);
         logger.info('Tool: list_memos called', { calendar_id: input.calendar_id });
 
-        let memos = await apiClient.getMemosByCalendar(input.calendar_id.toString());
+        const tally: SkipTally = { skipped: 0 };
+        let memos = await apiClient.getMemosByCalendar(input.calendar_id.toString(), tally);
         if (input.updated_after !== undefined) {
           memos = memos.filter((memo) => memo.updated_at && memo.updated_at > input.updated_after!);
         }
@@ -201,6 +205,7 @@ export function createListMemosTool(apiClient: TimeTreeAPIClient) {
                   calendar_id: input.calendar_id,
                   memos: memos.map(formatMemo),
                   total: memos.length,
+                  ...skippedItemsFields(tally.skipped),
                 },
                 null,
                 2

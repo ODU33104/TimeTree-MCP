@@ -7,7 +7,8 @@ import { z } from 'zod';
 import type { TimeTreeAPIClient } from '../client/api.js';
 import { AuthenticationError } from '../client/auth.js';
 import { logger } from '../utils/logger.js';
-import { ADDITIVE, READ_ONLY } from './shared-schemas.js';
+import { ADDITIVE, READ_ONLY, SKIPPED_ITEMS_OUTPUT_PROPERTIES } from './shared-schemas.js';
+import { skippedItemsFields, type SkipTally } from '../utils/lenient-list.js';
 
 export const ListCalendarsInputSchema = z.object({});
 
@@ -43,6 +44,7 @@ export function createListCalendarsTool(apiClient: TimeTreeAPIClient) {
           },
         },
         total: { type: 'number' },
+        ...SKIPPED_ITEMS_OUTPUT_PROPERTIES,
       },
       required: ['calendars', 'total'],
     },
@@ -54,7 +56,8 @@ export function createListCalendarsTool(apiClient: TimeTreeAPIClient) {
       try {
         logger.info('Tool: list_calendars called');
 
-        const calendars = await apiClient.getCalendars();
+        const tally: SkipTally = { skipped: 0 };
+        const calendars = await apiClient.getCalendars(tally);
 
         const formattedCalendars = calendars.map((cal) => {
           // Active users only (deactivated_at is null). Members without a name cannot be used to pick a calendar, so they are left out.
@@ -77,6 +80,7 @@ export function createListCalendarsTool(apiClient: TimeTreeAPIClient) {
         const result = {
           calendars: formattedCalendars,
           total: formattedCalendars.length,
+          ...skippedItemsFields(tally.skipped),
         };
 
         logger.info('Tool: list_calendars completed', { total: result.total });

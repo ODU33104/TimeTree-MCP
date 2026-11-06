@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Lists no longer fail as a whole when one TimeTree item does not match the expected shape. `list_calendars`, `get_events`, `get_updated_events`, `list_memos`, `list_event_comments`, `get_calendar_members`, and `get_calendar_virtual_members` return the valid items and leave out the rest. A calendar with one malformed member keeps its other members.
+- When items are left out, these tools add `skipped_items` (the count) and `skipped_items_note` to the result. Results with nothing left out are unchanged. The skipped items are logged by field path only, without their values.
+- The `get_calendar_members` output schema now allows `name` to be `null`, matching what the tool already returns for a member TimeTree does not name.
+
 ### Added
 - `check_connection` reports in one call whether sign-in to TimeTree works, the server version, whether an update is available, and whether read-only mode is on. It returns the next step to take when something fails. It is read-only and works in read-only mode.
 - The Claude Desktop extension has a "Read-only mode" checkbox (off by default) that sets `TIMETREE_READ_ONLY`, so only the read-only tools are listed and callable.
@@ -22,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `list_calendars` no longer fails with "Failed to fetch calendars" when TimeTree returns a calendar member without a name (`name` is `null`). Such members are left out of the member list; the rest of the calendars load normally. The same member without a name no longer fails `get_calendar_members`.
 
 ## [0.8.0] - 2026-10-29
+
 
 ### Added
 - `search_events_across_calendars` searches up to 5 selected calendars by date range and keyword.
@@ -40,11 +46,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.7.0] - 2026-10-22
 
+
 ### Added
 - `get_event_comment_image` retrieves one image from an event comment, including images posted by free accounts, and returns standard MCP image content over stdio without saving files. Supports JPEG, PNG, GIF, and WebP up to 5 MiB, with a 30-second download timeout, no redirects, and no authentication material sent to the image host.
 - `list_event_comments` and comment write results now include an `images` array with image indices, filenames, and dimensions, including comments containing only an image. Image download locations are not exposed.
 
 ## [0.6.0] - 2026-10-18
+
 
 ### Added
 - `update_event_occurrence` and `delete_event_occurrence` change or delete one occurrence of a recurring event, or it and every later one, the way the TimeTree app does. Earlier occurrences are not touched, and a failed second step removes the event created in the first.
@@ -64,6 +72,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.5.0] - 2026-10-07
 
+
 ### Added
 - Added `create_calendar` without member invitations, requiring an explicit name and purpose. Uses existing rate limiting and authentication recovery without retrying timeouts or server errors.
 - Calendar creation distinguishes invalid fields and authentication failures without forwarding upstream details.
@@ -76,6 +85,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated locked MCP SDK and proxy-addr dependencies to resolve high and critical audit findings.
 
 ## [0.4.0] - 2026-10-03
+
 
 ### Added
 - Claude Desktop extension (`.mcpb`) for macOS and Windows: download it from GitHub releases and open it to install. Claude Desktop asks for the TimeTree email and password, so no clone, build, or config file is needed. Nothing is published to npm.
@@ -110,6 +120,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.3.0] - 2026-05-25
 
+
 ### Added
 - Added memo tools: `list_memos`, `create_memo`, `update_memo`, and `delete_memo`.
 - Added event comment tools: `add_event_comment`, `list_event_comments`, `update_event_comment`, and `delete_event_comment`.
@@ -130,10 +141,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.2.1] - 2026-05-10
 
+
 ### Added
 - Event checklist support in create/update/get operations (@seisyo58)
 
 ## [0.2.0] - 2026-05-10
+
 
 ### Added
 - CI workflow for automated build verification on PRs
@@ -149,6 +162,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `node-fetch` dependency
 
 ## [0.1.0] - 2026-02-15
+
 
 ### Added
 - `list_calendars` tool - List all active TimeTree calendars
