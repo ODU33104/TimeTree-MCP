@@ -15,7 +15,7 @@ function pathSegment(value: string): string {
 }
 
 /** Keep in sync with package.json (checked by tests). */
-export const SERVER_VERSION = '0.8.1';
+export const SERVER_VERSION = '0.8.2';
 
 /** Latest published version: package.json on the default branch, which users install from. */
 export const UPDATE_CHECK_URL = 'https://raw.githubusercontent.com/ODU33104/TimeTree-MCP/main/package.json';

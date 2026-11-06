@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.2] - 2026-11-06
+
+### Changed
+- The Claude Desktop extension now uses this project's own logo (a mint leaf mark with three connected nodes) instead of the calendar artwork inherited from the upstream project.
+
 ## [0.8.1] - 2026-11-06
 
 ### Fixed
