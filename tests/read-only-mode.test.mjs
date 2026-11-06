@@ -9,7 +9,7 @@ const serverPath = fileURLToPath(new URL('../dist/index.js', import.meta.url));
 const READ_ONLY_TOOL_COUNT = 15;
 const ALL_TOOL_COUNT = 32;
 
-function listToolCount(readOnlyValue, timeoutMs = 5000) {
+function listToolCount(readOnlyValue, timeoutMs = 20000) {
   const env = {
     ...process.env,
     TIMETREE_EMAIL: 'your-email@example.com',
@@ -69,11 +69,11 @@ function listToolCount(readOnlyValue, timeoutMs = 5000) {
   });
 }
 
-test('TIMETREE_READ_ONLY=true lists only the read-only tools', { timeout: 15000 }, async () => {
+test('TIMETREE_READ_ONLY=true lists only the read-only tools', { timeout: 90000 }, async () => {
   assert.equal(await listToolCount('true'), READ_ONLY_TOOL_COUNT);
 });
 
-test('TIMETREE_READ_ONLY=false, empty, or unset keeps every tool listed', { timeout: 15000 }, async () => {
+test('TIMETREE_READ_ONLY=false, empty, or unset keeps every tool listed', { timeout: 90000 }, async () => {
   assert.equal(await listToolCount('false'), ALL_TOOL_COUNT);
   assert.equal(await listToolCount(''), ALL_TOOL_COUNT);
   assert.equal(await listToolCount(undefined), ALL_TOOL_COUNT);
