@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.1] - 2026-11-06
+
+### Fixed
+- `list_calendars` no longer fails with "Failed to fetch calendars" when TimeTree returns a calendar member without a name (`name` is `null`). Such members are left out of the member list; the rest of the calendars load normally. The same member without a name no longer fails `get_calendar_members`.
+
 ## [0.8.0] - 2026-10-29
 
 ### Added

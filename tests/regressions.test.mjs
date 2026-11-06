@@ -88,6 +88,25 @@ test('rejected session (400, code -493) triggers re-authentication and the call 
   assert.ok(getCount >= 2);
 });
 
+test('a calendar member with a null name does not fail getCalendars or getCalendarMembers', async () => {
+  const users = [
+    { id: 1, user_id: 7, name: 'Alex', role: 1 },
+    { id: 2, user_id: 8, name: null, role: 0 },
+    { id: 3, user_id: 9, role: 0 },
+  ];
+  const client = makeClient({
+    get: async (url) => String(url).endsWith('/users')
+      ? { calendar_users: users }
+      : { calendars: [{ id: 1, name: 'cal', deactivated_at: null, calendar_users: users }], chunk: false, since: 0 },
+  });
+
+  const calendars = await client.getCalendars();
+  assert.equal(calendars.length, 1);
+  assert.equal(calendars[0].calendar_users.length, 3);
+  const members = await client.getCalendarMembers('1');
+  assert.equal(members.length, 3);
+});
+
 test('other 400 errors do not trigger re-authentication', async () => {
   let authCount = 0;
   const client = makeClient(

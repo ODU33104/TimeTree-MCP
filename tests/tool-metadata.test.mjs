@@ -40,7 +40,7 @@ const defined = (data) => Object.fromEntries(Object.entries(data).filter(([, val
 
 /** A fake client answering every method with data shaped like TimeTree's responses. */
 const fakeClient = {
-  getCalendars: async () => [{ id: 123, name: 'Work', alias_code: 'abc', calendar_users: [{ id: 1, user_id: 7, name: 'Alex', role: 1 }] }],
+  getCalendars: async () => [{ id: 123, name: 'Work', alias_code: 'abc', calendar_users: [{ id: 1, user_id: 7, name: 'Alex', role: 1 }, { id: 2, user_id: 8, name: null, role: 0 }] }],
   createCalendar: async (name) => ({ id: 124, name, alias_code: 'new' }),
   getCurrentUser: async () => ({ id: 7, name: 'Alex', birthday: 0, gender: 'x' }),
   getEventsByCalendar: async () => [event(), memo],
