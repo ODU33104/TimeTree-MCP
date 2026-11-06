@@ -1,0 +1,26 @@
+{
+  "name": "timetree",
+  "displayName": "TimeTree MCP (Unofficial)",
+  "description": "Unofficial TimeTree MCP server. Reads and manages TimeTree calendars, events, memos, labels and members. Not affiliated with or endorsed by TimeTree.",
+  "author": {
+    "name": "ODU33104"
+  },
+  "repository": "https://github.com/ODU33104/TimeTree-MCP",
+  "license": "MIT",
+  "keywords": ["timetree", "calendar", "mcp", "unofficial"],
+  "userConfig": {
+    "email": {
+      "type": "string",
+      "title": "TimeTree email",
+      "description": "Email address of your TimeTree account",
+      "required": true
+    },
+    "password": {
+      "type": "string",
+      "title": "TimeTree password",
+      "description": "Password of your TimeTree account (stored as a sensitive value)",
+      "sensitive": true,
+      "required": true
+    }
+  }
+}
