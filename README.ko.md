@@ -72,10 +72,10 @@ Git, Node.js 설치나 설정 파일 편집이 필요 없습니다. macOS와 Win
 Node.js 22 이상과 Git이 필요합니다. GitHub 릴리스 태그 `v0.9.0`을 바로 설치합니다.
 
 ```bash
-claude mcp add timetree   --env TIMETREE_EMAIL=your-email@example.com   --env TIMETREE_PASSWORD=your-password   -- npx -y github:ODU33104/TimeTree-MCP#v0.9.0
+claude mcp add --scope user timetree -e TIMETREE_EMAIL=your-email@example.com -e TIMETREE_PASSWORD=your-password -e TIMETREE_INSTALL_SOURCE=npx -- npx -y github:ODU33104/TimeTree-MCP#v0.9.0
 ```
 
-처음 시작할 때는 서버를 빌드하느라 몇 분 걸릴 수 있으므로, Claude Code를 시작할 때 `MCP_TIMEOUT`(밀리초)을 넉넉하게 설정하세요. Windows PowerShell과 macOS/Linux용 명령: [docs/MCP_CLIENTS.md](docs/MCP_CLIENTS.md)
+처음 시작할 때는 서버를 빌드하느라 몇 분 걸릴 수 있으므로, Claude Code를 시작할 때 `MCP_TIMEOUT`(밀리초)을 넉넉하게 설정하세요. 이 명령은 비밀번호가 Claude 설정 파일에 평문으로 남습니다. 남기지 않는 방법과 Windows PowerShell·macOS/Linux용 명령: [docs/MCP_CLIENTS.md](docs/MCP_CLIENTS.md)
 
 ### Claude Code, Codex, Cursor 등 다른 클라이언트
 

@@ -72,10 +72,10 @@ Git や Node.js のインストール、設定ファイルの編集は不要で�
 Node.js 22 以上と Git が必要です。GitHub のリリースタグ `v0.9.0` から直接インストールします。
 
 ```bash
-claude mcp add timetree   --env TIMETREE_EMAIL=your-email@example.com   --env TIMETREE_PASSWORD=your-password   -- npx -y github:ODU33104/TimeTree-MCP#v0.9.0
+claude mcp add --scope user timetree -e TIMETREE_EMAIL=your-email@example.com -e TIMETREE_PASSWORD=your-password -e TIMETREE_INSTALL_SOURCE=npx -- npx -y github:ODU33104/TimeTree-MCP#v0.9.0
 ```
 
-初回起動はサーバーのビルドで数分かかることがあるため、Claude Code の起動時に `MCP_TIMEOUT`（ミリ秒）を長めに設定してください。Windows PowerShell と macOS/Linux 用のコマンド: [docs/MCP_CLIENTS.md](docs/MCP_CLIENTS.md)
+初回起動はサーバーのビルドで数分かかることがあるため、Claude Code の起動時に `MCP_TIMEOUT`（ミリ秒）を長めに設定してください。このコマンドではパスワードが Claude の設定ファイルに平文で残ります。残さない方法と、Windows PowerShell・macOS/Linux 用のコマンド: [docs/MCP_CLIENTS.md](docs/MCP_CLIENTS.md)
 
 ### Claude Code、Codex、Cursor などのクライアント
 

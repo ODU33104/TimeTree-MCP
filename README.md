@@ -72,10 +72,10 @@ No Git, Node.js install, or config file editing is needed. The extension runs on
 Requires Node.js 22 or later and Git. This installs the `v0.9.0` release tag straight from GitHub:
 
 ```bash
-claude mcp add timetree   --env TIMETREE_EMAIL=your-email@example.com   --env TIMETREE_PASSWORD=your-password   -- npx -y github:ODU33104/TimeTree-MCP#v0.9.0
+claude mcp add --scope user timetree -e TIMETREE_EMAIL=your-email@example.com -e TIMETREE_PASSWORD=your-password -e TIMETREE_INSTALL_SOURCE=npx -- npx -y github:ODU33104/TimeTree-MCP#v0.9.0
 ```
 
-The first start builds the server and can take a few minutes, so raise `MCP_TIMEOUT` (in milliseconds) when you start Claude Code. Commands for Windows PowerShell and macOS/Linux: [docs/MCP_CLIENTS.md](docs/MCP_CLIENTS.md)
+The first start builds the server and can take a few minutes, so raise `MCP_TIMEOUT` (in milliseconds) when you start Claude Code. The password is stored as plain text in Claude's configuration. [docs/MCP_CLIENTS.md](docs/MCP_CLIENTS.md) has a variant that keeps it out of the file, with commands for Windows PowerShell and macOS/Linux: [docs/MCP_CLIENTS.md](docs/MCP_CLIENTS.md)
 
 ### Claude Code, Codex, Cursor, and other clients
 
