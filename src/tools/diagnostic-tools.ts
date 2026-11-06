@@ -27,6 +27,10 @@ const UPDATE_NEXT_STEP_MCPB =
   `${RELEASES_URL} から最新の timetree-mcp .mcpb をダウンロードして開き、拡張機能を入れ直してください。 ` +
   `Download the latest timetree-mcp .mcpb from ${RELEASES_URL} and open it to reinstall the extension.`;
 
+const UPDATE_NEXT_STEP_NPX =
+  `インストールコマンドのリリースタグ（github:ODU33104/TimeTree-MCP#vX.Y.Z）を最新版に変えて入れ直し、Claude Code を再起動してください。 ` +
+  `Change the release tag in the install command (github:ODU33104/TimeTree-MCP#vX.Y.Z) to the latest release, add the server again, and restart Claude Code. ${RELEASES_URL}`;
+
 const UPDATE_NEXT_STEP_GIT =
   'TimeTree-MCP のフォルダで git pull origin main && npm ci && npm run build を実行し、MCP クライアントを再起動してください。 ' +
   'In the TimeTree-MCP folder, run git pull origin main && npm ci && npm run build, then restart the MCP client.';
@@ -107,7 +111,8 @@ export function createCheckConnectionTool(apiClient: TimeTreeAPIClient, options:
       if (signIn === 'failed') {
         nextStep = SIGN_IN_FAILED_NEXT_STEP;
       } else if (updateAvailable) {
-        nextStep = process.env.TIMETREE_INSTALL_SOURCE === 'mcpb' ? UPDATE_NEXT_STEP_MCPB : UPDATE_NEXT_STEP_GIT;
+        const source = process.env.TIMETREE_INSTALL_SOURCE;
+        nextStep = source === 'mcpb' ? UPDATE_NEXT_STEP_MCPB : source === 'npx' ? UPDATE_NEXT_STEP_NPX : UPDATE_NEXT_STEP_GIT;
       } else if (readOnlyMode) {
         nextStep = READ_ONLY_NEXT_STEP;
       } else {

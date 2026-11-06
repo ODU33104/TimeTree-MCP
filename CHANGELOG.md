@@ -16,6 +16,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - `check_connection` reports in one call whether sign-in to TimeTree works, the server version, whether an update is available, and whether read-only mode is on. It returns the next step to take when something fails. It is read-only and works in read-only mode.
 - The Claude Desktop extension has a "Read-only mode" checkbox (off by default) that sets `TIMETREE_READ_ONLY`, so only the read-only tools are listed and callable.
+- Claude Code can install the server without a clone: `claude mcp add ... -- npx -y github:ODU33104/TimeTree-MCP#v0.9.0` (see docs/MCP_CLIENTS.md). The package now builds `dist` on install (`prepare`) and ships only `dist` (`files`). The first start builds the package and can take a few minutes.
+- A Claude Code plugin marketplace entry (`.claude-plugin/marketplace.json`, `plugin/`). The plugin asks for the email and password through its user options. It has been installed and validated but not yet checked end to end in a Claude Code session.
+- Update notices for installs started through `npx` (`TIMETREE_INSTALL_SOURCE=npx`) tell the user to move to the latest release tag instead of running `git pull`.
 
 ### Changed
 - Failed tool calls now start with a category code and give a bilingual next step (`[AUTH_FAILED]`, `[UPSTREAM_FORMAT]`, `[NETWORK]`, `[RATE_LIMITED]`, `[INVALID_INPUT]`, `[NOT_FOUND]`, `[UNKNOWN]`) instead of raw exception text. Responses no longer include raw TimeTree response data, validation issue dumps, or argument values; the detail stays in the server log. `[UPSTREAM_FORMAT]` names only the response field path and the version to report in the issue tracker.
