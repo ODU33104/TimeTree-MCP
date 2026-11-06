@@ -55,8 +55,8 @@ import {
 } from '../types/timetree.js';
 
 export class TimeTreeAPIError extends Error {
-  constructor(message: string, public statusCode?: number) {
-    super(message);
+  constructor(message: string, public statusCode?: number, cause?: unknown) {
+    super(message, { cause });
     this.name = 'TimeTreeAPIError';
   }
 }
@@ -274,9 +274,7 @@ export class TimeTreeAPIClient {
       return activeCalendars;
     } catch (error) {
       logger.error('Failed to fetch calendars', { error });
-      throw new TimeTreeAPIError(
-        `Failed to fetch calendars: ${getErrorMessage(error)}`
-      );
+      throw new TimeTreeAPIError(`Failed to fetch calendars: ${getErrorMessage(error)}`, undefined, error);
     }
   }
 
@@ -371,9 +369,7 @@ export class TimeTreeAPIClient {
       }
 
       logger.error('Failed to sync events', { calendarId, error });
-      throw new TimeTreeAPIError(
-        `Failed to sync events: ${getErrorMessage(error)}`
-      );
+      throw new TimeTreeAPIError(`Failed to sync events: ${getErrorMessage(error)}`, undefined, error);
     }
   }
 
@@ -432,9 +428,7 @@ export class TimeTreeAPIClient {
       }
 
       logger.error('Failed to fetch updated events', { calendarId, error });
-      throw new TimeTreeAPIError(
-        `Failed to fetch updated events: ${getErrorMessage(error)}`
-      );
+      throw new TimeTreeAPIError(`Failed to fetch updated events: ${getErrorMessage(error)}`, undefined, error);
     }
   }
 
@@ -468,9 +462,7 @@ export class TimeTreeAPIClient {
         throw new InvalidCalendarError(calendarId);
       }
       logger.error('Failed to fetch calendar labels', { calendarId, error });
-      throw new TimeTreeAPIError(
-        `Failed to fetch calendar labels: ${getErrorMessage(error)}`
-      );
+      throw new TimeTreeAPIError(`Failed to fetch calendar labels: ${getErrorMessage(error)}`, undefined, error);
     }
   }
 
@@ -495,10 +487,7 @@ export class TimeTreeAPIClient {
         throw new InvalidCalendarError(calendarIds.join(','));
       }
       logger.error('Failed to fetch latest event activities', { calendarIds, error });
-      throw new TimeTreeAPIError(
-        `Failed to fetch recent activity: ${getErrorMessage(error)}`,
-        getStatusCode(error)
-      );
+      throw new TimeTreeAPIError(`Failed to fetch recent activity: ${getErrorMessage(error)}`, getStatusCode(error), error);
     }
   }
 
@@ -519,10 +508,7 @@ export class TimeTreeAPIClient {
       return MemorialDaysResponseSchema.parse(response).memorialdays.filter((day) => !day.deactivated_at);
     } catch (error) {
       logger.error('Failed to fetch memorial days', { countryIsos, error });
-      throw new TimeTreeAPIError(
-        `Failed to fetch holidays: ${getErrorMessage(error)}`,
-        getStatusCode(error)
-      );
+      throw new TimeTreeAPIError(`Failed to fetch holidays: ${getErrorMessage(error)}`, getStatusCode(error), error);
     }
   }
 
@@ -586,10 +572,7 @@ export class TimeTreeAPIClient {
         throw new TimeTreeAPIError('CSRF token missing or invalid - re-authentication required', 403);
       }
       logger.error('Failed to update calendar labels', { calendarId, error });
-      throw new TimeTreeAPIError(
-        `Failed to update calendar labels: ${getErrorMessage(error)}`,
-        getStatusCode(error)
-      );
+      throw new TimeTreeAPIError(`Failed to update calendar labels: ${getErrorMessage(error)}`, getStatusCode(error), error);
     }
   }
 
@@ -613,9 +596,7 @@ export class TimeTreeAPIClient {
         throw new InvalidCalendarError(calendarId);
       }
       logger.error('Failed to fetch calendar members', { calendarId, error });
-      throw new TimeTreeAPIError(
-        `Failed to fetch calendar members: ${getErrorMessage(error)}`
-      );
+      throw new TimeTreeAPIError(`Failed to fetch calendar members: ${getErrorMessage(error)}`, undefined, error);
     }
   }
 
@@ -639,9 +620,7 @@ export class TimeTreeAPIClient {
         throw new InvalidCalendarError(calendarId);
       }
       logger.error('Failed to fetch calendar virtual users', { calendarId, error });
-      throw new TimeTreeAPIError(
-        `Failed to fetch calendar virtual users: ${getErrorMessage(error)}`
-      );
+      throw new TimeTreeAPIError(`Failed to fetch calendar virtual users: ${getErrorMessage(error)}`, undefined, error);
     }
   }
 
@@ -742,7 +721,7 @@ export class TimeTreeAPIClient {
       return new TimeTreeAPIError('CSRF token missing or invalid - re-authentication required', 403);
     }
     logger.error(`Failed to ${action}`, { calendarId, error });
-    return new TimeTreeAPIError(`Failed to ${action}: ${getErrorMessage(error)}`, getStatusCode(error));
+    return new TimeTreeAPIError(`Failed to ${action}: ${getErrorMessage(error)}`, getStatusCode(error), error);
   }
 
   /** The signed-in TimeTree user. */
@@ -755,7 +734,7 @@ export class TimeTreeAPIClient {
       return CurrentUserResponseSchema.parse(response).user;
     } catch (error) {
       logger.error('Failed to fetch current user', { error });
-      throw new TimeTreeAPIError(`Failed to fetch current user: ${getErrorMessage(error)}`, getStatusCode(error));
+      throw new TimeTreeAPIError(`Failed to fetch current user: ${getErrorMessage(error)}`, getStatusCode(error), error);
     }
   }
 
@@ -799,10 +778,7 @@ export class TimeTreeAPIClient {
       }
 
       logger.error('Failed to create event', { calendarId, error });
-      throw new TimeTreeAPIError(
-        `Failed to create event: ${getErrorMessage(error)}`,
-        getStatusCode(error)
-      );
+      throw new TimeTreeAPIError(`Failed to create event: ${getErrorMessage(error)}`, getStatusCode(error), error);
     }
   }
 
@@ -862,10 +838,7 @@ export class TimeTreeAPIClient {
       }
 
       logger.error('Failed to update event', { calendarId, eventUuid, error });
-      throw new TimeTreeAPIError(
-        `Failed to update event: ${getErrorMessage(error)}`,
-        getStatusCode(error)
-      );
+      throw new TimeTreeAPIError(`Failed to update event: ${getErrorMessage(error)}`, getStatusCode(error), error);
     }
   }
 
@@ -950,10 +923,7 @@ export class TimeTreeAPIClient {
       }
 
       logger.error('Failed to delete event', { calendarId, eventUuid, error });
-      throw new TimeTreeAPIError(
-        `Failed to delete event: ${getErrorMessage(error)}`,
-        getStatusCode(error)
-      );
+      throw new TimeTreeAPIError(`Failed to delete event: ${getErrorMessage(error)}`, getStatusCode(error), error);
     }
   }
 
@@ -1082,10 +1052,7 @@ export class TimeTreeAPIClient {
         throw new TimeTreeAPIError('CSRF token missing or invalid - re-authentication required', 403);
       }
       logger.error('Failed to add event comment', { calendarId, eventUuid, error });
-      throw new TimeTreeAPIError(
-        `Failed to add event comment: ${getErrorMessage(error)}`,
-        getStatusCode(error)
-      );
+      throw new TimeTreeAPIError(`Failed to add event comment: ${getErrorMessage(error)}`, getStatusCode(error), error);
     }
   }
 
@@ -1116,10 +1083,7 @@ export class TimeTreeAPIClient {
         throw new TimeTreeAPIError(`Event not found: ${eventUuid}`, 404);
       }
       logger.error('Failed to list event comments', { calendarId, eventUuid, error });
-      throw new TimeTreeAPIError(
-        `Failed to list event comments: ${getErrorMessage(error)}`,
-        getStatusCode(error)
-      );
+      throw new TimeTreeAPIError(`Failed to list event comments: ${getErrorMessage(error)}`, getStatusCode(error), error);
     }
   }
 
@@ -1175,10 +1139,7 @@ export class TimeTreeAPIClient {
         throw new TimeTreeAPIError('CSRF token missing or invalid - re-authentication required', 403);
       }
       logger.error('Failed to update event comment', { calendarId, eventUuid, commentId, error });
-      throw new TimeTreeAPIError(
-        `Failed to update event comment: ${getErrorMessage(error)}`,
-        getStatusCode(error)
-      );
+      throw new TimeTreeAPIError(`Failed to update event comment: ${getErrorMessage(error)}`, getStatusCode(error), error);
     }
   }
 
@@ -1215,10 +1176,7 @@ export class TimeTreeAPIClient {
         throw new TimeTreeAPIError('CSRF token missing or invalid - re-authentication required', 403);
       }
       logger.error('Failed to delete event comment', { calendarId, eventUuid, commentId, error });
-      throw new TimeTreeAPIError(
-        `Failed to delete event comment: ${getErrorMessage(error)}`,
-        getStatusCode(error)
-      );
+      throw new TimeTreeAPIError(`Failed to delete event comment: ${getErrorMessage(error)}`, getStatusCode(error), error);
     }
   }
 }

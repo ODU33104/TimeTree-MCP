@@ -5,8 +5,8 @@
 
 import { z } from 'zod';
 import type { TimeTreeAPIClient } from '../client/api.js';
-import { InvalidCalendarError } from '../client/api.js';
 import { logger } from '../utils/logger.js';
+import { parseToolInput, toolErrorResult } from '../utils/mcp-errors.js';
 import { getLabelColorName } from '../types/label-colors.js';
 import {
   CALENDAR_ID_JSON_SCHEMA,
@@ -164,7 +164,7 @@ export function createGetEventsTool(apiClient: TimeTreeAPIClient) {
     },
     handler: async (args: unknown) => {
       try {
-        const input = GetEventsInputSchema.parse(args);
+        const input = parseToolInput(GetEventsInputSchema, args);
         const { start_after, start_before, query, label_id, include_memos, expand_recurring, limit } = input;
         const calendar_id = String(input.calendar_id);
 
@@ -279,62 +279,7 @@ export function createGetEventsTool(apiClient: TimeTreeAPIClient) {
       } catch (error) {
         logger.error('Tool: get_events failed', { error });
 
-        // Handle specific error types
-        if (error instanceof InvalidCalendarError) {
-          return {
-            content: [
-              {
-                type: 'text',
-                text: JSON.stringify(
-                  {
-                    error: 'Invalid calendar',
-                    message: `Calendar not found. Please use list_calendars to get valid calendar IDs.`,
-                  },
-                  null,
-                  2
-                ),
-              },
-            ],
-            isError: true,
-          };
-        }
-
-        if ((error as any).name === 'ZodError') {
-          return {
-            content: [
-              {
-                type: 'text',
-                text: JSON.stringify(
-                  {
-                    error: 'Invalid input',
-                    message: 'Please provide a valid calendar_id',
-                    details: (error as any).errors,
-                  },
-                  null,
-                  2
-                ),
-              },
-            ],
-            isError: true,
-          };
-        }
-
-        return {
-          content: [
-            {
-              type: 'text',
-              text: JSON.stringify(
-                {
-                  error: 'Failed to fetch events',
-                  message: (error as Error).message,
-                },
-                null,
-                2
-              ),
-            },
-          ],
-          isError: true,
-        };
+        return toolErrorResult(error);
       }
     },
   };
@@ -389,7 +334,7 @@ export function createGetUpdatedEventsTool(apiClient: TimeTreeAPIClient) {
     },
     handler: async (args: unknown) => {
       try {
-        const input = GetUpdatedEventsInputSchema.parse(args);
+        const input = parseToolInput(GetUpdatedEventsInputSchema, args);
         const { updated_after, limit } = input;
         const calendar_id = String(input.calendar_id);
 
@@ -458,62 +403,7 @@ export function createGetUpdatedEventsTool(apiClient: TimeTreeAPIClient) {
       } catch (error) {
         logger.error('Tool: get_updated_events failed', { error });
 
-        // Handle specific error types
-        if (error instanceof InvalidCalendarError) {
-          return {
-            content: [
-              {
-                type: 'text',
-                text: JSON.stringify(
-                  {
-                    error: 'Invalid calendar',
-                    message: `Calendar not found. Please use list_calendars to get valid calendar IDs.`,
-                  },
-                  null,
-                  2
-                ),
-              },
-            ],
-            isError: true,
-          };
-        }
-
-        if ((error as any).name === 'ZodError') {
-          return {
-            content: [
-              {
-                type: 'text',
-                text: JSON.stringify(
-                  {
-                    error: 'Invalid input',
-                    message: 'Please provide valid calendar_id and updated_after (number) parameters',
-                    details: (error as any).errors,
-                  },
-                  null,
-                  2
-                ),
-              },
-            ],
-            isError: true,
-          };
-        }
-
-        return {
-          content: [
-            {
-              type: 'text',
-              text: JSON.stringify(
-                {
-                  error: 'Failed to fetch updated events',
-                  message: (error as Error).message,
-                },
-                null,
-                2
-              ),
-            },
-          ],
-          isError: true,
-        };
+        return toolErrorResult(error);
       }
     },
   };

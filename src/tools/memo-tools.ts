@@ -5,8 +5,8 @@
 
 import { z } from 'zod';
 import type { TimeTreeAPIClient } from '../client/api.js';
-import { InvalidCalendarError, TimeTreeAPIError } from '../client/api.js';
 import { logger } from '../utils/logger.js';
+import { parseToolInput, toolErrorResult } from '../utils/mcp-errors.js';
 import {
   ADDITIVE,
   CALENDAR_ID_JSON_SCHEMA,
@@ -113,46 +113,6 @@ function formatMemo(memo: Event) {
   };
 }
 
-function errorContent(error: string, message: string, details?: unknown) {
-  return {
-    content: [
-      {
-        type: 'text',
-        text: JSON.stringify(
-          {
-            error,
-            message,
-            ...(details !== undefined && { details }),
-          },
-          null,
-          2
-        ),
-      },
-    ],
-    isError: true,
-  };
-}
-
-function memoError(error: unknown, action: string) {
-  if (error instanceof InvalidCalendarError) {
-    return errorContent('Invalid calendar', 'Calendar not found. Please use list_calendars to get valid calendar IDs.');
-  }
-
-  if (error instanceof TimeTreeAPIError && error.statusCode === 404) {
-    return errorContent('Memo not found', 'The specified memo UUID does not exist or has already been deleted.');
-  }
-
-  if (error instanceof TimeTreeAPIError && error.statusCode === 403) {
-    return errorContent('Authentication failed', 'CSRF token missing or invalid. Please try again.');
-  }
-
-  if ((error as { name?: string }).name === 'ZodError') {
-    return errorContent('Invalid input', `Please provide valid data to ${action}`, (error as { errors?: unknown }).errors);
-  }
-
-  return errorContent(`Failed to ${action}`, (error as Error).message);
-}
-
 export function createListMemosTool(apiClient: TimeTreeAPIClient) {
   return {
     name: 'list_memos',
@@ -181,7 +141,7 @@ export function createListMemosTool(apiClient: TimeTreeAPIClient) {
     },
     handler: async (args: unknown) => {
       try {
-        const input = ListMemosInputSchema.parse(args);
+        const input = parseToolInput(ListMemosInputSchema, args);
         logger.info('Tool: list_memos called', { calendar_id: input.calendar_id });
 
         let memos = await apiClient.getMemosByCalendar(input.calendar_id.toString());
@@ -210,7 +170,7 @@ export function createListMemosTool(apiClient: TimeTreeAPIClient) {
         };
       } catch (error) {
         logger.error('Tool: list_memos failed', { error });
-        return memoError(error, 'list memos');
+        return toolErrorResult(error);
       }
     },
   };
@@ -257,7 +217,7 @@ export function createCreateMemoTool(apiClient: TimeTreeAPIClient) {
     },
     handler: async (args: unknown) => {
       try {
-        const input = CreateMemoInputSchema.parse(args);
+        const input = parseToolInput(CreateMemoInputSchema, args);
         logger.info('Tool: create_memo called', { calendar_id: input.calendar_id, title: input.title });
 
         const memo = await apiClient.createMemo(input.calendar_id.toString(), {
@@ -289,7 +249,7 @@ export function createCreateMemoTool(apiClient: TimeTreeAPIClient) {
         };
       } catch (error) {
         logger.error('Tool: create_memo failed', { error });
-        return memoError(error, 'create memo');
+        return toolErrorResult(error);
       }
     },
   };
@@ -335,7 +295,7 @@ export function createUpdateMemoTool(apiClient: TimeTreeAPIClient) {
     },
     handler: async (args: unknown) => {
       try {
-        const input = UpdateMemoInputSchema.parse(args);
+        const input = parseToolInput(UpdateMemoInputSchema, args);
         logger.info('Tool: update_memo called', { calendar_id: input.calendar_id, memo_uuid: input.memo_uuid });
 
         const memo = await apiClient.updateMemo(input.calendar_id.toString(), input.memo_uuid, {
@@ -366,7 +326,7 @@ export function createUpdateMemoTool(apiClient: TimeTreeAPIClient) {
         };
       } catch (error) {
         logger.error('Tool: update_memo failed', { error });
-        return memoError(error, 'update memo');
+        return toolErrorResult(error);
       }
     },
   };
@@ -389,7 +349,7 @@ export function createDeleteMemoTool(apiClient: TimeTreeAPIClient) {
     },
     handler: async (args: unknown) => {
       try {
-        const input = DeleteMemoInputSchema.parse(args);
+        const input = parseToolInput(DeleteMemoInputSchema, args);
         logger.info('Tool: delete_memo called', { calendar_id: input.calendar_id, memo_uuid: input.memo_uuid });
 
         await apiClient.deleteMemo(input.calendar_id.toString(), input.memo_uuid);
@@ -412,7 +372,7 @@ export function createDeleteMemoTool(apiClient: TimeTreeAPIClient) {
         };
       } catch (error) {
         logger.error('Tool: delete_memo failed', { error });
-        return memoError(error, 'delete memo');
+        return toolErrorResult(error);
       }
     },
   };

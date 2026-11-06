@@ -1,5 +1,6 @@
 import { TIMETREE_CONFIG } from '../config/config.js';
 import { HttpError } from './http-client.js';
+import { withSafeMessage } from './mcp-errors.js';
 
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 
@@ -21,16 +22,16 @@ export async function downloadCommentImage(objectKey: string): Promise<{ data: B
     }
     if (Number(response.headers.get('content-length')) > MAX_IMAGE_BYTES) {
       await response.body?.cancel();
-      throw new HttpError(413, 'Comment images must be no larger than 5 MiB.');
+      throw withSafeMessage(new HttpError(413, 'Comment images must be no larger than 5 MiB.'));
     }
-    if (!response.body) throw new HttpError(415, 'The comment image is empty.');
+    if (!response.body) throw withSafeMessage(new HttpError(415, 'The comment image is empty.'));
 
     const chunks: Uint8Array[] = [];
     let size = 0;
     for await (const chunk of response.body) {
       size += chunk.byteLength;
       if (size > MAX_IMAGE_BYTES) {
-        throw new HttpError(413, 'Comment images must be no larger than 5 MiB.');
+        throw withSafeMessage(new HttpError(413, 'Comment images must be no larger than 5 MiB.'));
       }
       chunks.push(chunk);
     }
@@ -46,12 +47,12 @@ export async function downloadCommentImage(objectKey: string): Promise<{ data: B
     } else if (data.subarray(0, 4).toString('latin1') === 'RIFF' && data.subarray(8, 12).toString('latin1') === 'WEBP') {
       mimeType = 'image/webp';
     } else {
-      throw new HttpError(415, 'Unsupported comment image. Supported formats: JPEG, PNG, GIF, WebP.');
+      throw withSafeMessage(new HttpError(415, 'Unsupported comment image. Supported formats: JPEG, PNG, GIF, WebP.'));
     }
     return { data, mimeType };
   } catch (error) {
     if (error instanceof HttpError) throw error;
     // Fetch errors can contain private object keys or response details.
-    throw new Error('Could not download the comment image. The request failed, timed out, or was redirected.');
+    throw withSafeMessage(new Error('Could not download the comment image. The request failed, timed out, or was redirected.'));
   }
 }

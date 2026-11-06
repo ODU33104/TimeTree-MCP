@@ -5,8 +5,8 @@
 
 import { z } from 'zod';
 import type { TimeTreeAPIClient } from '../client/api.js';
-import { InvalidCalendarError } from '../client/api.js';
 import { logger } from '../utils/logger.js';
+import { parseToolInput, toolErrorResult } from '../utils/mcp-errors.js';
 import { CALENDAR_ID_JSON_SCHEMA, CalendarIdSchema, READ_ONLY } from './shared-schemas.js';
 
 /**
@@ -37,18 +37,6 @@ export const GetRecentActivityInputSchema = z.object({
 
 function activityName(code: number): string {
   return ACTIVITY_NAMES[code] ?? `other_${code}`;
-}
-
-function errorContent(error: string, message: string, details?: unknown) {
-  return {
-    content: [
-      {
-        type: 'text',
-        text: JSON.stringify({ error, message, ...(details !== undefined && { details }) }, null, 2),
-      },
-    ],
-    isError: true,
-  };
 }
 
 export function createGetRecentActivityTool(apiClient: TimeTreeAPIClient) {
@@ -113,7 +101,7 @@ export function createGetRecentActivityTool(apiClient: TimeTreeAPIClient) {
     },
     handler: async (args: unknown) => {
       try {
-        const input = GetRecentActivityInputSchema.parse(args);
+        const input = parseToolInput(GetRecentActivityInputSchema, args);
         const calendarId = String(input.calendar_id);
         logger.info('Tool: get_recent_activity called', { calendar_id: calendarId, since: input.since });
 
@@ -158,13 +146,7 @@ export function createGetRecentActivityTool(apiClient: TimeTreeAPIClient) {
         };
       } catch (error) {
         logger.error('Tool: get_recent_activity failed', { error });
-        if (error instanceof InvalidCalendarError) {
-          return errorContent('Invalid calendar', 'Calendar not found. Please use list_calendars to get valid calendar IDs.');
-        }
-        if ((error as { name?: string }).name === 'ZodError') {
-          return errorContent('Invalid input', 'Please provide valid activity query parameters', (error as { errors?: unknown }).errors);
-        }
-        return errorContent('Failed to get recent activity', (error as Error).message);
+        return toolErrorResult(error);
       }
     },
   };

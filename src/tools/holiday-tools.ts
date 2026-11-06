@@ -6,6 +6,7 @@
 import { z } from 'zod';
 import type { TimeTreeAPIClient } from '../client/api.js';
 import { logger } from '../utils/logger.js';
+import { parseToolInput, toolErrorResult, InvalidArgumentError } from '../utils/mcp-errors.js';
 import { READ_ONLY } from './shared-schemas.js';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -29,18 +30,6 @@ export const GetHolidaysInputSchema = z.object({
 
 function toDateString(timestamp: number): string {
   return new Date(timestamp).toISOString().slice(0, 10);
-}
-
-function errorContent(error: string, message: string, details?: unknown) {
-  return {
-    content: [
-      {
-        type: 'text',
-        text: JSON.stringify({ error, message, ...(details !== undefined && { details }) }, null, 2),
-      },
-    ],
-    isError: true,
-  };
 }
 
 export function createGetHolidaysTool(apiClient: TimeTreeAPIClient) {
@@ -91,15 +80,15 @@ export function createGetHolidaysTool(apiClient: TimeTreeAPIClient) {
     },
     handler: async (args: unknown) => {
       try {
-        const input = GetHolidaysInputSchema.parse(args);
+        const input = parseToolInput(GetHolidaysInputSchema, args);
         const from = new Date(`${input.start_date}T00:00:00Z`);
         const to = new Date(new Date(`${input.end_date}T00:00:00Z`).getTime() + DAY_MS);
 
         if (Number.isNaN(from.getTime()) || Number.isNaN(to.getTime()) || to <= from) {
-          return errorContent('Invalid input', 'start_date must be on or before end_date');
+          return toolErrorResult(new InvalidArgumentError('start_date', '開始日は終了日以前にしてください', 'must be on or before end_date'));
         }
         if ((to.getTime() - from.getTime()) / DAY_MS > MAX_RANGE_DAYS) {
-          return errorContent('Invalid input', 'Date range must be 2 years or less');
+          return toolErrorResult(new InvalidArgumentError('end_date', '期間は 2 年以内にしてください', 'date range must be 2 years or less'));
         }
 
         const countries = [...new Set(input.country_iso.map((code) => code.toUpperCase()))];
@@ -127,10 +116,7 @@ export function createGetHolidaysTool(apiClient: TimeTreeAPIClient) {
         };
       } catch (error) {
         logger.error('Tool: get_holidays failed', { error });
-        if ((error as { name?: string }).name === 'ZodError') {
-          return errorContent('Invalid input', 'Please provide valid holiday query parameters', (error as { errors?: unknown }).errors);
-        }
-        return errorContent('Failed to get holidays', (error as Error).message);
+        return toolErrorResult(error);
       }
     },
   };

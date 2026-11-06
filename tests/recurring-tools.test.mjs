@@ -63,6 +63,7 @@ function fakeClient(overrides = {}) {
 }
 
 const parse = (result) => JSON.parse(result.content[0].text);
+const errorText = (result) => result.content[0].text;
 
 test('delete_event_occurrence "this" adds the occurrence to EXDATE without notifying', async () => {
   const client = fakeClient();
@@ -101,13 +102,13 @@ test('occurrence tools reject times that are not occurrences and non-recurring e
     calendar_id: 123, event_uuid: 'series', occurrence_start_at: '2026-10-21T02:00:00Z',
   });
   assert.equal(offRule.isError, true);
-  assert.match(parse(offRule).message, /not an occurrence/);
+  assert.match(errorText(offRule), /not an occurrence/);
 
   const single = await createUpdateEventOccurrenceTool(fakeClient({
     getEvent: async () => series({ recurrences: [] }),
   })).handler({ calendar_id: 123, event_uuid: 'series', occurrence_start_at: OCT20, title: 'x' });
   assert.equal(single.isError, true);
-  assert.match(parse(single).message, /not a recurring event/);
+  assert.match(errorText(single), /not a recurring event/);
 
   const noChange = await createUpdateEventOccurrenceTool(fakeClient()).handler({
     calendar_id: 123, event_uuid: 'series', occurrence_start_at: OCT20,
@@ -186,7 +187,7 @@ test('update_event_occurrence keeps the created event when the series cannot be 
   });
 
   assert.equal(result.isError, true);
-  assert.match(parse(result).message, /event created was kept/);
+  assert.match(errorText(result), /event created was kept/);
   assert.ok(!client.calls.some(([method]) => method === 'deleteEvent'));
 });
 
@@ -206,7 +207,7 @@ test('update_event_occurrence reports the created event when the rollback delete
   });
 
   assert.equal(result.isError, true);
-  assert.match(parse(result).message, /removing event created .* failed too/);
+  assert.match(errorText(result), /removing event created .* failed too/);
 });
 
 test('update_event_occurrence does not change the series when the create has no clear answer', async () => {
@@ -221,7 +222,7 @@ test('update_event_occurrence does not change the series when the create has no 
   });
 
   assert.equal(result.isError, true);
-  assert.match(parse(result).message, /may have been created anyway/);
+  assert.match(errorText(result), /may have been created anyway/);
   assert.ok(!client.calls.some(([method]) => method === 'updateEvent'));
 });
 
@@ -236,7 +237,7 @@ test('update_event_occurrence asks for a new rule when moving a BYDAY series to 
 
   const refused = await createUpdateEventOccurrenceTool(fakeClient({ getEvent: async () => weekly() })).handler(args);
   assert.equal(refused.isError, true);
-  assert.match(parse(refused).message, /Pass recurrences/);
+  assert.match(errorText(refused), /Pass recurrences/);
 
   const client = fakeClient({ getEvent: async () => weekly() });
   const moved = parse(await createUpdateEventOccurrenceTool(client).handler({
@@ -275,7 +276,7 @@ test('update_event_occurrence carries the remaining COUNT into a supplied rule a
     start_timezone: 'America/Los_Angeles',
   });
   assert.equal(moved.isError, true);
-  assert.match(parse(moved).message, /Pass recurrences/);
+  assert.match(errorText(moved), /Pass recurrences/);
 });
 
 test('update_event_occurrence restarts an all-excluded series at the occurrence for a new rule', async () => {
@@ -306,7 +307,7 @@ test('update_event_occurrence refuses recurrences without an RRULE before writin
       scope: 'this_and_following', recurrences,
     });
     assert.equal(result.isError, true);
-    assert.match(parse(result).message, /must include an RRULE/);
+    assert.match(errorText(result), /must include an RRULE/);
     assert.equal(client.calls.length, 0);
   }
 });
