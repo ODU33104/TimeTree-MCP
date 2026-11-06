@@ -94,7 +94,7 @@
     "read_only": {
       "type": "boolean",
       "title": "読み取り専用で使う (Read-only mode)",
-      "description": "When on, events cannot be added, changed, or deleted. オンにすると予定の追加・変更・削除ができなくなります。",
+      "description": "When on, events, memos, comments, labels, and members cannot be added, changed, or deleted. オンにすると、予定・メモ・コメント・ラベル・メンバーの追加・変更・削除ができなくなります。",
       "default": false,
       "required": false
     }
