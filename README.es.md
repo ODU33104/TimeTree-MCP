@@ -12,9 +12,9 @@
 
 ## Estado de las funciones
 
-- **Versión v0.8.0 (`main`): 32 herramientas MCP** para calendarios, eventos, recurrencias, notas y listas, comentarios, miembros, etiquetas, festivos y actividad reciente. Las 3 nuevas son de solo lectura: `search_events_across_calendars` (buscar eventos en varios calendarios), `find_available_slots` (buscar horarios libres) y `detect_event_conflicts` (detectar eventos solapados).
+- **Versión v0.9.0 (`main`): 33 herramientas MCP** para calendarios, eventos, recurrencias, notas y listas, comentarios, miembros, etiquetas, festivos y actividad reciente. Las 3 nuevas son de solo lectura: `search_events_across_calendars` (buscar eventos en varios calendarios), `find_available_slots` (buscar horarios libres) y `detect_event_conflicts` (detectar eventos solapados). Novedad de v0.9.0: `check_connection` (solo lectura) comprueba en una llamada el inicio de sesión, la versión y si hay actualización.
 - **En desarrollo, sin publicar y sin herramientas MCP utilizables:** simulación de cambios de horario, exportación `.ics` con privacidad por defecto, protección contra duplicados, resúmenes de asistencia/listas y resumen móvil. No se ha verificado la conexión directa desde ChatGPT móvil, la operación pública multiusuario ni una autorización oficial de TimeTree.
-- **Acceso:** por stdio se puede escribir como hasta ahora; con la variable de entorno `TIMETREE_READ_ONLY=true` el servidor es de solo lectura. Para HTTP remoto solo existe un módulo de políticas, sin servidor que acepte conexiones; no hay servicio remoto público.
+- **Acceso:** por stdio se puede escribir como hasta ahora; con la variable de entorno `TIMETREE_READ_ONLY=true` el servidor es de solo lectura. Para HTTP remoto solo existe un módulo de políticas, sin servidor que acepte conexiones; no hay servicio remoto público. En la extensión de Claude Desktop, la casilla «Modo de solo lectura (Read-only mode)» de los ajustes activa el modo de solo lectura; en ese modo hay 16 herramientas.
 
 
 ## TimeTree MCP

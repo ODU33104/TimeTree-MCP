@@ -48,8 +48,8 @@ AI 어시스턴트에게 이렇게 물어보면 됩니다.
 
 ## 범위와 한계
 
-- **v0.8.0의 도구는 32개.** [툴](#툴)을 참고하세요. 메모와 일정의 체크리스트 항목은 읽고 쓸 수 있지만, 항목 하나만 체크하는 도구는 없습니다. 참석 관련 필드는 RSVP 동작으로 제공하지 않습니다.
-- **읽기 전용 모드.** stdio에서는 기본적으로 쓰기 도구도 사용할 수 있습니다. MCP `env`에 `TIMETREE_READ_ONLY=true`를 설정하면 읽기 전용 도구 15개만 목록에 나오고 허용됩니다.
+- **v0.9.0의 도구는 33개.** [툴](#툴)을 참고하세요. 메모와 일정의 체크리스트 항목은 읽고 쓸 수 있지만, 항목 하나만 체크하는 도구는 없습니다. 참석 관련 필드는 RSVP 동작으로 제공하지 않습니다.
+- **읽기 전용 모드.** stdio에서는 기본적으로 쓰기 도구도 사용할 수 있습니다. 읽기 전용 도구 16개만 목록에 나오고 허용되게 하려면, Claude Desktop 확장 프로그램에서는 설정의 "읽기 전용으로 사용 (Read-only mode)"을 체크하고, git clone에서는 MCP `env`에 `TIMETREE_READ_ONLY=true`를 설정합니다.
 - **로컬 전용.** 서버는 내 컴퓨터에서 stdio로 실행됩니다. 호스팅 또는 원격 서비스는 없으며, 이 저장소의 원격 접속용 코드는 서버 없이 보안 규칙만 모아 둔 것입니다. ChatGPT 모바일 앱에서의 연결은 테스트하지 않았습니다.
 - **미지원.** 사진·파일 업로드, 앨범, RSVP, 프리미엄 첨부, 캘린더 양방향 동기화.
 - **미검증.** 자동 테스트 밖의 시간대·서머타임 경계 사례와 모든 TimeTree 앱 기능. 호환성은 TimeTree의 비공개 엔드포인트와 MCP 클라이언트에 따라 달라집니다.
@@ -66,6 +66,16 @@ AI 어시스턴트에게 이렇게 물어보면 됩니다.
 3. TimeTree 이메일과 비밀번호를 입력하고 확장 프로그램을 켭니다.
 
 Git, Node.js 설치나 설정 파일 편집이 필요 없습니다. macOS와 Windows용 Claude Desktop에 들어 있는 Node.js로 실행됩니다.
+
+### Claude Code (clone 없이)
+
+Node.js 22 이상과 Git이 필요합니다. GitHub 릴리스 태그 `v0.9.0`을 바로 설치합니다.
+
+```bash
+claude mcp add timetree   --env TIMETREE_EMAIL=your-email@example.com   --env TIMETREE_PASSWORD=your-password   -- npx -y github:ODU33104/TimeTree-MCP#v0.9.0
+```
+
+처음 시작할 때는 서버를 빌드하느라 몇 분 걸릴 수 있으므로, Claude Code를 시작할 때 `MCP_TIMEOUT`(밀리초)을 넉넉하게 설정하세요. Windows PowerShell과 macOS/Linux용 명령: [docs/MCP_CLIENTS.md](docs/MCP_CLIENTS.md)
 
 ### Claude Code, Codex, Cursor 등 다른 클라이언트
 
@@ -136,6 +146,7 @@ GUI 클라이언트가 `node`를 찾지 못하면 `command -v node`로 나온 �
 | 메모 | `list_memos`, `create_memo`, `update_memo`, `delete_memo` |
 | 댓글 | `list_event_comments`, `get_event_comment_image`, `add_event_comment`, `update_event_comment`, `delete_event_comment` |
 | 라벨과 멤버 | `get_calendar_labels`, `update_calendar_labels`, `get_calendar_members`, `get_calendar_virtual_members`, `create_virtual_member`, `update_virtual_member`, `delete_virtual_member` |
+| 진단 | `check_connection` (읽기 전용) |
 | 기타 | `get_holidays`, `get_recent_activity` |
 
 `create_calendar`에는 이름(1~20자)과 명시적인 용도가 필수입니다. 멤버를 초대하지 않으며 시간 초과나 서버 오류는 재시도하지 않습니다.
@@ -154,11 +165,17 @@ GUI 클라이언트가 `node`를 찾지 못하면 `command -v node`로 나온 �
 
 ## 문제 해결
 
+**무엇이 문제인지 모르겠을 때**: AI 어시스턴트에게 `check_connection` 실행을 요청하세요. 로그인 가능 여부, 서버 버전, 업데이트 여부, 읽기 전용 여부를 확인하고 다음에 할 일을 알려줍니다. 도구 호출이 실패하면 응답이 `[AUTH_FAILED]`, `[NETWORK]` 같은 분류 코드로 시작하고 이어서 다음에 할 일이 나옵니다.
+
+**목록에서 일부 항목이 빠져 있을 때**: TimeTree 응답의 일부가 예상과 다른 형식이어도 목록은 나머지 올바른 항목을 반환하고, 제외한 개수를 `skipped_items`로 알려줍니다.
+
 **"Missing required environment variables"**: MCP 설정에 `TIMETREE_EMAIL`과 `TIMETREE_PASSWORD`를 넣습니다. Claude Desktop 확장 프로그램이라면 설정을 열어 다시 입력합니다.
 
 **로그인 실패**: 같은 이메일과 비밀번호로 TimeTree 웹 앱에 로그인되는지 확인합니다. 이 서버는 이메일과 비밀번호 로그인만 지원합니다.
 
 **캘린더나 일정이 안 나옴**: 계정에 캘린더가 있는지 확인하고 클라이언트의 MCP 로그를 봅니다. TimeTree 웹 API가 바뀌었을 수 있으니 [이슈](https://github.com/ODU33104/TimeTree-MCP/issues)로 알려주십시오.
+
+질문과 버그 신고는 [GitHub Issues](https://github.com/ODU33104/TimeTree-MCP/issues)에서 받습니다.
 
 ## 동작 방식
 

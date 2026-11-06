@@ -12,9 +12,9 @@
 
 ## Status ciri
 
-- **Keluaran v0.8.0 (`main`): 32 alat MCP** untuk kalendar, acara, acara berulang, memo dan data senarai semak, komen, ahli, label, cuti umum dan aktiviti terkini. Tiga alat baharu ialah baca-sahaja: `search_events_across_calendars` (cari acara merentas kalendar), `find_available_slots` (cari masa lapang) dan `detect_event_conflicts` (kesan acara yang bertindih).
+- **Keluaran v0.9.0 (`main`): 33 alat MCP** untuk kalendar, acara, acara berulang, memo dan data senarai semak, komen, ahli, label, cuti umum dan aktiviti terkini. Tiga alat baharu ialah baca-sahaja: `search_events_across_calendars` (cari acara merentas kalendar), `find_available_slots` (cari masa lapang) dan `detect_event_conflicts` (kesan acara yang bertindih). Baharu dalam v0.9.0: `check_connection` (baca-sahaja) menyemak log masuk, versi dan kemas kini dalam satu panggilan.
 - **Dalam pembangunan, belum dikeluarkan, bukan alat MCP yang boleh digunakan:** simulasi perubahan waktu acara, eksport `.ics` yang mengutamakan privasi, perlindungan pendua, ringkasan kehadiran/senarai semak dan taklimat mudah alih. Sambungan terus ChatGPT mudah alih, perkhidmatan awam berbilang pengguna dan kebenaran rasmi TimeTree belum disahkan.
-- **Akses:** melalui stdio penulisan masih boleh dilakukan seperti biasa; tetapkan pemboleh ubah persekitaran `TIMETREE_READ_ONLY=true` untuk mod baca-sahaja. Untuk HTTP jauh hanya modul dasar disediakan, tanpa pelayan yang menerima sambungan; tiada perkhidmatan jauh awam.
+- **Akses:** melalui stdio penulisan masih boleh dilakukan seperti biasa; tetapkan pemboleh ubah persekitaran `TIMETREE_READ_ONLY=true` untuk mod baca-sahaja. Untuk HTTP jauh hanya modul dasar disediakan, tanpa pelayan yang menerima sambungan; tiada perkhidmatan jauh awam. Pada sambungan Claude Desktop, kotak semak "Mod baca-sahaja (Read-only mode)" dalam tetapan mengaktifkan mod baca-sahaja; dalam mod ini 16 alat tersedia.
 
 
 ## TimeTree MCP

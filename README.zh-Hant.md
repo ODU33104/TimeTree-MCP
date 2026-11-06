@@ -12,9 +12,9 @@
 
 ## 功能開發狀態
 
-- **v0.8.0（`main`）：32 個 MCP 工具**，涵蓋行事曆、活動、重複事件、備忘錄與清單資料、留言、成員、標籤、假日及最近變更。新增 3 個唯讀工具：`search_events_across_calendars`（跨多個行事曆搜尋活動）、`find_available_slots`（尋找空閒時段）、`detect_event_conflicts`（偵測重疊活動）。
+- **v0.9.0（`main`）：33 個 MCP 工具**，涵蓋行事曆、活動、重複事件、備忘錄與清單資料、留言、成員、標籤、假日及最近變更。新增 3 個唯讀工具：`search_events_across_calendars`（跨多個行事曆搜尋活動）、`find_available_slots`（尋找空閒時段）、`detect_event_conflicts`（偵測重疊活動）。新增 `check_connection`（唯讀），一次呼叫即可檢查登入、版本與更新狀態。
 - **開發中，尚未發佈，無法作為 MCP 工具使用：** 假設性改期分析、保護隱私的 `.ics` 匯出、重複防護、出席／清單摘要及行動裝置簡報。ChatGPT 手機版直接連線、公開多人服務及 TimeTree 官方授權尚未驗證。
-- **存取方式：** 透過 stdio 仍可像以往一樣寫入；設定環境變數 `TIMETREE_READ_ONLY=true` 可讓伺服器唯讀。遠端 HTTP 目前只有政策模組，沒有接受連線的伺服器，也沒有公開的遠端服務。
+- **存取方式：** 透過 stdio 仍可像以往一樣寫入；設定環境變數 `TIMETREE_READ_ONLY=true` 可讓伺服器唯讀。遠端 HTTP 目前只有政策模組，沒有接受連線的伺服器，也沒有公開的遠端服務。在 Claude Desktop 擴充功能的設定中勾選「以唯讀模式使用 (Read-only mode)」即可啟用唯讀模式，此時可用 16 個工具。
 
 
 ## TimeTree MCP

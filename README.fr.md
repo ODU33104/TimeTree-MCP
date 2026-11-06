@@ -12,9 +12,9 @@
 
 ## État des fonctionnalités
 
-- **Version v0.8.0 (`main`) : 32 outils MCP** : calendriers, événements, récurrences, mémos et données de listes, commentaires, membres, étiquettes, jours fériés et activité récente. Les 3 nouveaux sont en lecture seule : `search_events_across_calendars` (rechercher des événements dans plusieurs calendriers), `find_available_slots` (trouver des créneaux libres) et `detect_event_conflicts` (détecter les événements qui se chevauchent).
+- **Version v0.9.0 (`main`) : 33 outils MCP** : calendriers, événements, récurrences, mémos et données de listes, commentaires, membres, étiquettes, jours fériés et activité récente. Les 3 nouveaux sont en lecture seule : `search_events_across_calendars` (rechercher des événements dans plusieurs calendriers), `find_available_slots` (trouver des créneaux libres) et `detect_event_conflicts` (détecter les événements qui se chevauchent). Nouveauté de la v0.9.0 : `check_connection` (lecture seule) vérifie en un appel la connexion, la version et les mises à jour.
 - **En développement, non publié, non appelable via MCP :** simulation de déplacement d'événement, export `.ics` respectueux de la vie privée, garde anti-doublons, résumés de présence/listes et briefing mobile. La connexion directe sur ChatGPT mobile, l'hébergement multi-utilisateur et l'autorisation officielle de TimeTree restent non vérifiés.
-- **Accès :** en stdio, l'écriture reste possible comme avant ; la variable d'environnement `TIMETREE_READ_ONLY=true` passe le serveur en lecture seule. Pour le HTTP distant, seul un module de politique existe : aucun serveur n'écoute et il n'y a pas de service distant public.
+- **Accès :** en stdio, l'écriture reste possible comme avant ; la variable d'environnement `TIMETREE_READ_ONLY=true` passe le serveur en lecture seule. Pour le HTTP distant, seul un module de politique existe : aucun serveur n'écoute et il n'y a pas de service distant public. Dans l'extension Claude Desktop, la case « Mode lecture seule (Read-only mode) » des réglages active la lecture seule ; ce mode donne accès à 16 outils.
 
 
 ## TimeTree MCP
