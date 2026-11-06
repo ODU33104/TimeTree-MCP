@@ -32,6 +32,7 @@
     }
   },
   "tools": [
+    { "name": "check_connection", "description": "Check TimeTree sign-in, server version, and update status in one call (read-only)." },
     { "name": "list_calendars", "description": "List your TimeTree calendars." },
     { "name": "create_calendar", "description": "Create a calendar with an explicit name and purpose, without inviting members." },
     { "name": "get_current_user", "description": "Show your TimeTree user ID and name." },
