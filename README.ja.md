@@ -54,7 +54,7 @@ AI アシスタントに次のように聞くだけです。
 - **未検証。** 自動テスト以外のタイムゾーンや夏時間の端ケース、およびすべての TimeTree アプリ機能。互換性は TimeTree の非公開エンドポイントと MCP クライアントに依存します。
 - **言語。** 英語・日本語・韓国語は詳細版です。その他10言語は短い導入用の要約です。
 
-開発中の `main` には、読み取り専用の `preview_calendar_bridge` と `export_calendar_bridge_ics` が追加され、合計35ツール（読み取り専用18）になっています。v0.9.0 のリリースタグは従来の33ツールのままです。繰り返し・終日予定は不正確な変換を避けるため現時点では書き出しを中止します。Google認証と実際の同期は未完成です。詳細は [Calendar Bridge](docs/CALENDAR-BRIDGE.md) を参照してください。
+開発中の `main` は41ツールです（カレンダーの変更を伴わない接続操作など、制限モードで許可するものは24）。v0.9.0 のリリースタグは従来の33ツールのままです。TimeTree・Googleの比較プレビュー、ICS書き出し、ローカルGoogle OAuth認証と読み取りを追加しました。繰り返し・終日予定は不正確な変換を避けるため書き出しを中止します。実際の同期書き込みと定期同期は未完成です。詳細は [Calendar Bridge](docs/CALENDAR-BRIDGE.md) を参照してください。
 
 ## インストール
 
@@ -141,7 +141,7 @@ GUI クライアントが `node` を見つけられない場合は、`command -v
 | カレンダー | `list_calendars`, `create_calendar`, `get_current_user` |
 | 予定 | `get_events`, `get_updated_events`, `create_event`, `update_event`, `delete_event`, `copy_event` |
 | 複数カレンダー読み取り | `search_events_across_calendars`, `find_available_slots`, `detect_event_conflicts`（読み取り専用） |
-| Calendar Bridge（mainのみ、試験的） | `preview_calendar_bridge`, `export_calendar_bridge_ics`（読み取り専用、Google接続なし） |
+| Calendar Bridge（mainのみ、試験的） | `preview_calendar_bridge`, `preview_google_calendar_bridge`, `export_calendar_bridge_ics`（読み取り専用） |\n| Googleカレンダー（mainのみ、試験的） | `connect_google_calendar`, `google_connection_status`, `list_google_calendars`, `get_google_calendar_events`, `disconnect_google_calendar`（予定の書き込みなし） |
 | 繰り返し予定 | `update_event_occurrence`, `delete_event_occurrence` |
 | メモ | `list_memos`, `create_memo`, `update_memo`, `delete_memo` |
 | コメント | `list_event_comments`, `get_event_comment_image`, `add_event_comment`, `update_event_comment`, `delete_event_comment` |
@@ -155,6 +155,14 @@ GUI クライアントが `node` を見つけられない場合は、`command -v
 `list_event_comments` は添付画像の情報も返します。`get_event_comment_image` で1枚ずつ取得し、stdio 経由で MCP 標準の画像データとして返します。クライアント側がツールの画像応答に対応している必要があります。JPEG・PNG・GIF・WebP、最大 5 MiB に対応し、画像はメモリにだけ保持してディスクには保存しません。予定に直接添付されたプレミアムのファイルと画像のアップロードは対象外です。
 
 パラメータと使用例: [COMMANDS.md](COMMANDS.md)
+
+## Googleカレンダー接続（開発中のmainのみ）
+
+ローカルのMCPサーバー環境変数 `GOOGLE_OAUTH_CLIENT_ID` に、自分で作成したGoogle Cloudの **デスクトップアプリ用OAuthクライアントID** を設定します。Google Calendar APIと同意画面の設定も必要です。必要な場合は `GOOGLE_OAUTH_CLIENT_SECRET` も環境変数に設定します。認証コードやコールバックURLをAIチャットに貼り付けないでください。
+
+`connect_google_calendar` で取得したURLを、**MCPサーバーが動く同じ端末のブラウザ**で開きます。認証受付は127.0.0.1だけ、期限は5分です。アクセストークン・更新トークンはプロセスのメモリにのみ保存し、終了時に消えます。認証後は `list_google_calendars` と `preview_google_calendar_bridge` で読み取り・比較を行えます。
+
+この実装はChatGPTモバイルなどのリモート接続用認証ではありません。Googleへの予定書き込み・定期同期・トークンの永続保存は未対応です。MCP Apps非対応のClaude・Gemini等でも、MCPツール自体はJSON/テキストで利用する設計です。
 
 ## GitHub Actionsなしのローカル検証
 
