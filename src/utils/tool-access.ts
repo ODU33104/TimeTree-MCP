@@ -17,6 +17,7 @@ const READ_ONLY_TOOLS = new Set([
   'google_connection_status',
   'list_google_calendars',
   'get_google_calendar_events',
+  'preview_google_calendar_bridge',
   'disconnect_google_calendar',
   'list_memos',
   'list_event_comments',
