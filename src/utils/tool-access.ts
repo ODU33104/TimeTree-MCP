@@ -11,6 +11,8 @@ const READ_ONLY_TOOLS = new Set([
   'find_available_slots',
   'detect_event_conflicts',
   'get_updated_events',
+  'preview_calendar_bridge',
+  'export_calendar_bridge_ics',
   'list_memos',
   'list_event_comments',
   'get_event_comment_image',
