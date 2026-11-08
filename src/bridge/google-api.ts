@@ -57,11 +57,11 @@ function requireString(value: unknown, label: string): string {
 }
 
 function asItems(json: unknown): { items: unknown[]; nextPageToken?: string } {
-  if (!isRecord(json) || !Array.isArray(json.items)) throw new Error('Invalid Google list response');
+  if (!isRecord(json) || (json.items !== undefined && !Array.isArray(json.items))) throw new Error('Invalid Google list response');
   if (json.nextPageToken !== undefined && typeof json.nextPageToken !== 'string') {
     throw new Error('Invalid Google pagination cursor');
   }
-  return { items: json.items, nextPageToken: json.nextPageToken as string | undefined };
+  return { items: (json.items ?? []) as unknown[], nextPageToken: json.nextPageToken as string | undefined };
 }
 
 function normalizeEvent(value: unknown): GoogleEvent {
