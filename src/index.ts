@@ -12,10 +12,13 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
+  ListResourcesRequestSchema,
+  ReadResourceRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
 import { TimeTreeAuthManager } from './client/auth.js';
 import { TimeTreeAPIClient } from './client/api.js';
 import { registerTools, toolResult } from './tools/index.js';
+import { BRIDGE_APP_HTML, BRIDGE_APP_URI, BRIDGE_APP_MIME } from './ui/calendar-bridge.js';
 import { logger, summarizeToolArguments } from './utils/logger.js';
 import { toolErrorResult } from './utils/mcp-errors.js';
 import { isToolAllowed } from './utils/tool-access.js';
@@ -88,6 +91,7 @@ async function main() {
     {
       capabilities: {
         tools: {},
+        resources: {},
       },
       instructions: SERVER_INSTRUCTIONS,
     }
@@ -108,8 +112,40 @@ async function main() {
     });
   }
 
-  // Handle list_tools request
+  // MCP Apps is optional. Only attach UI metadata to clients that explicitly
+  // advertise the MCP UI extension. Every tool works without the UI.
+  const supportsBridgeApp = (): boolean => {
+    const caps = server.getClientCapabilities() as
+      | { extensions?: Record<string, { mimeTypes?: string[] }> }
+      | undefined;
+    return caps?.extensions?.['io.modelcontextprotocol/ui']?.mimeTypes?.includes(BRIDGE_APP_MIME) === true;
+  };
+
+  server.setRequestHandler(ListResourcesRequestSchema, async () => ({
+    resources: [{
+      uri: BRIDGE_APP_URI,
+      name: 'TimeTree Calendar Bridge preview',
+      mimeType: BRIDGE_APP_MIME,
+      description: 'Read-only interactive preview of TimeTree export plans',
+    }],
+  }));
+
+  server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
+    if (request.params.uri !== BRIDGE_APP_URI) {
+      throw new Error('Unknown resource URI');
+    }
+    return {
+      contents: [{
+        uri: BRIDGE_APP_URI,
+        mimeType: BRIDGE_APP_MIME,
+        text: BRIDGE_APP_HTML,
+      }],
+    };
+  });
+
+  // Handle list_tools request.
   server.setRequestHandler(ListToolsRequestSchema, async () => {
+    const withApp = supportsBridgeApp();
     return {
       tools: tools.filter((tool) => isToolAllowed(tool.name, readOnly)).map((tool) => ({
         name: tool.name,
@@ -117,6 +153,9 @@ async function main() {
         inputSchema: tool.inputSchema,
         outputSchema: tool.outputSchema,
         annotations: tool.annotations,
+        ...(withApp && (tool.name === 'preview_calendar_bridge' || tool.name === 'export_calendar_bridge_ics')
+          ? { _meta: { ui: { resourceUri: BRIDGE_APP_URI } } }
+          : {}),
       })),
     };
   });
