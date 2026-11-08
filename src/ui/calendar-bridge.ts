@@ -30,12 +30,33 @@ export const BRIDGE_APP_HTML = String.raw`<!doctype html>
   button { background: transparent; border: 1px solid currentColor; color: inherit; padding: 7px 12px; border-radius: 8px; cursor: pointer; margin: 4px 5px 4px 0; }
   button[aria-pressed="true"] { font-weight: 750; background: color-mix(in srgb, CanvasText 11%, Canvas); }
   #empty { margin-top: 18px; font-size: .86rem; }
+  .fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(145px, 1fr)); gap: 8px; }
+  label { display: block; font-size: .78rem; margin-bottom: 4px; }
+  select, input { box-sizing: border-box; width: 100%; padding: 8px; border: 1px solid color-mix(in srgb, CanvasText 30%, Canvas); border-radius: 8px; background: Canvas; color: CanvasText; }
+  button:disabled { opacity: .5; cursor: not-allowed; }
+  #uiStatus { font-size: .8rem; overflow-wrap: anywhere; }
+  .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
 </style>
 </head>
 <body>
 <main>
 <h1>TimeTree Calendar Bridge</h1>
 <p class="sub" id="subtitle">Read-only preview · No events have been changed</p>
+<section aria-label="Build migration preview">
+<h2>Select calendars</h2>
+<button type="button" id="loadCalendars">Load calendars</button>
+<button type="button" id="connectGoogle">Connect Google (local)</button>
+<p id="uiStatus" aria-live="polite">Loading calendars requires a compatible MCP Apps host.</p>
+<p id="googleLink"></p>
+<div class="fields">
+<div><label for="sourceCalendar">TimeTree source</label><select id="sourceCalendar" aria-label="TimeTree source"><option value="">Select…</option></select></div>
+<div><label for="googleCalendar">Google destination</label><select id="googleCalendar" aria-label="Google destination"><option value="">Select…</option></select></div>
+<div><label for="fromDate">From (UTC)</label><input type="date" id="fromDate"></div>
+<div><label for="toDate">Until (UTC, exclusive)</label><input type="date" id="toDate"></div>
+<div><label for="privacy">Privacy</label><select id="privacy"><option value="full">Full event details</option><option value="busy">Busy only</option></select></div>
+</div>
+<button type="button" id="compare" disabled>Compare — read only</button>
+</section>
 <div class="grid" aria-label="Export summary">
   <div class="stat"><div class="num" id="create">—</div><span class="small">Create</span></div>
   <div class="stat"><div class="num" id="skip">—</div><span class="small">Skip</span></div>
@@ -58,6 +79,71 @@ export const BRIDGE_APP_HTML = String.raw`<!doctype html>
   'use strict';
   let current = null;
   let filter = 'all';
+  let rpcId = 100;
+  const awaiting = new Map();
+  let sourceLoaded = false;
+  let googleLoaded = false;
+  function notify(value) { set('uiStatus', value); }
+  function callReadTool(name, args, kind) {
+    // Only these bounded tools can be called by this UI.
+    if (!['list_calendars', 'list_google_calendars', 'preview_google_calendar_bridge', 'connect_google_calendar'].includes(name)) return;
+    const id = rpcId++;
+    awaiting.set(id, kind);
+    window.parent.postMessage({
+      jsonrpc: '2.0', id, method: 'tools/call',
+      params: { name, arguments: args }
+    }, '*');
+  }
+  function decodeResult(reply) {
+    if (!reply || reply.isError) return null;
+    if (reply.structuredContent && typeof reply.structuredContent === 'object') return reply.structuredContent;
+    try {
+      return JSON.parse(reply.content.find(x => x.type === 'text')?.text ?? 'null');
+    } catch { return null; }
+  }
+  function fillSelect(id, items, nameField) {
+    const select = el(id);
+    select.replaceChildren(new Option('Select…', ''));
+    for (const item of items.slice(0, 200)) {
+      if (typeof item.id !== 'string' || typeof item[nameField] !== 'string') continue;
+      select.appendChild(new Option(item[nameField], item.id));
+    }
+  }
+  function onRpcResult(kind, message) {
+    const data = decodeResult(message.result);
+    if (!data) { notify('Unable to complete the requested operation. Check the MCP client response.'); return; }
+    if (kind === 'source') {
+      sourceLoaded = Array.isArray(data.calendars);
+      if (sourceLoaded) fillSelect('sourceCalendar', data.calendars, 'name');
+    } else if (kind === 'google') {
+      googleLoaded = Array.isArray(data.calendars);
+      if (googleLoaded) fillSelect('googleCalendar', data.calendars, 'name');
+    } else if (kind === 'connect') {
+      if (typeof data.authorization_url === 'string') {
+        try {
+          const url = new URL(data.authorization_url);
+          if (url.origin === 'https://accounts.google.com') {
+            const link = document.createElement('a');
+            link.href = url.href;
+            link.target = '_blank';
+            link.rel = 'noopener noreferrer';
+            link.textContent = 'Open Google authorization on this computer';
+            el('googleLink').replaceChildren(link);
+          }
+        } catch { /* Invalid provider URL is not rendered. */ }
+      }
+      notify('Finish authorization in a browser on this computer, then load calendars again.');
+    } else if (kind === 'preview') {
+      current = data;
+      render();
+      notify(data.ready ? 'Preview complete. No changes were applied.' : 'Preview requires review. No changes were applied.');
+    }
+    el('compare').disabled = !(sourceLoaded && googleLoaded);
+    if (kind === 'source' || kind === 'google') {
+      notify(sourceLoaded && googleLoaded ? 'Choose both calendars and a date range to compare.' : 'Select calendars after both lists finish loading.');
+    }
+  }
+
   const el = id => document.getElementById(id);
   const set = (id, value) => { el(id).textContent = String(value); };
   function appendText(parent, tag, value, className) {
@@ -115,6 +201,11 @@ export const BRIDGE_APP_HTML = String.raw`<!doctype html>
       if (message.result) window.parent.postMessage({ jsonrpc:'2.0', method:'ui/notifications/initialized' }, '*');
       else set('empty', 'This host does not support the MCP Apps handshake.');
     }
+    if (message.id !== undefined && awaiting.has(message.id)) {
+      const kind = awaiting.get(message.id);
+      awaiting.delete(message.id);
+      onRpcResult(kind, message);
+    }
     if (message.method === 'ui/notifications/tool-result') receiveResult(message);
     if (message.method === 'ui/resource-teardown' && message.id !== undefined) {
       window.parent.postMessage({ jsonrpc:'2.0', id: message.id, result:{} }, '*');
@@ -127,6 +218,39 @@ export const BRIDGE_APP_HTML = String.raw`<!doctype html>
       render();
     });
   }
+  el('loadCalendars').addEventListener('click', () => {
+    sourceLoaded = false; googleLoaded = false;
+    el('compare').disabled = true;
+    notify('Loading TimeTree and Google calendars…');
+    callReadTool('list_calendars', {}, 'source');
+    callReadTool('list_google_calendars', {}, 'google');
+  });
+  el('connectGoogle').addEventListener('click', () => {
+    el('googleLink').replaceChildren();
+    notify('Opening local Google authorization…');
+    callReadTool('connect_google_calendar', {}, 'connect');
+  });
+  el('compare').addEventListener('click', () => {
+    const calendar = el('sourceCalendar').value;
+    const google = el('googleCalendar').value;
+    const from = el('fromDate').value;
+    const to = el('toDate').value;
+    const startMs = Date.parse(from + 'T00:00:00Z');
+    const endMs = Date.parse(to + 'T00:00:00Z');
+    if (!calendar || !google || !Number.isFinite(startMs) || !Number.isFinite(endMs) ||
+        endMs <= startMs || endMs - startMs > 366 * 86400000) {
+      notify('Select both calendars and a valid UTC date range of at most 366 days.');
+      return;
+    }
+    notify('Comparing calendars — no changes will be made…');
+    callReadTool('preview_google_calendar_bridge', {
+      calendar_id: calendar, google_calendar_id: google,
+      start_at: startMs, end_at: endMs, privacy: el('privacy').value
+    }, 'preview');
+  });
+  const today = new Date();
+  el('fromDate').value = today.toISOString().slice(0, 10);
+  el('toDate').value = new Date(today.getTime() + 7 * 86400000).toISOString().slice(0, 10);
   window.parent.postMessage({
     jsonrpc:'2.0', id:1, method:'ui/initialize',
     params:{ protocolVersion:'2026-01-26', appInfo:{ name:'timetree-calendar-bridge', version:'0.1.0' }, appCapabilities:{} }
