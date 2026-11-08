@@ -9,7 +9,6 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/ODU33104/TimeTree-MCP/actions/workflows/ci.yml"><img src="https://github.com/ODU33104/TimeTree-MCP/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="https://github.com/ODU33104/TimeTree-MCP/releases"><img src="https://img.shields.io/github/v/release/ODU33104/TimeTree-MCP?label=release" alt="最新リリース"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT License"></a>
 </p>
@@ -49,13 +48,13 @@ AI アシスタントに次のように聞くだけです。
 ## 対応範囲と制限
 
 - **v0.9.0 のツールは33個。** [ツール](#ツール)を参照してください。メモと予定のチェックリスト項目は読み書きできますが、項目を1つずつ完了にするツールはありません。参加状況の項目は RSVP 操作としては公開していません。
-- **読み取り専用モード。** stdio では既定で書き込みツールも使えます。16個の読み取り専用ツールだけを一覧に出して許可するには、Claude Desktop 拡張機能では設定の「読み取り専用で使う (Read-only mode)」にチェックを入れ、git clone では MCP の `env` に `TIMETREE_READ_ONLY=true` を設定します。
+- **読み取り専用モード。** stdio では既定で書き込みツールも使えます。読み取り専用ツールだけを一覧に出して許可するには、Claude Desktop 拡張機能では設定の「読み取り専用で使う (Read-only mode)」にチェックを入れ、git clone では MCP の `env` に `TIMETREE_READ_ONLY=true` を設定します。
 - **ローカル専用。** サーバーは自分のパソコン上で stdio 経由で動きます。ホスト型やリモートのサービスはなく、このリポジトリにあるリモート接続用のコードはサーバーを持たないセキュリティ規則の集まりです。ChatGPT モバイルアプリからの接続は試していません。
 - **未対応。** 写真・ファイルのアップロード、アルバム、RSVP、プレミアム添付、カレンダーの双方向同期。
 - **未検証。** 自動テスト以外のタイムゾーンや夏時間の端ケース、およびすべての TimeTree アプリ機能。互換性は TimeTree の非公開エンドポイントと MCP クライアントに依存します。
 - **言語。** 英語・日本語・韓国語は詳細版です。その他10言語は短い導入用の要約です。
 
-予定を動かした場合の比較、`.ics` 書き出し、重複予定ガードなどの計画中の機能は試作段階で、このリリースには含まれません。
+開発中の `main` には、読み取り専用の `preview_calendar_bridge` と `export_calendar_bridge_ics` が追加され、合計35ツール（読み取り専用18）になっています。v0.9.0 のリリースタグは従来の33ツールのままです。繰り返し・終日予定は不正確な変換を避けるため現時点では書き出しを中止します。Google認証と実際の同期は未完成です。詳細は [Calendar Bridge](docs/CALENDAR-BRIDGE.md) を参照してください。
 
 ## インストール
 
@@ -142,6 +141,7 @@ GUI クライアントが `node` を見つけられない場合は、`command -v
 | カレンダー | `list_calendars`, `create_calendar`, `get_current_user` |
 | 予定 | `get_events`, `get_updated_events`, `create_event`, `update_event`, `delete_event`, `copy_event` |
 | 複数カレンダー読み取り | `search_events_across_calendars`, `find_available_slots`, `detect_event_conflicts`（読み取り専用） |
+| Calendar Bridge（mainのみ、試験的） | `preview_calendar_bridge`, `export_calendar_bridge_ics`（読み取り専用、Google接続なし） |
 | 繰り返し予定 | `update_event_occurrence`, `delete_event_occurrence` |
 | メモ | `list_memos`, `create_memo`, `update_memo`, `delete_memo` |
 | コメント | `list_event_comments`, `get_event_comment_image`, `add_event_comment`, `update_event_comment`, `delete_event_comment` |
@@ -155,6 +155,10 @@ GUI クライアントが `node` を見つけられない場合は、`command -v
 `list_event_comments` は添付画像の情報も返します。`get_event_comment_image` で1枚ずつ取得し、stdio 経由で MCP 標準の画像データとして返します。クライアント側がツールの画像応答に対応している必要があります。JPEG・PNG・GIF・WebP、最大 5 MiB に対応し、画像はメモリにだけ保持してディスクには保存しません。予定に直接添付されたプレミアムのファイルと画像のアップロードは対象外です。
 
 パラメータと使用例: [COMMANDS.md](COMMANDS.md)
+
+## GitHub Actionsなしのローカル検証
+
+`npm ci && npm run typecheck && npm test && npm run build` をローカルのNode.js環境で実行します。無料枠の消費を避けるため、GitHub Actionsの3ワークフローはリポジトリから削除しました。
 
 ## プライバシーとセキュリティ
 
