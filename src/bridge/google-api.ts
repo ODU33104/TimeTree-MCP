@@ -66,7 +66,7 @@ function asItems(json: unknown): { items: unknown[]; nextPageToken?: string } {
 
 function normalizeEvent(value: unknown): GoogleEvent {
   if (!isRecord(value)) throw new Error('Invalid Google event');
-  const id = requireString(value.id, 'event id');
+  requireString(value.id, 'event id');
   if (value.summary !== undefined && typeof value.summary !== 'string') throw new Error('Invalid Google event summary');
   if (value.status !== undefined && typeof value.status !== 'string') throw new Error('Invalid Google event status');
   return value as GoogleEvent & { id: string };
