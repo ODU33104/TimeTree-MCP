@@ -83,6 +83,8 @@ const sampleArgs = {
   get_current_user: {},
   get_events: { calendar_id: '123', start_before: Date.parse('2026-11-01T00:00:00Z') },
   get_updated_events: { calendar_id: '123', updated_after: 0 },
+  preview_calendar_bridge: { calendar_id: '123', destination_calendar_id: 'google-test', start_at: Date.parse('2026-10-19T00:00:00Z'), end_at: Date.parse('2026-10-23T00:00:00Z') },
+  export_calendar_bridge_ics: { calendar_id: '123', calendar_name: 'Fixture', start_at: Date.parse('2025-01-01T00:00:00Z'), end_at: Date.parse('2025-01-02T00:00:00Z') },
   search_events_across_calendars: { calendar_ids: ['123'], start: '2026-10-20T00:00:00Z', end: '2026-10-23T00:00:00Z' },
   find_available_slots: { calendar_ids: ['123'], start: '2026-10-20T00:00:00Z', end: '2026-10-20T04:00:00Z', duration_minutes: 30, time_zone: 'Asia/Seoul' },
   detect_event_conflicts: { calendar_ids: ['123'], start: '2026-10-20T00:00:00Z', end: '2026-10-23T00:00:00Z' },
@@ -116,7 +118,7 @@ test('every tool declares annotations and an output schema', () => {
   for (const tool of registerTools(fakeClient)) {
     assert.ok(tool.annotations, `${tool.name} has annotations`);
     assert.equal(tool.annotations.openWorldHint, true, `${tool.name} talks to TimeTree`);
-    const readOnly = /^(get|list)_/.test(tool.name) || ['check_connection','search_events_across_calendars','find_available_slots','detect_event_conflicts'].includes(tool.name);
+    const readOnly = /^(get|list)_/.test(tool.name) || ['check_connection','search_events_across_calendars','find_available_slots','detect_event_conflicts','preview_calendar_bridge','export_calendar_bridge_ics'].includes(tool.name);
     assert.equal(tool.annotations.readOnlyHint, readOnly, `${tool.name} readOnlyHint`);
     if (/^delete_/.test(tool.name)) assert.equal(tool.annotations.destructiveHint, true, `${tool.name} is destructive`);
     assert.equal(tool.outputSchema?.type, 'object', `${tool.name} has an object outputSchema`);
