@@ -31,6 +31,16 @@ import {
 import { createDeleteEventOccurrenceTool, createUpdateEventOccurrenceTool } from './recurring-event-tools.js';
 import { createGetEventsTool, createGetUpdatedEventsTool } from './event-tools.js';
 import { createExportCalendarBridgeIcsTool, createPreviewCalendarBridgeTool } from './bridge-tools.js';
+import { GoogleLocalConnection, type GoogleConnection } from '../bridge/google-connection.js';
+import { GoogleCalendarApi } from '../bridge/google-api.js';
+import {
+  createConnectGoogleCalendarTool,
+  createGoogleConnectionStatusTool,
+  createDisconnectGoogleCalendarTool,
+  createListGoogleCalendarsTool,
+  createGetGoogleCalendarEventsTool,
+} from './google-tools.js';
+
 import { createGetHolidaysTool } from './holiday-tools.js';
 import { createGetRecentActivityTool } from './activity-tools.js';
 import { createCheckConnectionTool } from './diagnostic-tools.js';
@@ -41,7 +51,18 @@ import {
   createUpdateMemoTool,
 } from './memo-tools.js';
 
-export function registerTools(apiClient: TimeTreeAPIClient) {
+export function registerTools(
+  apiClient: TimeTreeAPIClient,
+  googleDependencies?: {
+    connection: GoogleConnection;
+    api: Pick<GoogleCalendarApi, 'listCalendars' | 'listEvents'>;
+  },
+) {
+  const googleConnection = googleDependencies?.connection ??
+    new GoogleLocalConnection(process.env.GOOGLE_OAUTH_CLIENT_ID, process.env.GOOGLE_OAUTH_CLIENT_SECRET);
+  const googleApi = googleDependencies?.api ??
+    new GoogleCalendarApi(() => googleConnection.accessToken());
+
   return [
     createCheckConnectionTool(apiClient),
     createListCalendarsTool(apiClient),
@@ -54,6 +75,11 @@ export function registerTools(apiClient: TimeTreeAPIClient) {
     createGetUpdatedEventsTool(apiClient),
     createPreviewCalendarBridgeTool(apiClient),
     createExportCalendarBridgeIcsTool(apiClient),
+    createConnectGoogleCalendarTool(googleConnection),
+    createGoogleConnectionStatusTool(googleConnection),
+    createListGoogleCalendarsTool(googleConnection, googleApi),
+    createGetGoogleCalendarEventsTool(googleConnection, googleApi),
+    createDisconnectGoogleCalendarTool(googleConnection),
     createCreateEventTool(apiClient),
     createUpdateEventTool(apiClient),
     createDeleteEventTool(apiClient),
