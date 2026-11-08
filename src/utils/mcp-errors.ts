@@ -3,6 +3,11 @@ import { SERVER_VERSION } from '../config/config.js';
 
 export type ErrorCode =
   | 'AUTH_FAILED'
+  | 'GOOGLE_NOT_CONNECTED'
+  | 'GOOGLE_NOT_CONFIGURED'
+  | 'GOOGLE_AUTH'
+  | 'GOOGLE_API'
+  | 'GOOGLE_WRITE_UNCERTAIN'
   | 'UPSTREAM_FORMAT'
   | 'NETWORK'
   | 'RATE_LIMITED'
@@ -335,6 +340,20 @@ function classifyOne(error: unknown): ClassifiedError | undefined {
     };
   }
 
+  if (name === 'GoogleNotConnectedError') {
+    return { code: 'GOOGLE_NOT_CONNECTED' };
+  }
+  if (name === 'GoogleOAuthConfigurationError') {
+    return { code: 'GOOGLE_NOT_CONFIGURED' };
+  }
+  if (name === 'GoogleApiError') {
+    const status = getField(error, 'status');
+    return { code: status === 401 || status === 403 ? 'GOOGLE_AUTH' : 'GOOGLE_API' };
+  }
+  if (name === 'GoogleWriteUncertainError') {
+    return { code: 'GOOGLE_WRITE_UNCERTAIN' };
+  }
+
   if (
     name === 'AuthenticationError' ||
     statusCode === 401 ||
@@ -403,6 +422,36 @@ function errorMessages(
   classified: ClassifiedError,
 ): { ja: string; en: string } {
   switch (classified.code) {
+    case 'GOOGLE_NOT_CONNECTED':
+      return {
+        ja: 'Googleカレンダーが未接続です。ローカルのMCPクライアントから connect_google_calendar を実行し、同じ端末のブラウザで認証してください。',
+        en: 'Google Calendar is not connected. Run connect_google_calendar from your local MCP client and authorize in a browser on the same device.',
+      };
+
+    case 'GOOGLE_NOT_CONFIGURED':
+      return {
+        ja: 'Google認証の設定がありません。MCPサーバーの環境変数 GOOGLE_OAUTH_CLIENT_ID にGoogleのデスクトップ用OAuthクライアントIDを設定してください。',
+        en: 'Google OAuth is not configured. Set GOOGLE_OAUTH_CLIENT_ID to a desktop OAuth client ID in your local MCP server environment.',
+      };
+
+    case 'GOOGLE_AUTH':
+      return {
+        ja: 'Googleカレンダーの認証または権限が不足しています。接続状態とGoogle側のカレンダー共有権限を確認してください。',
+        en: 'Google Calendar authorization or access permissions failed. Check the connection and calendar sharing permissions.',
+      };
+
+    case 'GOOGLE_API':
+      return {
+        ja: 'GoogleカレンダーAPIへの要求に失敗しました。Googleの接続、利用制限、カレンダーIDを確認してください。',
+        en: 'Google Calendar API request failed. Check the connection, API quotas and calendar ID.',
+      };
+
+    case 'GOOGLE_WRITE_UNCERTAIN':
+      return {
+        ja: 'Googleへの書き込みの成否を確認できません。同期先で重複を照合するまで同じ作成操作を繰り返さないでください。',
+        en: 'A Google write may have succeeded. Reconcile the destination before retrying the same creation.',
+      };
+
     case 'AUTH_FAILED':
       return {
         ja: 'TimeTree へのサインインに失敗しました。拡張機能の設定（または環境変数）のメールアドレスとパスワードを確認してください。Google・Apple でログインしている場合は、TimeTree 側でメールとパスワードの設定が必要です。',
