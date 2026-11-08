@@ -13,6 +13,20 @@ import {
   type GoogleOAuthAttempt, type GoogleOAuthTokens, type OAuthFetch,
 } from './google-oauth.js';
 
+export class GoogleNotConnectedError extends Error {
+  constructor() {
+    super('Google Calendar is not connected');
+    this.name = 'GoogleNotConnectedError';
+  }
+}
+
+export class GoogleOAuthConfigurationError extends Error {
+  constructor() {
+    super('Google OAuth client ID is not configured');
+    this.name = 'GoogleOAuthConfigurationError';
+  }
+}
+
 const AUTH_TIMEOUT_MS = 5 * 60_000;
 const CALLBACK_PATH = '/timetree-mcp/google-oauth/callback';
 
@@ -67,7 +81,7 @@ export class GoogleLocalConnection implements GoogleConnection {
   }
 
   async begin(): Promise<GoogleConnectionStart> {
-    if (!this.clientId) throw new Error('Set GOOGLE_OAUTH_CLIENT_ID in the local MCP server environment');
+    if (!this.clientId) throw new GoogleOAuthConfigurationError();
     if (this.pending) throw new Error('Google authorization is already pending');
     if (this.tokens) throw new Error('Disconnect the current Google account before authorizing another');
     this.generation++;
@@ -187,11 +201,11 @@ export class GoogleLocalConnection implements GoogleConnection {
 
   async accessToken(): Promise<string> {
     const current = this.tokens;
-    if (!current) throw new Error('Google Calendar is not connected');
+    if (!current) throw new GoogleNotConnectedError();
     if (current.expiresAtMs > Date.now() + 60_000) return current.accessToken;
     if (!current.refreshToken || !this.clientId) {
       this.tokens = null;
-      throw new Error('Google Calendar authorization expired; reconnect');
+      throw new GoogleNotConnectedError();
     }
     if (!this.refreshInFlight) {
       this.refreshInFlight = (async () => {
@@ -208,8 +222,8 @@ export class GoogleLocalConnection implements GoogleConnection {
           };
           return this.tokens.accessToken;
         } catch {
-          this.tokens = null;
-          throw new Error('Google Calendar authorization expired; reconnect');
+          if (this.tokens === current) this.tokens = null;
+          throw new GoogleNotConnectedError();
         }
       })().finally(() => { this.refreshInFlight = null; });
     }
