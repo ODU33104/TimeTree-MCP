@@ -5,7 +5,7 @@
  *
  * This is an OAuth building block, NOT an exposed MCP login workflow.
  */
-import { createHash, randomBytes } from 'node:crypto';
+import { createHash, randomBytes, timingSafeEqual } from 'node:crypto';
 
 export const GOOGLE_CALENDAR_LIST_SCOPE =
   'https://www.googleapis.com/auth/calendar.calendarlist.readonly';
@@ -150,8 +150,10 @@ export async function completeGoogleOAuth(
   opts: { clientSecret?: string; fetcher?: OAuthFetch } = {},
 ): Promise<GoogleOAuthTokens> {
   required(authorizationCode, 'OAuth code');
-  if (typeof returnedState !== 'string' || !returnedState ||
-      !Buffer.from(returnedState).equals(Buffer.from(attempt.state))) {
+  const received = typeof returnedState === 'string' ? Buffer.from(returnedState) : Buffer.alloc(0);
+  const expected = Buffer.from(attempt.state);
+  if (!received.length || received.length !== expected.length ||
+      !timingSafeEqual(received, expected)) {
     throw new Error('Google OAuth state mismatch');
   }
   const params = new URLSearchParams({
