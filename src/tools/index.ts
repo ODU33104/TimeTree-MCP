@@ -31,6 +31,7 @@ import {
 import { createDeleteEventOccurrenceTool, createUpdateEventOccurrenceTool } from './recurring-event-tools.js';
 import { createGetEventsTool, createGetUpdatedEventsTool } from './event-tools.js';
 import { createExportCalendarBridgeIcsTool, createPreviewCalendarBridgeTool } from './bridge-tools.js';
+import { createPreviewGoogleCalendarBridgeTool } from './google-bridge-tools.js';
 import { GoogleLocalConnection, type GoogleConnection } from '../bridge/google-connection.js';
 import { GoogleCalendarApi } from '../bridge/google-api.js';
 import {
@@ -75,6 +76,7 @@ export function registerTools(
     createGetUpdatedEventsTool(apiClient),
     createPreviewCalendarBridgeTool(apiClient),
     createExportCalendarBridgeIcsTool(apiClient),
+    createPreviewGoogleCalendarBridgeTool(apiClient, googleConnection, googleApi),
     createConnectGoogleCalendarTool(googleConnection),
     createGoogleConnectionStatusTool(googleConnection),
     createListGoogleCalendarsTool(googleConnection, googleApi),
