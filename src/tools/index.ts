@@ -30,6 +30,7 @@ import {
 } from './event-crud-tools.js';
 import { createDeleteEventOccurrenceTool, createUpdateEventOccurrenceTool } from './recurring-event-tools.js';
 import { createGetEventsTool, createGetUpdatedEventsTool } from './event-tools.js';
+import { createExportCalendarBridgeIcsTool, createPreviewCalendarBridgeTool } from './bridge-tools.js';
 import { createGetHolidaysTool } from './holiday-tools.js';
 import { createGetRecentActivityTool } from './activity-tools.js';
 import { createCheckConnectionTool } from './diagnostic-tools.js';
@@ -51,6 +52,8 @@ export function registerTools(apiClient: TimeTreeAPIClient) {
     createFindAvailableSlotsTool(apiClient),
     createDetectEventConflictsTool(apiClient),
     createGetUpdatedEventsTool(apiClient),
+    createPreviewCalendarBridgeTool(apiClient),
+    createExportCalendarBridgeIcsTool(apiClient),
     createCreateEventTool(apiClient),
     createUpdateEventTool(apiClient),
     createDeleteEventTool(apiClient),
