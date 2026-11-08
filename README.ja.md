@@ -141,7 +141,8 @@ GUI クライアントが `node` を見つけられない場合は、`command -v
 | カレンダー | `list_calendars`, `create_calendar`, `get_current_user` |
 | 予定 | `get_events`, `get_updated_events`, `create_event`, `update_event`, `delete_event`, `copy_event` |
 | 複数カレンダー読み取り | `search_events_across_calendars`, `find_available_slots`, `detect_event_conflicts`（読み取り専用） |
-| Calendar Bridge（mainのみ、試験的） | `preview_calendar_bridge`, `preview_google_calendar_bridge`, `export_calendar_bridge_ics`（読み取り専用） |\n| Googleカレンダー（mainのみ、試験的） | `connect_google_calendar`, `google_connection_status`, `list_google_calendars`, `get_google_calendar_events`, `disconnect_google_calendar`（予定の書き込みなし） |
+| Calendar Bridge（mainのみ、試験的） | `preview_calendar_bridge`, `preview_google_calendar_bridge`, `export_calendar_bridge_ics`（読み取り専用） |
+| Googleカレンダー（mainのみ、試験的） | `connect_google_calendar`, `google_connection_status`, `list_google_calendars`, `get_google_calendar_events`, `disconnect_google_calendar`（予定の書き込みなし） |
 | 繰り返し予定 | `update_event_occurrence`, `delete_event_occurrence` |
 | メモ | `list_memos`, `create_memo`, `update_memo`, `delete_memo` |
 | コメント | `list_event_comments`, `get_event_comment_image`, `add_event_comment`, `update_event_comment`, `delete_event_comment` |
