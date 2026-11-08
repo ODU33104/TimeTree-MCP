@@ -29,6 +29,7 @@ const WindowSchema = z.object({
 export const PreviewBridgeInputSchema = WindowSchema.safeExtend({
   destination_calendar_id: z.string().trim().min(1).max(256),
   privacy: z.enum(['full', 'busy']).default('full'),
+  destination_snapshot_complete: z.boolean().default(false),
   existing_destination_events: z.array(z.object({
     id: z.string().min(1),
     sourceKey: z.string().optional(),
@@ -54,8 +55,8 @@ function selectedEvents(events: readonly Event[], start: number, end: number) {
   return events.filter(event =>
     !event.deactivated_at &&
     event.category !== 2 &&
-    event.start_at >= start &&
-    event.start_at < end
+    ((event.recurrences?.length && event.start_at < end) ||
+      (event.start_at >= start && event.start_at < end))
   );
 }
 
@@ -98,6 +99,7 @@ export function createPreviewCalendarBridgeTool(apiClient: TimeTreeAPIClient) {
         ...windowProperties,
         destination_calendar_id: { type: 'string', description: 'Explicit destination calendar ID; no automatic name matching' },
         privacy: { type: 'string', enum: ['full', 'busy'], description: 'busy omits title and notes' },
+        destination_snapshot_complete: { type: 'boolean', description: 'True only after checking all existing destination events within the exact window; an empty calendar may have zero entries.' },
         existing_destination_events: {
           type: 'array', maxItems: MAX_EVENTS,
           description: 'Optional complete destination snapshot for the same time window. Empty means duplicates cannot be checked.',
@@ -135,16 +137,16 @@ export function createPreviewCalendarBridgeTool(apiClient: TimeTreeAPIClient) {
         });
         const warnings = [
           'Preview only; no Google connection or write has occurred.',
-          ...(input.existing_destination_events.length === 0
-            ? ['No destination snapshot supplied; duplicate detection is incomplete.']
+          ...(!input.destination_snapshot_complete
+            ? ['Destination snapshot has not been marked complete; duplicate detection is incomplete.']
             : []),
           ...(blocked.length ? ['Recurring, exception or all-day events require special handling and were blocked.'] : []),
         ];
         return { content: [{ type: 'text', text: JSON.stringify({
-          ready: blocked.length === 0 && input.existing_destination_events.length > 0 &&
+          ready: blocked.length === 0 && input.destination_snapshot_complete &&
             plan.totals.invalid === 0,
           calendar_id: calendarId, destination_calendar_id: input.destination_calendar_id,
-          snapshot_supplied: input.existing_destination_events.length > 0,
+          snapshot_supplied: input.destination_snapshot_complete,
           scanned: events.length, blocked: blocked.length, blocked_event_ids: blocked.map(e => e.uuid),
           warnings, plan,
         }) }] };
