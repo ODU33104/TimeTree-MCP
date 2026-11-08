@@ -6,8 +6,8 @@ import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 const serverPath = fileURLToPath(new URL('../dist/index.js', import.meta.url));
-const READ_ONLY_TOOL_COUNT = 23;
-const ALL_TOOL_COUNT = 40;
+const READ_ONLY_TOOL_COUNT = 24;
+const ALL_TOOL_COUNT = 41;
 
 function listToolCount(readOnlyValue, timeoutMs = 20000) {
   const env = {
