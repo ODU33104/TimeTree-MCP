@@ -110,3 +110,24 @@ test('rejects windows that are too long before calling external services', async
   assert.equal(result.isError, true);
   assert.deepEqual(api.calls, []);
 });
+
+test('unreadable TimeTree records make the preview incomplete', async () => {
+  const tool = createPreviewCalendarBridgeTool({
+    async getEventsByCalendar(_id, _since, tally) { tally.skipped = 2; return [event()]; },
+  });
+  const response = await tool.handler({ ...previewArgs, destination_snapshot_complete: true });
+  assert.equal(response.isError, undefined);
+  const data = JSON.parse(response.content[0].text);
+  assert.equal(data.unreadable, 2);
+  assert.equal(data.ready, false);
+  assert.match(data.warnings.join(' '), /unreadable/);
+});
+
+test('ICS export refuses an incomplete TimeTree feed', async () => {
+  const tool = createExportCalendarBridgeIcsTool({
+    async getEventsByCalendar(_id, _since, tally) { tally.skipped = 1; return [event()]; },
+  });
+  const response = await tool.handler({ calendar_id: '12', calendar_name: 'Family', start_at: start, end_at: end });
+  assert.equal(response.isError, true);
+  assert.match(response.content[0].text, /INVALID_INPUT/);
+});
