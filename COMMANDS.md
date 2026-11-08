@@ -15,6 +15,8 @@ Quick reference for using TimeTree MCP Server with AI assistants.
 | **search_events_across_calendars** | Search up to 5 selected calendars by date range and keyword (read-only) |
 | **find_available_slots** | Suggest free time slots across selected calendars (read-only) |
 | **detect_event_conflicts** | Find overlapping events across selected calendars (read-only) |
+| **preview_calendar_bridge** | Read-only TimeTree-to-Google migration preview (main only) |
+| **export_calendar_bridge_ics** | Export a safe subset of TimeTree events as ICS text (main only) |
 | **create_event** | Create a new event |
 | **update_event** | Update an existing event (every occurrence of a recurring event) |
 | **delete_event** | Delete an event (every occurrence of a recurring event) |
@@ -39,6 +41,41 @@ Quick reference for using TimeTree MCP Server with AI assistants.
 | **delete_virtual_member** | Remove a virtual member |
 | **get_holidays** | Get public holidays and memorial days for a date range |
 | **get_recent_activity** | See who recently created, changed, or deleted events and memos |
+
+## Calendar Bridge (development main only)
+
+The following tools are not included in the v0.9.0 release tag. Both are read-only and work with any MCP client; compatible MCP Apps hosts may show a visual preview.
+
+### preview_calendar_bridge
+
+| Parameter | Required | Description |
+|---|---|---|
+| `calendar_id` | Yes | TimeTree ID from `list_calendars` |
+| `destination_calendar_id` | Yes | Explicit Google destination ID; no Google connection occurs |
+| `start_at` | Yes | Inclusive Unix milliseconds |
+| `end_at` | Yes | Exclusive Unix milliseconds, max 366 days later |
+| `max_events` | No | Limit 1–250, default 250; error if exceeded |
+| `privacy` | No | `full` or `busy` |
+| `destination_snapshot_complete` | No | True only after loading the full destination snapshot |
+| `existing_destination_events` | No | Up to 250 existing destination events with `id`, `title`, `startMs`, `endMs`, optional `sourceKey` and `allDay` |
+
+Returns `ready`, `scanned`, `blocked`, `warnings` and `plan` (proposed creates/skips). It does not create or update a Google event. If the destination snapshot has not been verified, `ready` remains false. A `ready: true` preview is **not** consent to write.
+
+### export_calendar_bridge_ics
+
+| Parameter | Required | Description |
+|---|---|---|
+| `calendar_id` | Yes | TimeTree ID |
+| `calendar_name` | Yes | Display name for the exported calendar |
+| `start_at` / `end_at` | Yes | Unix milliseconds, max 366-day window |
+| `max_events` | No | 1–250, default 250 |
+| `privacy` | No | `full` or `busy` |
+
+Returns `ics_content` suitable for a UTF-8 `.ics` file. This initial implementation only supports single, timed events and aborts if the window includes recurring, exception or all-day events rather than silently corrupting the export. It is a snapshot, not a sync.
+
+For architecture, safety, and multi-client UI details, see [docs/CALENDAR-BRIDGE.md](docs/CALENDAR-BRIDGE.md) and [docs/CROSS-CLIENT-UI.md](docs/CROSS-CLIENT-UI.md).
+
+---
 
 ## Tool Details
 
