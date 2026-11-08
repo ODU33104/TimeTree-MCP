@@ -129,7 +129,7 @@ export const BRIDGE_APP_HTML = String.raw`<!doctype html>
   }
   window.parent.postMessage({
     jsonrpc:'2.0', id:1, method:'ui/initialize',
-    params:{ appInfo:{ name:'timetree-calendar-bridge', version:'0.1.0' }, appCapabilities:{} }
+    params:{ protocolVersion:'2026-01-26', appInfo:{ name:'timetree-calendar-bridge', version:'0.1.0' }, appCapabilities:{} }
   }, '*');
 })();
 </script>
