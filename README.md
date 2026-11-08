@@ -9,7 +9,6 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/ODU33104/TimeTree-MCP/actions/workflows/ci.yml"><img src="https://github.com/ODU33104/TimeTree-MCP/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="https://github.com/ODU33104/TimeTree-MCP/releases"><img src="https://img.shields.io/github/v/release/ODU33104/TimeTree-MCP?label=release" alt="Latest release"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT License"></a>
 </p>
@@ -49,13 +48,13 @@ Ask your AI assistant things like:
 ## Scope and limits
 
 - **33 tools in v0.9.0.** See [Tools](#tools). Checklist fields on memos and events can be read and written, but there is no tool that checks off a single item. Attendance fields are not exposed as RSVP actions.
-- **Read-only mode.** Over stdio, write tools are available by default. To list and allow only the 16 read-only tools, tick "Read-only mode" in the Claude Desktop extension's settings, or set `TIMETREE_READ_ONLY=true` in the MCP `env` for a git clone.
+- **Read-only mode.** Over stdio, write tools are available by default. To list and allow only the read-only tools (16 in v0.9.0, 18 on main), tick "Read-only mode" in the Claude Desktop extension's settings, or set `TIMETREE_READ_ONLY=true` in the MCP `env` for a git clone.
 - **Local only.** The server runs on your computer over stdio. There is no hosted or remote service, and the remote-access code in this repository is a set of security rules without a server. Connecting from the ChatGPT mobile app has not been tested.
 - **Not supported.** Photo and file uploads, albums, RSVP, premium attachments, and two-way calendar sync.
 - **Not tested.** Time zone and daylight-saving edge cases outside the automated tests, and every TimeTree app feature. Compatibility depends on TimeTree's undocumented endpoints and on your MCP client.
 - **Languages.** English, Japanese, and Korean are full guides. The other ten languages are short quick-start summaries.
 
-Planned features such as a what-if event mover, `.ics` export, and a duplicate-event guard are prototypes and are not part of this release.
+The development branch (`main`) adds two read-only Calendar Bridge tools (35 tools total): `preview_calendar_bridge` and `export_calendar_bridge_ics`. The v0.9.0 release tag still contains 33 tools. Export currently rejects recurring and all-day events rather than silently changing them; Google account authorization and live sync are not available yet. See [Calendar Bridge](docs/CALENDAR-BRIDGE.md) and [Cross-client UI](docs/CROSS-CLIENT-UI.md).
 
 ## Install
 
@@ -142,6 +141,7 @@ Details: [docs/UPDATING.md](docs/UPDATING.md). Changes: [CHANGELOG.md](CHANGELOG
 | Calendars | `list_calendars`, `create_calendar`, `get_current_user` |
 | Events | `get_events`, `get_updated_events`, `create_event`, `update_event`, `delete_event`, `copy_event` |
 | Cross-calendar reads | `search_events_across_calendars`, `find_available_slots`, `detect_event_conflicts` (read-only) |
+| Calendar Bridge (main only, experimental) | `preview_calendar_bridge`, `export_calendar_bridge_ics` (read-only; no Google connection) |
 | Recurring events | `update_event_occurrence`, `delete_event_occurrence` |
 | Memos | `list_memos`, `create_memo`, `update_memo`, `delete_memo` |
 | Comments | `list_event_comments`, `get_event_comment_image`, `add_event_comment`, `update_event_comment`, `delete_event_comment` |
@@ -155,6 +155,10 @@ Parameters and examples: [COMMANDS.md](COMMANDS.md)
 If the creation response cannot be validated, check existing calendars before trying again.
 
 `list_event_comments` includes image metadata. Use `get_event_comment_image` to retrieve one image as standard MCP image content over stdio; the client must support image tool results. JPEG, PNG, GIF, and WebP up to 5 MiB are supported. Images stay in memory and are not saved to disk. Premium files attached directly to an event and image uploads are not supported.
+
+## Offline verification (no GitHub Actions)
+
+Run `npm ci && npm run typecheck && npm test && npm run build` on your own computer. All GitHub Actions workflow files have been removed from this fork to prevent automatic billing on pushes, schedules, or tags.
 
 ## Privacy and security
 
