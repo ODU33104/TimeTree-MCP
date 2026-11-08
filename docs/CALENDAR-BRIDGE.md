@@ -1,6 +1,15 @@
 # Calendar Bridge (development)
 
-Calendar Bridge is being built on the existing TimeTree web-client implementation. No official TimeTree API is required for the existing read capabilities. This feature is **not yet an available MCP tool**.
+Calendar Bridge is being built on the existing TimeTree web-client implementation. No official TimeTree API is required for the existing read capabilities. Development `main` exposes two read-only MCP tools; Google OAuth and automatic syncing are not yet available. They are **not in the v0.9.0 release tag**.
+
+## Current development implementation
+
+- `preview_calendar_bridge`: read selected TimeTree events within a required date window and return creates/skips, duplicate warnings and blocked event IDs; no Google write.
+- `export_calendar_bridge_ics`: export bounded single, timed TimeTree events as RFC 5545 text; aborts if the window includes recurring, exception or all-day events.
+- Both tools work without an interactive host UI. An optional MCP Apps preview resource is served only to clients that advertise the compatible extension.
+- `src/bridge/google-api.ts`: injected-token Google Calendar HTTP adapter with paginated reads, private source-key deduplication and disabled-by-default write method. It is not yet connected to a user OAuth flow or exposed as a write tool.
+- `src/bridge/journal.ts` and `journal-store.ts`: revision-checked event mappings and local atomic persistence. Not yet wired into live sync execution.
+- No GitHub Actions; run validation locally with `npm ci && npm run typecheck && npm test && npm run build`. Tests added in this series have not yet been executed in the authoring environment.
 
 ## Implemented foundation
 
@@ -24,3 +33,36 @@ Calendar Bridge is being built on the existing TimeTree web-client implementatio
 - The planner does not yet propose updates, recurrence transforms, deletions or two-way conflict resolution.
 - The planner's `sourceKey` is a logical identifier, not a Google API event ID. The adapter must store it in a safe metadata field or a separate journal.
 - The test suite must pass in CI before the planner is considered verified.
+
+
+## Read-only tool examples (MCP arguments)
+
+`preview_calendar_bridge`:
+
+```json
+{
+  "calendar_id": "123",
+  "destination_calendar_id": "family@example.com",
+  "start_at": 1794268800000,
+  "end_at": 1794355200000,
+  "privacy": "busy",
+  "destination_snapshot_complete": false,
+  "existing_destination_events": []
+}
+```
+
+`export_calendar_bridge_ics`:
+
+```json
+{
+  "calendar_id": "123",
+  "calendar_name": "Family",
+  "start_at": 1794268800000,
+  "end_at": 1794355200000,
+  "privacy": "full"
+}
+```
+
+Both examples use synthetic IDs and dates, not a real account. The preview is not a permission to write, even if its `ready` field is `true`. `destination_snapshot_complete` must only be set after reading all relevant Google events. A Google account with no events can be a confirmed empty snapshot.
+
+**Limitations:** up to 250 selected events in a maximum 366-day window per call. Entire calendars are read from TimeTree before filtering. Recurring series that began before the window still block migration; unsupported events are never silently ignored as safe to transfer. Google synchronization, background scheduling, cross-account OAuth and visual CRUD edits are future work.
