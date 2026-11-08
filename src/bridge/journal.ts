@@ -82,6 +82,36 @@ export function addSyncLink(journal: SyncJournal, link: SyncLink): SyncJournal {
 }
 
 /**
+ * Advance a confirmed link without changing either event identity.
+ * Compare-and-swap fingerprints prevent racing sync passes from clobbering
+ * a newer journal revision.
+ */
+export function advanceSyncLink(
+  journal: SyncJournal,
+  previous: SyncLink,
+  sourceFingerprint: string,
+  destinationFingerprint: string,
+): SyncJournal {
+  validateSyncJournal(journal);
+  assertId(sourceFingerprint, 'source fingerprint');
+  assertId(destinationFingerprint, 'destination fingerprint');
+  const index = journal.links.findIndex(link =>
+    sourceIdentity(link) === sourceIdentity(previous));
+  if (index < 0) throw new Error('Sync link not found');
+  const current = journal.links[index];
+  if (destinationIdentity(current) !== destinationIdentity(previous) ||
+      current.sourceFingerprint !== previous.sourceFingerprint ||
+      current.destinationFingerprint !== previous.destinationFingerprint ||
+      current.createdByBridge !== previous.createdByBridge) {
+    throw new Error('Stale sync journal revision');
+  }
+  const links = journal.links.map((link, i) => i === index
+    ? { ...link, sourceFingerprint, destinationFingerprint }
+    : { ...link });
+  return validateSyncJournal({ version: 1, links });
+}
+
+/**
  * Decide whether a one-way sync may safely update a linked destination.
  * Missing events and destination-side edits require human review. Deletion is
  * never proposed, even when an event was originally created by the bridge.
