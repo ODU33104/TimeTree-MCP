@@ -69,6 +69,12 @@ test('MCP Apps capable client gets preview UI metadata and readable resource', {
     assert.equal(result.contents[0].mimeType, MIME);
     assert.match(result.contents[0].text, /ui\/initialize/);
     assert.match(result.contents[0].text, /ui\/notifications\/tool-result/);
+    assert.match(result.contents[0].text, /id="sourceCalendar"/);
+    assert.match(result.contents[0].text, /id="googleCalendar"/);
+    assert.match(result.contents[0].text, /id="compare"/);
+    assert.match(result.contents[0].text, /preview_google_calendar_bridge/);
+    assert.match(result.contents[0].text, /method: 'tools\/call'/);
+    assert.doesNotMatch(result.contents[0].text, /'delete_event'|'create_event'|'update_event'/);
     assert.doesNotMatch(result.contents[0].text, /https:\/\/esm\.sh|https:\/\/unpkg\.com/);
   } finally { h.close(); }
 });
