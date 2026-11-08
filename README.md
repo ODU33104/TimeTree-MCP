@@ -48,13 +48,13 @@ Ask your AI assistant things like:
 ## Scope and limits
 
 - **33 tools in v0.9.0.** See [Tools](#tools). Checklist fields on memos and events can be read and written, but there is no tool that checks off a single item. Attendance fields are not exposed as RSVP actions.
-- **Read-only mode.** Over stdio, write tools are available by default. To list and allow only the read-only tools (16 in v0.9.0, 18 on main), tick "Read-only mode" in the Claude Desktop extension's settings, or set `TIMETREE_READ_ONLY=true` in the MCP `env` for a git clone.
+- **Read-only mode.** Over stdio, write tools are available by default. To list and allow only non-calendar-writing tools (16 in v0.9.0; 24 on development main, including Google connection/disconnect controls), tick "Read-only mode" in the Claude Desktop extension's settings, or set `TIMETREE_READ_ONLY=true` in the MCP `env` for a git clone.
 - **Local only.** The server runs on your computer over stdio. There is no hosted or remote service, and the remote-access code in this repository is a set of security rules without a server. Connecting from the ChatGPT mobile app has not been tested.
 - **Not supported.** Photo and file uploads, albums, RSVP, premium attachments, and two-way calendar sync.
 - **Not tested.** Time zone and daylight-saving edge cases outside the automated tests, and every TimeTree app feature. Compatibility depends on TimeTree's undocumented endpoints and on your MCP client.
 - **Languages.** English, Japanese, and Korean are full guides. The other ten languages are short quick-start summaries.
 
-The development branch (`main`) adds two read-only Calendar Bridge tools (35 tools total): `preview_calendar_bridge` and `export_calendar_bridge_ics`. The v0.9.0 release tag still contains 33 tools. Export currently rejects recurring and all-day events rather than silently changing them; Google account authorization and live sync are not available yet. See [Calendar Bridge](docs/CALENDAR-BRIDGE.md) and [Cross-client UI](docs/CROSS-CLIENT-UI.md).
+The development branch (`main`) has 41 registered tools, including Calendar Bridge previews, ICS export and local Google OAuth/read tools. The v0.9.0 release tag still contains 33 tools. Export currently rejects recurring and all-day events rather than silently changing them. Google OAuth and Google-backed comparison exist on `main`, but automatic writes and synchronization are not yet available. See [Calendar Bridge](docs/CALENDAR-BRIDGE.md) and [Cross-client UI](docs/CROSS-CLIENT-UI.md).
 
 ## Install
 
@@ -141,7 +141,7 @@ Details: [docs/UPDATING.md](docs/UPDATING.md). Changes: [CHANGELOG.md](CHANGELOG
 | Calendars | `list_calendars`, `create_calendar`, `get_current_user` |
 | Events | `get_events`, `get_updated_events`, `create_event`, `update_event`, `delete_event`, `copy_event` |
 | Cross-calendar reads | `search_events_across_calendars`, `find_available_slots`, `detect_event_conflicts` (read-only) |
-| Calendar Bridge (main only, experimental) | `preview_calendar_bridge`, `export_calendar_bridge_ics` (read-only; no Google connection) |
+| Calendar Bridge (main only, experimental) | `preview_calendar_bridge`, `preview_google_calendar_bridge`, `export_calendar_bridge_ics` (read-only) |\n| Google Calendar (main only, experimental) | `connect_google_calendar`, `google_connection_status`, `list_google_calendars`, `get_google_calendar_events`, `disconnect_google_calendar` (no calendar writes) |
 | Recurring events | `update_event_occurrence`, `delete_event_occurrence` |
 | Memos | `list_memos`, `create_memo`, `update_memo`, `delete_memo` |
 | Comments | `list_event_comments`, `get_event_comment_image`, `add_event_comment`, `update_event_comment`, `delete_event_comment` |
@@ -155,6 +155,14 @@ Parameters and examples: [COMMANDS.md](COMMANDS.md)
 If the creation response cannot be validated, check existing calendars before trying again.
 
 `list_event_comments` includes image metadata. Use `get_event_comment_image` to retrieve one image as standard MCP image content over stdio; the client must support image tool results. JPEG, PNG, GIF, and WebP up to 5 MiB are supported. Images stay in memory and are not saved to disk. Premium files attached directly to an event and image uploads are not supported.
+
+## Experimental Google Calendar connection (development main)
+
+Set `GOOGLE_OAUTH_CLIENT_ID` to your own Google Cloud **Desktop application** OAuth client ID in the local MCP environment. Google Calendar API access and an authorized consent screen are required. The optional `GOOGLE_OAUTH_CLIENT_SECRET` can be supplied if the client configuration requires it. **Do not enter either value or OAuth callback links into AI chat.**
+
+Use `connect_google_calendar` to obtain a Google authorization link, then open it in the browser on the **same computer** where the stdio MCP server runs. The one-time authorization callback binds to 127.0.0.1 and expires after five minutes. The connection and its refresh token live only in the running MCP process and disappear when it exits. Use `google_connection_status`, `list_google_calendars` and `get_google_calendar_events` to confirm read access, and `preview_google_calendar_bridge` to compare a selected TimeTree and Google calendar.
+
+This is **not a remote or ChatGPT mobile OAuth flow**. It does not implement Google event writes, background synchronization or encrypted long-term Google token storage. A running local MCP server is required. Tools remain usable as normal JSON/text in hosts without MCP Apps support.
 
 ## Offline verification (no GitHub Actions)
 
