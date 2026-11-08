@@ -17,6 +17,12 @@ Quick reference for using TimeTree MCP Server with AI assistants.
 | **detect_event_conflicts** | Find overlapping events across selected calendars (read-only) |
 | **preview_calendar_bridge** | Read-only TimeTree-to-Google migration preview (main only) |
 | **export_calendar_bridge_ics** | Export a safe subset of TimeTree events as ICS text (main only) |
+| **preview_google_calendar_bridge** | Compare TimeTree and connected Google calendar without writing (main only) |
+| **connect_google_calendar** | Begin local browser OAuth (in-memory only, main only) |
+| **google_connection_status** | Check Google OAuth connection state without revealing credentials |
+| **list_google_calendars** | List connected Google calendars with access permissions |
+| **get_google_calendar_events** | Read Google events in a bounded date range |
+| **disconnect_google_calendar** | Clear local Google credentials from memory |
 | **create_event** | Create a new event |
 | **update_event** | Update an existing event (every occurrence of a recurring event) |
 | **delete_event** | Delete an event (every occurrence of a recurring event) |
@@ -72,6 +78,31 @@ Returns `ready`, `scanned`, `blocked`, `warnings` and `plan` (proposed creates/s
 | `privacy` | No | `full` or `busy` |
 
 Returns `ics_content` suitable for a UTF-8 `.ics` file. This initial implementation only supports single, timed events and aborts if the window includes recurring, exception or all-day events rather than silently corrupting the export. It is a snapshot, not a sync.
+
+### Google Calendar read-only connection and comparison (main only)
+
+Set `GOOGLE_OAUTH_CLIENT_ID` in the **local MCP server environment**. The client ID must be a Google Cloud Desktop OAuth client with Google Calendar API enabled. Optional: `GOOGLE_OAUTH_CLIENT_SECRET` if required. No credential is requested in chat.
+
+1. Call `connect_google_calendar` (no arguments) to receive an authorization link. Open it in a browser on the same computer as this stdio MCP server. The 127.0.0.1 callback expires after 5 minutes.
+2. Call `google_connection_status` (no arguments). Only connection state, expiry and scopes are returned.
+3. Call `list_google_calendars` (no arguments). Output includes `id`, `name`, `access_role`, `can_write`, `primary` and `time_zone`. No permission is changed.
+4. Call `get_google_calendar_events` with `calendar_id`, `start_at` and `end_at` in Unix milliseconds; optional `privacy: "busy"` redacts title and description. Maximum 366 days and 250 events per call.
+5. Call `preview_google_calendar_bridge` to read **both providers** and preview migration actions:
+
+```json
+{
+  "calendar_id": "123",
+  "google_calendar_id": "example-calendar@group.calendar.google.com",
+  "start_at": 1794268800000,
+  "end_at": 1794355200000,
+  "privacy": "busy"
+}
+```
+
+The real Google destination is checked for existence, access role, duplicate title/time signatures, and hashed source markers on already migrated events. The result includes `ready`, `blocked`, `unreadable`, counts, warnings, and proposed `create`/`skip` actions. **No Google writes happen.** A preview marked `ready` is not authorization to write.
+6. `disconnect_google_calendar` drops the process-local Google tokens. Google account-level consent revocation requires Google Account settings.
+
+A server restart loses Google tokens; local OAuth is not a remote/hosted client authorization flow. Automatic syncing, OAuth token persistence, and calendar write tools are not implemented. MCP Apps support is optional: text-only MCP clients still use the same data.
 
 For architecture, safety, and multi-client UI details, see [docs/CALENDAR-BRIDGE.md](docs/CALENDAR-BRIDGE.md) and [docs/CROSS-CLIENT-UI.md](docs/CROSS-CLIENT-UI.md).
 
