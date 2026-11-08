@@ -10,6 +10,7 @@ import type { Event } from '../types/timetree.js';
 import { exportCalendarIcs } from '../bridge/ics.js';
 import { planBridgeExport, type BridgeEvent, type BridgeDestinationEvent } from '../bridge/plan.js';
 import { logger } from '../utils/logger.js';
+import type { SkipTally } from '../utils/lenient-list.js';
 import { parseToolInput, toolErrorResult, InvalidArgumentError } from '../utils/mcp-errors.js';
 import { CalendarIdSchema, CALENDAR_ID_JSON_SCHEMA, READ_ONLY } from './shared-schemas.js';
 
@@ -115,18 +116,19 @@ export function createPreviewCalendarBridgeTool(apiClient: TimeTreeAPIClient) {
     outputSchema: {
       type: 'object', properties: {
         ready: { type: 'boolean' }, calendar_id: { type: 'string' }, destination_calendar_id: { type: 'string' },
-        snapshot_supplied: { type: 'boolean' }, scanned: { type: 'number' },
+        snapshot_supplied: { type: 'boolean' }, scanned: { type: 'number' }, unreadable: { type: 'number' },
         blocked: { type: 'number' }, blocked_event_ids: { type: 'array', items: { type: 'string' } },
         warnings: { type: 'array', items: { type: 'string' } },
         plan: { type: 'object' },
       },
-      required: ['ready', 'calendar_id', 'destination_calendar_id', 'snapshot_supplied', 'scanned', 'blocked', 'blocked_event_ids', 'warnings', 'plan'],
+      required: ['ready', 'calendar_id', 'destination_calendar_id', 'snapshot_supplied', 'scanned', 'unreadable', 'blocked', 'blocked_event_ids', 'warnings', 'plan'],
     },
     handler: async (args: unknown) => {
       try {
         const input = parseToolInput(PreviewBridgeInputSchema, args);
         const calendarId = String(input.calendar_id);
-        const events = selectedEvents(await apiClient.getEventsByCalendar(calendarId), input.start_at, input.end_at);
+        const tally: SkipTally = { skipped: 0 };
+        const events = selectedEvents(await apiClient.getEventsByCalendar(calendarId, 0, tally), input.start_at, input.end_at);
         ensureWithinLimit(events.length, input.max_events);
         const blocked = events.filter(event => !supportedEvent(event));
         const supported = events.filter(supportedEvent).map(event => toBridgeEvent(event, calendarId));
@@ -137,17 +139,19 @@ export function createPreviewCalendarBridgeTool(apiClient: TimeTreeAPIClient) {
         });
         const warnings = [
           'Preview only; no Google connection or write has occurred.',
+          ...(tally.skipped > 0 ? ['Some TimeTree records were unreadable; preview is incomplete.'] : []),
           ...(!input.destination_snapshot_complete
             ? ['Destination snapshot has not been marked complete; duplicate detection is incomplete.']
             : []),
           ...(blocked.length ? ['Recurring, exception or all-day events require special handling and were blocked.'] : []),
         ];
         return { content: [{ type: 'text', text: JSON.stringify({
-          ready: blocked.length === 0 && input.destination_snapshot_complete &&
+          ready: blocked.length === 0 && tally.skipped === 0 && input.destination_snapshot_complete &&
             plan.totals.invalid === 0,
           calendar_id: calendarId, destination_calendar_id: input.destination_calendar_id,
           snapshot_supplied: input.destination_snapshot_complete,
-          scanned: events.length, blocked: blocked.length, blocked_event_ids: blocked.map(e => e.uuid),
+          scanned: events.length, unreadable: tally.skipped,
+          blocked: blocked.length, blocked_event_ids: blocked.map(e => e.uuid),
           warnings, plan,
         }) }] };
       } catch (error) {
@@ -187,6 +191,10 @@ export function createExportCalendarBridgeIcsTool(apiClient: TimeTreeAPIClient) 
         const calendarId = String(input.calendar_id);
         const events = selectedEvents(await apiClient.getEventsByCalendar(calendarId), input.start_at, input.end_at);
         ensureWithinLimit(events.length, input.max_events);
+        if (tally.skipped > 0) {
+          throw new InvalidArgumentError('calendar_id', '読み取れない予定があるため書き出しを中止しました',
+            'Calendar has unreadable events; export aborted to avoid an incomplete backup');
+        }
         if (events.some(event => !supportedEvent(event))) {
           throw new InvalidArgumentError('calendar_id', '繰り返し・例外・終日予定を含みます。誤った出力を避けるため中止しました',
             'Calendar contains recurring, exception or all-day events; export aborted to avoid incorrect data');
