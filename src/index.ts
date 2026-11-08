@@ -153,7 +153,7 @@ async function main() {
         inputSchema: tool.inputSchema,
         outputSchema: tool.outputSchema,
         annotations: tool.annotations,
-        ...(withApp && (tool.name === 'preview_calendar_bridge' || tool.name === 'export_calendar_bridge_ics')
+        ...(withApp && (tool.name === 'preview_calendar_bridge' || tool.name === 'preview_google_calendar_bridge' || tool.name === 'export_calendar_bridge_ics')
           ? { _meta: { ui: { resourceUri: BRIDGE_APP_URI } } }
           : {}),
       })),
