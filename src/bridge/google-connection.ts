@@ -48,6 +48,7 @@ export class GoogleLocalConnection implements GoogleConnection {
   private pending: Pending | null = null;
   private tokens: GoogleOAuthTokens | null = null;
   private refreshInFlight: Promise<string> | null = null;
+  private generation = 0;
 
   constructor(
     private readonly clientId: string | undefined,
@@ -69,6 +70,7 @@ export class GoogleLocalConnection implements GoogleConnection {
     if (!this.clientId) throw new Error('Set GOOGLE_OAUTH_CLIENT_ID in the local MCP server environment');
     if (this.pending) throw new Error('Google authorization is already pending');
     if (this.tokens) throw new Error('Disconnect the current Google account before authorizing another');
+    this.generation++;
 
     const server = createServer((request, response) => {
       void this.handleCallback(request, response);
@@ -150,12 +152,16 @@ export class GoogleLocalConnection implements GoogleConnection {
     if (!code && !error) return this.respond(response, 400, 'Missing authorization result.');
 
     this.cancelPending();
+    const generation = this.generation;
     if (error) return this.respond(response, 400, 'Google authorization was denied or cancelled.');
     try {
       const next = await completeGoogleOAuth(pending.attempt, code!, pending.attempt.state, {
         ...(this.clientSecret ? { clientSecret: this.clientSecret } : {}),
         ...(this.oauthFetch ? { fetcher: this.oauthFetch } : {}),
       });
+      if (this.generation !== generation) {
+        return this.respond(response, 410, 'Authorization no longer active.');
+      }
       // Granted scopes are drawn from the token response; do not silently
       // widen permissions when the user did not grant the requested scopes.
       if (!next.grantedScopes.includes(GOOGLE_CALENDAR_LIST_SCOPE) ||
@@ -211,6 +217,7 @@ export class GoogleLocalConnection implements GoogleConnection {
   }
 
   disconnect(): void {
+    this.generation++;
     this.cancelPending();
     this.tokens = null;
   }
