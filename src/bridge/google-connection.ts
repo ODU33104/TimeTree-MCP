@@ -22,7 +22,7 @@ export class GoogleNotConnectedError extends Error {
 
 export class GoogleOAuthConfigurationError extends Error {
   constructor() {
-    super('Google OAuth client ID is not configured');
+    super('GOOGLE_OAUTH_CLIENT_ID is not configured');
     this.name = 'GoogleOAuthConfigurationError';
   }
 }
