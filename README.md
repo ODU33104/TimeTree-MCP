@@ -141,7 +141,8 @@ Details: [docs/UPDATING.md](docs/UPDATING.md). Changes: [CHANGELOG.md](CHANGELOG
 | Calendars | `list_calendars`, `create_calendar`, `get_current_user` |
 | Events | `get_events`, `get_updated_events`, `create_event`, `update_event`, `delete_event`, `copy_event` |
 | Cross-calendar reads | `search_events_across_calendars`, `find_available_slots`, `detect_event_conflicts` (read-only) |
-| Calendar Bridge (main only, experimental) | `preview_calendar_bridge`, `preview_google_calendar_bridge`, `export_calendar_bridge_ics` (read-only) |\n| Google Calendar (main only, experimental) | `connect_google_calendar`, `google_connection_status`, `list_google_calendars`, `get_google_calendar_events`, `disconnect_google_calendar` (no calendar writes) |
+| Calendar Bridge (main only, experimental) | `preview_calendar_bridge`, `preview_google_calendar_bridge`, `export_calendar_bridge_ics` (read-only) |
+| Google Calendar (main only, experimental) | `connect_google_calendar`, `google_connection_status`, `list_google_calendars`, `get_google_calendar_events`, `disconnect_google_calendar` (no calendar writes) |
 | Recurring events | `update_event_occurrence`, `delete_event_occurrence` |
 | Memos | `list_memos`, `create_memo`, `update_memo`, `delete_memo` |
 | Comments | `list_event_comments`, `get_event_comment_image`, `add_event_comment`, `update_event_comment`, `delete_event_comment` |
