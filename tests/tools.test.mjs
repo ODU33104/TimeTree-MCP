@@ -67,6 +67,7 @@ test('registerTools exposes every tool', () => {
     'google_connection_status',
     'get_recent_activity',
     'preview_calendar_bridge',
+    'preview_google_calendar_bridge',
     'get_updated_events',
     'list_calendars',
     'list_google_calendars',
