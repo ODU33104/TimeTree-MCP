@@ -40,18 +40,27 @@ TimeTree-MCP must remain useful from Claude, Gemini, ChatGPT, Codex, Cursor, and
 - `preview_calendar_bridge` and `export_calendar_bridge_ics` are registered in the existing stdio MCP server and each returns portable structured JSON.
 - The server advertises a read-only preview resource at `ui://timetree-mcp/calendar-bridge.html` with MIME type `text/html;profile=mcp-app`.
 - A client receives `_meta.ui.resourceUri` only when its initialization capabilities declare `io.modelcontextprotocol/ui` with that MIME type.
-- The HTML UI is self-contained, uses the MCP Apps JSON-RPC handshake, renders proposed actions, blockers, and warnings with `textContent` rather than unsafe HTML insertion, and never calls a write tool.
+- The HTML UI is self-contained, uses the MCP Apps JSON-RPC handshake, lets users load both calendar lists, start local Google authorization, select source/destination and date ranges, and request a read-only comparison via `tools/call`. It renders proposed actions, blockers, and warnings with `textContent` rather than unsafe HTML insertion, and never calls a calendar write tool.
 - Other clients receive the identical model-visible result without UI. No OpenAI-only JavaScript API is used.
-- Official Google Calendar REST adapter exists but OAuth onboarding and real sync are **not complete**. The UI is a preview, not a Google account manager or CRUD editor.
+- Local desktop Google OAuth with PKCE, read-only Google calendar/event tools, and real two-provider comparison are registered on development main. Token persistence, remote OAuth and live write sync are **not complete**. The UI is a read-only comparison, not a CRUD editor.
 - Host behavior and widget rendering are not verified in Claude, Gemini, or ChatGPT. Gemini clients in particular differ in MCP support; do not promise universal embedded UI.
 - Tests and local build have not been run in the authoring environment, so this code is not described as production-ready.
 
 ## Local testing checklist (no CI charges)
 
-1. Run `npm ci && npm run typecheck && npm test && npm run build` locally.
+1. Run `npm ci && npm run typecheck && npm test && npm run build` locally. No GitHub Actions runs.
 2. Exercise `tools/list` with and without `extensions.io.modelcontextprotocol/ui.mimeTypes` and confirm the UI metadata is capability-gated.
 3. Read `resources/list` and `resources/read` and verify the HTML MIME type and resource URI.
 4. Test `ui/initialize`, `ui/notifications/initialized` and `ui/notifications/tool-result` against a compatible MCP Apps host or inspector.
 5. Test equivalent preview and export tools in a text-only MCP client; the result must not depend on a UI.
 6. Check large calendars, recurring series that start before the window, all-day events, deleted events and privacy mode with fake data.
 7. Do not use a live Google or TimeTree account until the whole offline matrix passes.
+
+
+## Google and UI security checklist
+
+- OAuth works only for a desktop browser on the same host as the stdio MCP process. It opens an ephemeral 127.0.0.1 listener, validates state and requested scopes, closes after 5 minutes and never returns access/refresh tokens to the model.
+- `connect_google_calendar` and `disconnect_google_calendar` change only process-local authorization state, not events. Both are available even in `TIMETREE_READ_ONLY=true` so users can manage a read-only Google connection.
+- The UI may call only `list_calendars`, `list_google_calendars`, `connect_google_calendar`, and `preview_google_calendar_bridge`. All preview calls remain read-only; a future write UI must use new explicit confirmation and server-side authorization.
+- The UI's compare form uses UTC day boundaries and an exclusive end date. It cannot display correct local-day slicing for all zones without a dedicated timezone-aware upgrade.
+- A tool result with `ready:true` is **not a write authorization**. Never trust model-supplied preview JSON as an execution plan; re-read and revalidate on the server before any future writes.
